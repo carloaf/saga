@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     // Admin routes
     Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+        Route::post('/users', [AdminController::class, 'storeUser'])->name('users.store');
         Route::patch('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
         Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
         

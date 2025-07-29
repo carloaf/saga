@@ -11,7 +11,7 @@
             <p class="mt-2 text-sm text-gray-700">Gerencie os usuários do sistema SAGA</p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <button type="button" class="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
+            <button type="button" onclick="openCreateModal()" class="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
                 Novo Usuário
             </button>
         </div>
@@ -39,6 +39,9 @@
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                     Gênero
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    Data Prontidão OM
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                     Status
@@ -81,6 +84,9 @@
                                     {{ $user->gender === 'male' ? 'Masculino' : ($user->gender === 'female' ? 'Feminino' : 'N/A') }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    {{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('d/m/Y') : 'N/A' }}
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
                                         {{ $user->is_active ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/20' }}">
                                         {{ $user->is_active ? 'Ativo' : 'Inativo' }}
@@ -95,6 +101,7 @@
                                             data-rank-id="{{ $user->rank_id ?? '' }}"
                                             data-organization-id="{{ $user->organization_id ?? '' }}"
                                             data-gender="{{ $user->gender ?? '' }}"
+                                            data-ready-date="{{ $user->ready_at_om_date ?? '' }}"
                                             data-is-active="{{ $user->is_active ? 1 : 0 }}"
                                             onclick="openEditModal(this)"
                                             class="text-green-600 hover:text-green-900">
@@ -189,6 +196,145 @@
                             <dd class="text-lg font-medium text-blue-600">{{ $recentUsers }}</dd>
                         </dl>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Criação -->
+<div id="createModal" class="relative z-50 hidden" aria-labelledby="create-modal-title" role="dialog" aria-modal="true">
+    <!-- Background backdrop -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <!-- Modal panel -->
+            <div class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-semibold leading-6 text-gray-900" id="create-modal-title">
+                            Novo Usuário
+                        </h3>
+                        <button type="button" onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">
+                            <span class="sr-only">Fechar</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <form id="createUserForm" class="space-y-5">
+                            <div>
+                                <label for="createFullName" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Nome Completo
+                                </label>
+                                <div class="mt-2">
+                                    <input type="text" id="createFullName" name="full_name" required
+                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createWarName" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Nome de Guerra
+                                </label>
+                                <div class="mt-2">
+                                    <input type="text" id="createWarName" name="war_name" required
+                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createEmail" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Email
+                                </label>
+                                <div class="mt-2">
+                                    <input type="email" id="createEmail" name="email" required
+                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createRank" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Posto/Graduação
+                                </label>
+                                <div class="mt-2">
+                                    <select id="createRank" name="rank_id" 
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="">Selecione um posto</option>
+                                        @foreach(\App\Models\Rank::all() as $rank)
+                                            <option value="{{ $rank->id }}">{{ $rank->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createOrganization" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Organização
+                                </label>
+                                <div class="mt-2">
+                                    <select id="createOrganization" name="organization_id" 
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="">Selecione uma organização</option>
+                                        @foreach(\App\Models\Organization::all() as $org)
+                                            <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createGender" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Gênero <span class="text-red-500">*</span>
+                                </label>
+                                <div class="mt-2">
+                                    <select id="createGender" name="gender" required
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="">Selecione o gênero</option>
+                                        <option value="male">Masculino</option>
+                                        <option value="female">Feminino</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createReadyDate" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Data de Prontidão na OM <span class="text-red-500">*</span>
+                                </label>
+                                <div class="mt-2">
+                                    <input type="date" id="createReadyDate" name="ready_at_om_date" required
+                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="createStatus" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Status
+                                </label>
+                                <div class="mt-2">
+                                    <select id="createStatus" name="is_active" 
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="1" selected>Ativo</option>
+                                        <option value="0">Inativo</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                    <button type="button" onclick="createUser()" 
+                            class="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 sm:col-start-2">
+                        Criar Usuário
+                    </button>
+                    <button type="button" onclick="closeCreateModal()" 
+                            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0">
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
@@ -296,6 +442,16 @@
                             </div>
                             
                             <div>
+                                <label for="editReadyDate" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Data de Prontidão na OM
+                                </label>
+                                <div class="mt-2">
+                                    <input type="date" id="editReadyDate" name="ready_at_om_date"
+                                           class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                </div>
+                            </div>
+                            
+                            <div>
                                 <label for="editStatus" class="block text-sm font-medium leading-6 text-gray-900">
                                     Status
                                 </label>
@@ -328,6 +484,90 @@
 
 @section('scripts')
 <script>
+    function openCreateModal() {
+        // Limpa o formulário
+        document.getElementById('createUserForm').reset();
+        
+        // Mostra o modal
+        const modal = document.getElementById('createModal');
+        modal.classList.remove('hidden');
+        
+        // Adiciona animação de entrada
+        setTimeout(() => {
+            const backdrop = modal.querySelector('.bg-gray-500');
+            const panel = modal.querySelector('.transform');
+            backdrop.classList.add('opacity-100');
+            panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+        }, 10);
+    }
+
+    function closeCreateModal() {
+        const modal = document.getElementById('createModal');
+        const backdrop = modal.querySelector('.bg-gray-500');
+        const panel = modal.querySelector('.transform');
+        
+        // Animação de saída
+        backdrop.classList.remove('opacity-100');
+        panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 200);
+    }
+
+    function createUser() {
+        const formData = new FormData(document.getElementById('createUserForm'));
+        
+        // Validação básica
+        if (!formData.get('full_name') || !formData.get('war_name') || !formData.get('email') || !formData.get('gender') || !formData.get('ready_at_om_date')) {
+            alert('Por favor, preencha todos os campos obrigatórios.');
+            return;
+        }
+        
+        // Desabilita o botão durante a requisição
+        const createButton = event.target;
+        createButton.disabled = true;
+        createButton.textContent = 'Criando...';
+        
+        fetch('/admin/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                full_name: formData.get('full_name'),
+                war_name: formData.get('war_name'),
+                email: formData.get('email'),
+                rank_id: formData.get('rank_id') || null,
+                organization_id: formData.get('organization_id') || null,
+                gender: formData.get('gender'),
+                ready_at_om_date: formData.get('ready_at_om_date'),
+                is_active: formData.get('is_active') === '1'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                closeCreateModal();
+                // Mostra mensagem de sucesso
+                alert('Usuário criado com sucesso!');
+                location.reload(); // Recarrega a página para mostrar o novo usuário
+            } else {
+                alert('Erro ao criar usuário: ' + (data.message || 'Erro desconhecido'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erro ao criar usuário');
+        })
+        .finally(() => {
+            // Reabilita o botão
+            createButton.disabled = false;
+            createButton.textContent = 'Criar Usuário';
+        });
+    }
+
     function openEditModal(button) {
         // Pega os dados dos data attributes
         const userId = button.getAttribute('data-user-id');
@@ -337,6 +577,7 @@
         const rankId = button.getAttribute('data-rank-id');
         const organizationId = button.getAttribute('data-organization-id');
         const gender = button.getAttribute('data-gender');
+        const readyDate = button.getAttribute('data-ready-date');
         const isActive = button.getAttribute('data-is-active');
         
         // Preenche os campos do formulário
@@ -347,6 +588,7 @@
         document.getElementById('editRank').value = rankId || '';
         document.getElementById('editOrganization').value = organizationId || '';
         document.getElementById('editGender').value = gender || '';
+        document.getElementById('editReadyDate').value = readyDate || '';
         document.getElementById('editStatus').value = isActive;
         
         // Mostra o modal
@@ -398,6 +640,7 @@
                 rank_id: formData.get('rank_id') || null,
                 organization_id: formData.get('organization_id') || null,
                 gender: formData.get('gender'),
+                ready_at_om_date: formData.get('ready_at_om_date'),
                 is_active: formData.get('is_active') === '1'
             })
         })
@@ -423,18 +666,31 @@
 
     // Fecha modal ao clicar no backdrop
     document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('editModal');
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
+        const editModal = document.getElementById('editModal');
+        const createModal = document.getElementById('createModal');
+        
+        editModal.addEventListener('click', function(e) {
+            if (e.target === editModal) {
                 closeEditModal();
+            }
+        });
+        
+        createModal.addEventListener('click', function(e) {
+            if (e.target === createModal) {
+                closeCreateModal();
             }
         });
     });
 
     // Fecha modal com ESC
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
-            closeEditModal();
+        if (e.key === 'Escape') {
+            if (!document.getElementById('editModal').classList.contains('hidden')) {
+                closeEditModal();
+            }
+            if (!document.getElementById('createModal').classList.contains('hidden')) {
+                closeCreateModal();
+            }
         }
     });
 </script>
