@@ -22,6 +22,12 @@ Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
 
+// Traditional Authentication routes
+Route::get('/login/traditional', [AuthController::class, 'showLogin'])->name('auth.traditional-login');
+Route::post('/login/traditional', [AuthController::class, 'login'])->name('auth.login');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register');
+Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+
 // Google OAuth routes
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');

@@ -15,6 +15,7 @@ class User extends Authenticatable
         'full_name',
         'war_name',
         'email',
+        'password',
         'avatar_url',
         'rank_id',
         'organization_id',
@@ -25,12 +26,14 @@ class User extends Authenticatable
     ];
 
     protected $hidden = [
+        'password',
         'remember_token',
     ];
 
     protected $casts = [
         'ready_at_om_date' => 'date',
         'is_active' => 'boolean',
+        'password' => 'hashed',
     ];
 
     public function rank()

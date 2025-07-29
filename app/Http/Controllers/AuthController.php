@@ -7,6 +7,8 @@ use App\Models\Rank;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
@@ -109,5 +111,81 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect('/');
+    }
+
+    /**
+     * Mostrar formulário de login tradicional
+     */
+    public function showLogin()
+    {
+        return view('auth.traditional-login');
+    }
+
+    /**
+     * Processar login tradicional
+     */
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
+        }
+
+        return back()->withErrors([
+            'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
+        ])->onlyInput('email');
+    }
+
+    /**
+     * Mostrar formulário de registro
+     */
+    public function showRegister()
+    {
+        $ranks = Rank::ordered()->get();
+        $organizations = Organization::all();
+        
+        return view('auth.register', compact('ranks', 'organizations'));
+    }
+
+    /**
+     * Processar registro tradicional
+     */
+    public function register(Request $request)
+    {
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'war_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'rank_id' => 'required|exists:ranks,id',
+            'organization_id' => 'required|exists:organizations,id',
+            'gender' => 'required|in:male,female',
+            'ready_at_om_date' => 'required|date',
+        ]);
+
+        $user = User::create([
+            'full_name' => $request->full_name,
+            'war_name' => $request->war_name,
+            'email' => $request->email,
+            'password' => $request->password, // Será hasheada automaticamente pelo cast
+            'rank_id' => $request->rank_id,
+            'organization_id' => $request->organization_id,
+            'gender' => $request->gender,
+            'ready_at_om_date' => $request->ready_at_om_date,
+            'role' => 'user',
+            'is_active' => true,
+            'email_verified_at' => now(), // Para simplificar, considera como verificado
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/dashboard')->with('success', 'Cadastro realizado com sucesso!');
     }
 }
