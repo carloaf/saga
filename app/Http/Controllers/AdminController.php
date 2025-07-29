@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Booking;
+use App\Models\Organization;
+use App\Models\Rank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -129,5 +135,230 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         }
+    }
+
+    /**
+     * Display the reports page
+     */
+    public function reports()
+    {
+        // Verificação de acesso
+        if (!Auth::user() || Auth::user()->role !== 'superuser') {
+            abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
+        }
+
+        // Estatísticas para dashboard
+        $todayBookings = Booking::whereDate('booking_date', today())->count();
+        $todayBreakfast = Booking::whereDate('booking_date', today())->where('meal_type', 'breakfast')->count();
+        $todayLunch = Booking::whereDate('booking_date', today())->where('meal_type', 'lunch')->count();
+        
+        $weekBookings = Booking::whereBetween('booking_date', [today()->subWeek(), today()])->count();
+        $avgDaily = round($weekBookings / 7, 1);
+        
+        $monthlyBookings = Booking::whereMonth('booking_date', now()->month)
+            ->whereYear('booking_date', now()->year)
+            ->count();
+        
+        // Top organizações do mês
+        $topOrgs = Booking::join('users', 'bookings.user_id', '=', 'users.id')
+            ->join('organizations', 'users.organization_id', '=', 'organizations.id')
+            ->whereMonth('booking_date', now()->month)
+            ->whereYear('booking_date', now()->year)
+            ->select('organizations.name', DB::raw('count(*) as total'))
+            ->groupBy('organizations.id', 'organizations.name')
+            ->orderBy('total', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('admin.reports.index', compact(
+            'todayBookings',
+            'todayBreakfast', 
+            'todayLunch',
+            'weekBookings',
+            'avgDaily',
+            'monthlyBookings',
+            'topOrgs'
+        ));
+    }
+
+    /**
+     * Generate and download reports
+     */
+    public function generateReport(Request $request)
+    {
+        // Verificação de acesso
+        if (!Auth::user() || Auth::user()->role !== 'superuser') {
+            abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
+        }
+
+        $request->validate([
+            'report_type' => 'required|in:daily_meals,weekly_summary,monthly_summary,organization_breakdown,user_activity',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'format' => 'required|in:pdf,excel'
+        ]);
+
+        $reportType = $request->report_type;
+        $startDate = Carbon::parse($request->start_date);
+        $endDate = Carbon::parse($request->end_date);
+        $format = $request->format;
+
+        $data = $this->getReportData($reportType, $startDate, $endDate);
+        
+        if ($format === 'pdf') {
+            return $this->generatePdfReport($reportType, $data, $startDate, $endDate);
+        } else {
+            return $this->generateExcelReport($reportType, $data, $startDate, $endDate);
+        }
+    }
+
+    /**
+     * Get report data based on type
+     */
+    private function getReportData($reportType, $startDate, $endDate)
+    {
+        switch ($reportType) {
+            case 'daily_meals':
+                return $this->getDailyMealsData($startDate, $endDate);
+            
+            case 'weekly_summary':
+            case 'monthly_summary':
+                return $this->getSummaryData($startDate, $endDate);
+            
+            case 'organization_breakdown':
+                return $this->getOrganizationBreakdownData($startDate, $endDate);
+            
+            case 'user_activity':
+                return $this->getUserActivityData($startDate, $endDate);
+            
+            default:
+                throw new \InvalidArgumentException('Tipo de relatório inválido');
+        }
+    }
+
+    /**
+     * Get daily meals data
+     */
+    private function getDailyMealsData($startDate, $endDate)
+    {
+        $bookings = Booking::with(['user.rank', 'user.organization'])
+            ->whereBetween('booking_date', [$startDate, $endDate])
+            ->orderBy('booking_date')
+            ->orderBy('meal_type')
+            ->orderBy('users.full_name')
+            ->join('users', 'bookings.user_id', '=', 'users.id')
+            ->select('bookings.*')
+            ->get()
+            ->groupBy('booking_date');
+
+        return $bookings;
+    }
+
+    /**
+     * Get summary data
+     */
+    private function getSummaryData($startDate, $endDate)
+    {
+        $totalBookings = Booking::whereBetween('booking_date', [$startDate, $endDate])->count();
+        $breakfastCount = Booking::whereBetween('booking_date', [$startDate, $endDate])
+            ->where('meal_type', 'breakfast')->count();
+        $lunchCount = Booking::whereBetween('booking_date', [$startDate, $endDate])
+            ->where('meal_type', 'lunch')->count();
+
+        $dailyStats = Booking::whereBetween('booking_date', [$startDate, $endDate])
+            ->select(
+                DB::raw('DATE(booking_date) as date'),
+                DB::raw('COUNT(*) as total'),
+                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast'),
+                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch')
+            )
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        return [
+            'total_bookings' => $totalBookings,
+            'breakfast_count' => $breakfastCount,
+            'lunch_count' => $lunchCount,
+            'daily_stats' => $dailyStats,
+            'period_days' => $startDate->diffInDays($endDate) + 1
+        ];
+    }
+
+    /**
+     * Get organization breakdown data
+     */
+    private function getOrganizationBreakdownData($startDate, $endDate)
+    {
+        return Booking::join('users', 'bookings.user_id', '=', 'users.id')
+            ->join('organizations', 'users.organization_id', '=', 'organizations.id')
+            ->whereBetween('booking_date', [$startDate, $endDate])
+            ->select(
+                'organizations.name as organization_name',
+                DB::raw('COUNT(*) as total_bookings'),
+                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast_count'),
+                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch_count'),
+                DB::raw('COUNT(DISTINCT users.id) as unique_users')
+            )
+            ->groupBy('organizations.id', 'organizations.name')
+            ->orderBy('total_bookings', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get user activity data
+     */
+    private function getUserActivityData($startDate, $endDate)
+    {
+        return Booking::join('users', 'bookings.user_id', '=', 'users.id')
+            ->leftJoin('organizations', 'users.organization_id', '=', 'organizations.id')
+            ->leftJoin('ranks', 'users.rank_id', '=', 'ranks.id')
+            ->whereBetween('booking_date', [$startDate, $endDate])
+            ->select(
+                'users.full_name',
+                'users.war_name',
+                'ranks.name as rank_name',
+                'organizations.name as organization_name',
+                DB::raw('COUNT(*) as total_bookings'),
+                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast_count'),
+                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch_count')
+            )
+            ->groupBy('users.id', 'users.full_name', 'users.war_name', 'ranks.name', 'organizations.name')
+            ->orderBy('total_bookings', 'desc')
+            ->get();
+    }
+
+    /**
+     * Generate PDF report
+     */
+    private function generatePdfReport($reportType, $data, $startDate, $endDate)
+    {
+        $viewName = 'admin.reports.pdf.' . str_replace('_', '-', $reportType);
+        
+        $pdf = Pdf::loadView($viewName, [
+            'data' => $data,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'generated_at' => now()
+        ]);
+
+        $filename = sprintf('%s_%s_%s.pdf', 
+            $reportType, 
+            $startDate->format('Y-m-d'), 
+            $endDate->format('Y-m-d')
+        );
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Generate Excel report (placeholder)
+     */
+    private function generateExcelReport($reportType, $data, $startDate, $endDate)
+    {
+        // Por enquanto, retorna erro - implementação do Excel seria feita posteriormente
+        return response()->json([
+            'error' => 'Relatórios em Excel ainda não implementados. Use o formato PDF.'
+        ], 501);
     }
 }

@@ -56,14 +56,9 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/users/{user}', [AdminController::class, 'updateUser'])->name('users.update');
         Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
         
-        Route::get('/reports', function () {
-            // Verificação simples de role
-            if (!Auth::user() || Auth::user()->role !== 'superuser') {
-                abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
-            }
-            
-            return view('admin.reports.index');
-        })->name('reports.index');
+        // Routes para relatórios
+        Route::get('/reports', [AdminController::class, 'reports'])->name('reports.index');
+        Route::get('/reports/generate', [AdminController::class, 'generateReport'])->name('reports.generate');
     });
 });
 
