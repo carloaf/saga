@@ -85,7 +85,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🍽️ MAPA DO RANCHO</h1>
+        <h1>MAPA DO RANCHO</h1>
         <p>Sistema de Agendamento e Gestão de Arranchamento</p>
         @if($start_date->eq($end_date))
             <p><strong>Data:</strong> {{ $start_date->format('d/m/Y') }} ({{ $start_date->translatedFormat('l') }})</p>
@@ -97,7 +97,7 @@
     @forelse($data as $date => $dayBookings)
         <div class="date-section">
             <div class="date-header">
-                📅 {{ \Carbon\Carbon::parse($date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($date)->translatedFormat('l') }}
+                {{ \Carbon\Carbon::parse($date)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($date)->translatedFormat('l') }}
             </div>
 
             @php
@@ -105,7 +105,7 @@
                 $dayTotal = $dayBookings->count();
             @endphp
 
-            @foreach(['breakfast' => '☕ Café da Manhã', 'lunch' => '🍽️ Almoço'] as $mealType => $mealLabel)
+            @foreach(['breakfast' => 'Café da Manhã', 'lunch' => 'Almoço'] as $mealType => $mealLabel)
                 @if(isset($mealTypes[$mealType]))
                     <div class="meal-section">
                         <div class="meal-header">
@@ -145,7 +145,7 @@
         </div>
     @empty
         <div class="no-data">
-            <p>🚫 Nenhum agendamento encontrado para o período selecionado.</p>
+            <p>Nenhum agendamento encontrado para o período selecionado.</p>
         </div>
     @endforelse
 

@@ -84,14 +84,14 @@
 </head>
 <body>
     <div class="header">
-        <h1>👥 RELATÓRIO DE ATIVIDADE DOS USUÁRIOS</h1>
+        <h1>RELATÓRIO DE ATIVIDADE DOS USUÁRIOS</h1>
         <p>Sistema de Agendamento e Gestão de Arranchamento</p>
         <p><strong>Período:</strong> {{ $start_date->format('d/m/Y') }} a {{ $end_date->format('d/m/Y') }}</p>
     </div>
 
     @if($data->count() > 0)
         <!-- Resumo Executivo -->
-        <div class="section-title">📊 Resumo Executivo</div>
+        <div class="section-title">Resumo Executivo</div>
         
         <div class="summary-box">
             @php
@@ -114,7 +114,7 @@
         </div>
 
         <!-- Ranking de Usuários -->
-        <div class="section-title">🏆 Ranking de Usuários Mais Ativos</div>
+        <div class="section-title">Ranking de Usuários Mais Ativos</div>
         
         <table>
             <thead>
@@ -141,9 +141,9 @@
                         <td style="text-align: center">
                             <strong>{{ $index + 1 }}°</strong>
                             @if($index < 3)
-                                @if($index === 0) 🥇
-                                @elseif($index === 1) 🥈
-                                @else 🥉
+                                @if($index === 0) 1º
+                                @elseif($index === 1) 2º
+                                @else 3º
                                 @endif
                             @endif
                         </td>
@@ -168,7 +168,7 @@
         </table>
 
         <!-- Estatísticas por Faixa de Atividade -->
-        <div class="section-title">📈 Distribuição por Nível de Atividade</div>
+        <div class="section-title">Distribuição por Nível de Atividade</div>
         
         @php
             $veryHighActivity = $data->where('total_bookings', '>=', 20)->count();
@@ -190,35 +190,35 @@
             </thead>
             <tbody>
                 <tr class="high-activity">
-                    <td><strong>🔥 Muito Alta</strong></td>
+                    <td><strong>Muito Alta</strong></td>
                     <td style="text-align: center">≥ 20</td>
                     <td style="text-align: center">{{ number_format($veryHighActivity) }}</td>
                     <td style="text-align: center">{{ number_format(($veryHighActivity / $totalUsers) * 100, 1) }}%</td>
                     <td style="text-align: center">{{ number_format($data->where('total_bookings', '>=', 20)->sum('total_bookings')) }}</td>
                 </tr>
                 <tr class="high-activity">
-                    <td><strong>🚀 Alta</strong></td>
+                    <td><strong>Alta</strong></td>
                     <td style="text-align: center">10 - 19</td>
                     <td style="text-align: center">{{ number_format($highActivity) }}</td>
                     <td style="text-align: center">{{ number_format(($highActivity / $totalUsers) * 100, 1) }}%</td>
                     <td style="text-align: center">{{ number_format($data->whereBetween('total_bookings', [10, 19])->sum('total_bookings')) }}</td>
                 </tr>
                 <tr class="medium-activity">
-                    <td><strong>📊 Média</strong></td>
+                    <td><strong>Média</strong></td>
                     <td style="text-align: center">5 - 9</td>
                     <td style="text-align: center">{{ number_format($mediumActivity) }}</td>
                     <td style="text-align: center">{{ number_format(($mediumActivity / $totalUsers) * 100, 1) }}%</td>
                     <td style="text-align: center">{{ number_format($data->whereBetween('total_bookings', [5, 9])->sum('total_bookings')) }}</td>
                 </tr>
                 <tr class="low-activity">
-                    <td><strong>📉 Baixa</strong></td>
+                    <td><strong>Baixa</strong></td>
                     <td style="text-align: center">1 - 4</td>
                     <td style="text-align: center">{{ number_format($lowActivity) }}</td>
                     <td style="text-align: center">{{ number_format(($lowActivity / $totalUsers) * 100, 1) }}%</td>
                     <td style="text-align: center">{{ number_format($data->whereBetween('total_bookings', [1, 4])->sum('total_bookings')) }}</td>
                 </tr>
                 <tr style="background-color: #f8f9fa;">
-                    <td><strong>😴 Sem Atividade</strong></td>
+                    <td><strong>Sem Atividade</strong></td>
                     <td style="text-align: center">0</td>
                     <td style="text-align: center">{{ number_format($noActivity) }}</td>
                     <td style="text-align: center">{{ number_format(($noActivity / $totalUsers) * 100, 1) }}%</td>
@@ -235,7 +235,7 @@
         </table>
 
         <!-- Top 10 por Organização -->
-        <div class="section-title">🏢 Usuários Mais Ativos por Organização</div>
+        <div class="section-title">Usuários Mais Ativos por Organização</div>
         
         @php
             $orgStats = $data->groupBy('organization_name')->map(function($users, $orgName) {
@@ -273,7 +273,7 @@
         </table>
 
         <!-- Análise e Insights -->
-        <div class="section-title">💡 Análise e Insights</div>
+        <div class="section-title">Análise e Insights</div>
         
         <div class="summary-box">
             <h4 style="margin-top: 0;">Principais Observações:</h4>
@@ -297,7 +297,7 @@
         </div>
     @else
         <div class="no-data">
-            <p>🚫 Nenhum usuário encontrado para o período selecionado.</p>
+            <p>Nenhum usuário encontrado para o período selecionado.</p>
             <p>Verifique se existem usuários cadastrados no sistema.</p>
         </div>
     @endif

@@ -84,14 +84,14 @@
 </head>
 <body>
     <div class="header">
-        <h1>📊 RELATÓRIO ESTATÍSTICO</h1>
+        <h1>RELATÓRIO ESTATÍSTICO</h1>
         <p>Sistema de Agendamento e Gestão de Arranchamento</p>
         <p><strong>Período:</strong> {{ $start_date->format('d/m/Y') }} a {{ $end_date->format('d/m/Y') }}</p>
         <p><strong>Duração:</strong> {{ $data['period_days'] }} dia{{ $data['period_days'] > 1 ? 's' : '' }}</p>
     </div>
 
     <!-- Estatísticas Gerais -->
-    <div class="section-title">📈 Resumo Geral</div>
+    <div class="section-title">Resumo Geral</div>
     
     <div class="stats-grid">
         <div class="stat-card">
@@ -113,7 +113,7 @@
     </div>
 
     <!-- Distribuição por Tipo de Refeição -->
-    <div class="section-title">🍽️ Distribuição por Refeição</div>
+    <div class="section-title">Distribuição por Refeição</div>
     
     <table>
         <thead>
@@ -125,12 +125,12 @@
         </thead>
         <tbody>
             <tr>
-                <td>☕ Café da Manhã</td>
+                <td>Café da Manhã</td>
                 <td style="text-align: center">{{ number_format($data['breakfast_count']) }}</td>
                 <td style="text-align: center">{{ $data['total_bookings'] > 0 ? number_format(($data['breakfast_count'] / $data['total_bookings']) * 100, 1) : 0 }}%</td>
             </tr>
             <tr>
-                <td>🍽️ Almoço</td>
+                <td>Almoço</td>
                 <td style="text-align: center">{{ number_format($data['lunch_count']) }}</td>
                 <td style="text-align: center">{{ $data['total_bookings'] > 0 ? number_format(($data['lunch_count'] / $data['total_bookings']) * 100, 1) : 0 }}%</td>
             </tr>
@@ -144,7 +144,7 @@
 
     <!-- Estatísticas Diárias -->
     @if($data['daily_stats']->count() > 0)
-        <div class="section-title">📅 Estatísticas Diárias</div>
+        <div class="section-title">Estatísticas Diárias</div>
         
         <table>
             <thead>
@@ -181,7 +181,7 @@
     @endif
 
     <!-- Análise de Tendências -->
-    <div class="section-title">📋 Observações</div>
+    <div class="section-title">Observações</div>
     
     <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; background-color: #f9f9f9;">
         <ul style="margin: 0; padding-left: 20px;">

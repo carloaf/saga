@@ -6,6 +6,11 @@ use App\Models\User;
 use App\Models\Booking;
 use App\Models\Organization;
 use App\Models\Rank;
+use App\Exports\DailyMealsExport;
+use App\Exports\SummaryExport;
+use App\Exports\WeeklySummaryExport;
+use App\Exports\OrganizationBreakdownExport;
+use App\Exports\UserActivityExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -147,27 +152,32 @@ class AdminController extends Controller
             abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
         }
 
-        // Estatísticas para dashboard
-        $todayBookings = Booking::whereDate('booking_date', today())->count();
-        $todayBreakfast = Booking::whereDate('booking_date', today())->where('meal_type', 'breakfast')->count();
-        $todayLunch = Booking::whereDate('booking_date', today())->where('meal_type', 'lunch')->count();
-        
-        $weekBookings = Booking::whereBetween('booking_date', [today()->subWeek(), today()])->count();
-        $avgDaily = round($weekBookings / 7, 1);
-        
-        $monthlyBookings = Booking::whereMonth('booking_date', now()->month)
-            ->whereYear('booking_date', now()->year)
-            ->count();
-        
-        // Top organizações do mês
+        // Estatísticas do dia atual
+        $today = Carbon::today();
+        $todayBookings = Booking::whereDate('booking_date', $today)->count();
+        $todayBreakfast = Booking::whereDate('booking_date', $today)
+            ->where('meal_type', 'breakfast')->count();
+        $todayLunch = Booking::whereDate('booking_date', $today)
+            ->where('meal_type', 'lunch')->count();
+
+        // Estatísticas da semana
+        $weekStart = Carbon::today()->startOfWeek();
+        $weekEnd = Carbon::today()->endOfWeek();
+        $weekBookings = Booking::whereBetween('booking_date', [$weekStart, $weekEnd])->count();
+        $avgDaily = $weekBookings > 0 ? round($weekBookings / 7, 1) : 0;
+
+        // Estatísticas do mês
+        $monthStart = Carbon::today()->startOfMonth();
+        $monthEnd = Carbon::today()->endOfMonth();
+        $monthlyBookings = Booking::whereBetween('booking_date', [$monthStart, $monthEnd])->count();
+
+        // Top organizações
         $topOrgs = Booking::join('users', 'bookings.user_id', '=', 'users.id')
             ->join('organizations', 'users.organization_id', '=', 'organizations.id')
-            ->whereMonth('booking_date', now()->month)
-            ->whereYear('booking_date', now()->year)
-            ->select('organizations.name', DB::raw('count(*) as total'))
+            ->select('organizations.name', DB::raw('COUNT(*) as total'))
             ->groupBy('organizations.id', 'organizations.name')
             ->orderBy('total', 'desc')
-            ->limit(3)
+            ->limit(5)
             ->get();
 
         return view('admin.reports.index', compact(
@@ -269,8 +279,8 @@ class AdminController extends Controller
             ->select(
                 DB::raw('DATE(booking_date) as date'),
                 DB::raw('COUNT(*) as total'),
-                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast'),
-                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch')
+                DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast'),
+                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch')
             )
             ->groupBy('date')
             ->orderBy('date')
@@ -296,8 +306,8 @@ class AdminController extends Controller
             ->select(
                 'organizations.name as organization_name',
                 DB::raw('COUNT(*) as total_bookings'),
-                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast_count'),
-                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch_count'),
+                DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast_count'),
+                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch_count'),
                 DB::raw('COUNT(DISTINCT users.id) as unique_users')
             )
             ->groupBy('organizations.id', 'organizations.name')
@@ -320,8 +330,8 @@ class AdminController extends Controller
                 'ranks.name as rank_name',
                 'organizations.name as organization_name',
                 DB::raw('COUNT(*) as total_bookings'),
-                DB::raw('SUM(CASE WHEN meal_type = "breakfast" THEN 1 ELSE 0 END) as breakfast_count'),
-                DB::raw('SUM(CASE WHEN meal_type = "lunch" THEN 1 ELSE 0 END) as lunch_count')
+                DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast_count'),
+                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch_count')
             )
             ->groupBy('users.id', 'users.full_name', 'users.war_name', 'ranks.name', 'organizations.name')
             ->orderBy('total_bookings', 'desc')
@@ -352,13 +362,45 @@ class AdminController extends Controller
     }
 
     /**
-     * Generate Excel report (placeholder)
+     * Generate Excel report
      */
     private function generateExcelReport($reportType, $data, $startDate, $endDate)
     {
-        // Por enquanto, retorna erro - implementação do Excel seria feita posteriormente
-        return response()->json([
-            'error' => 'Relatórios em Excel ainda não implementados. Use o formato PDF.'
-        ], 501);
+        $filename = '';
+        $export = null;
+
+        switch ($reportType) {
+            case 'daily_meals':
+                $export = new DailyMealsExport($data, $startDate, $endDate);
+                $filename = 'refeicoes_diarias_' . Carbon::parse($startDate)->format('Y-m-d') . '.xlsx';
+                break;
+
+            case 'weekly_summary':
+                $export = new WeeklySummaryExport($data, $startDate, $endDate);
+                $filename = 'resumo_semanal_' . Carbon::parse($startDate)->format('Y-m-d') . '_' . Carbon::parse($endDate)->format('Y-m-d') . '.xlsx';
+                break;
+
+            case 'monthly_summary':
+                $export = new SummaryExport($data, $startDate, $endDate);
+                $filename = 'resumo_mensal_' . Carbon::parse($startDate)->format('Y-m') . '.xlsx';
+                break;
+
+            case 'organization_breakdown':
+                $export = new OrganizationBreakdownExport($data, $startDate, $endDate);
+                $filename = 'relatorio_organizacoes_' . Carbon::parse($startDate)->format('Y-m-d') . '_' . Carbon::parse($endDate)->format('Y-m-d') . '.xlsx';
+                break;
+
+            case 'user_activity':
+                $export = new UserActivityExport($data, $startDate, $endDate);
+                $filename = 'atividade_usuarios_' . Carbon::parse($startDate)->format('Y-m-d') . '_' . Carbon::parse($endDate)->format('Y-m-d') . '.xlsx';
+                break;
+
+            default:
+                return response()->json([
+                    'error' => 'Tipo de relatório não reconhecido.'
+                ], 400);
+        }
+
+        return Excel::download($export, $filename);
     }
 }

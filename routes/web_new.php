@@ -80,6 +80,8 @@ Route::get('/dev-admin-login', function () {
             'is_active' => true,
             'rank_id' => 1,
             'organization_id' => 1,
+            'gender' => 'male',
+            'ready_at_om_date' => now()->format('Y-m-d'),
         ]
     );
     

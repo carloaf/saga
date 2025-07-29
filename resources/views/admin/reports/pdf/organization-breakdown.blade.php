@@ -78,14 +78,14 @@
 </head>
 <body>
     <div class="header">
-        <h1>🏢 RELATÓRIO POR ORGANIZAÇÃO</h1>
+        <h1>RELATÓRIO POR ORGANIZAÇÃO</h1>
         <p>Sistema de Agendamento e Gestão de Arranchamento</p>
         <p><strong>Período:</strong> {{ $start_date->format('d/m/Y') }} a {{ $end_date->format('d/m/Y') }}</p>
     </div>
 
     @if($data->count() > 0)
         <!-- Resumo Executivo -->
-        <div class="section-title">📊 Resumo Executivo</div>
+        <div class="section-title">Resumo Executivo</div>
         
         <div class="summary-box">
             <ul style="margin: 0; padding-left: 20px;">
@@ -98,7 +98,7 @@
         </div>
 
         <!-- Ranking de Organizações -->
-        <div class="section-title">🏆 Ranking de Organizações</div>
+        <div class="section-title">Ranking de Organizações</div>
         
         <table>
             <thead>
@@ -128,9 +128,9 @@
                         <td style="text-align: center">
                             <strong>{{ $index + 1 }}°</strong>
                             @if($index < 3)
-                                @if($index === 0) 🥇
-                                @elseif($index === 1) 🥈
-                                @else 🥉
+                                @if($index === 0) 1º
+                                @elseif($index === 1) 2º
+                                @else 3º
                                 @endif
                             @endif
                         </td>
@@ -155,7 +155,7 @@
         </table>
 
         <!-- Análise Detalhada -->
-        <div class="section-title">📈 Análise Detalhada</div>
+        <div class="section-title">Análise Detalhada</div>
         
         <table>
             <thead>
@@ -186,7 +186,7 @@
         </table>
 
         <!-- Insights e Observações -->
-        <div class="section-title">💡 Insights e Observações</div>
+        <div class="section-title">Insights e Observações</div>
         
         <div class="summary-box">
             @php
@@ -218,7 +218,7 @@
         </div>
     @else
         <div class="no-data">
-            <p>🚫 Nenhum dado de organização encontrado para o período selecionado.</p>
+            <p>Nenhum dado de organização encontrado para o período selecionado.</p>
             <p>Verifique se existem agendamentos no período ou se os usuários possuem organizações associadas.</p>
         </div>
     @endif
