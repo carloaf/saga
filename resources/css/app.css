@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for SAGA */
+.calendar-day {
+    @apply border border-gray-200 rounded-lg p-2 hover:bg-gray-50 transition-colors duration-200;
+}
+
+.calendar-day.weekend {
+    @apply bg-gray-100 text-gray-400;
+}
+
+.calendar-day.other-month {
+    @apply text-gray-300 bg-gray-50;
+}
+
+.calendar-day.has-booking {
+    @apply border-green-300 bg-green-50;
+}
+
+.meal-checkbox {
+    @apply rounded text-green-600 focus:ring-green-500 focus:ring-offset-0;
+}
+
+.chart-container {
+    @apply relative h-64 w-full;
+}

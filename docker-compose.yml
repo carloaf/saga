@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: saga/app
+        container_name: saga_app
+        restart: unless-stopped
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - saga_network
+        depends_on:
+            - database
+        ports:
+            - "8000:80"
+        environment:
+            - PHP_EXTENSIONS=pdo_pgsql,pgsql,gd,zip,bcmath,exif,intl
+
+    database:
+        image: postgres:16-alpine
+        container_name: saga_db
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: saga
+            POSTGRES_USER: saga_user
+            POSTGRES_PASSWORD: saga_password
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - saga_network
+        ports:
+            - "5432:5432"
+
+    redis:
+        image: redis:7-alpine
+        container_name: saga_redis
+        restart: unless-stopped
+        networks:
+            - saga_network
+        ports:
+            - "6379:6379"
+
+networks:
+    saga_network:
+        driver: bridge
+
+volumes:
+    postgres_data:

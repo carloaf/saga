@@ -1,0 +1,64 @@
+# Laravel
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/public
+/.env
+/.env.backup
+/.env.production
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+
+# IDEs
+/.idea
+/.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+/docker/mysql/data/
+
+# Logs
+/storage/logs/*.log
+
+# Compiled assets
+/public/css/
+/public/js/
+/public/mix-manifest.json
+
+# Cache
+bootstrap/cache/*.php
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Testing
+coverage/
+.phpunit.cache
+
+# Custom
+cookies.txt
+test.html
+modal_fix.html
+DEADLINE_VALIDACAO.md
+IMPLEMENTACAO_CONCLUIDA.sh
+IMPLEMENTACAO_PERFIL.md
+setup-saga.sh
+setup.sh
+test-deadline.sh
+test-organizacao-padrao.sh
