@@ -1,5 +1,37 @@
 # SAGA - Comandos Úteis
 
+## Scripts de Automação
+
+### Sincronização de Branches
+```bash
+# Sincronizar dev ↔ main e fazer push
+./sync-branches.sh
+
+# Ver ajuda do script
+./sync-branches.sh --help
+```
+
+### Deploy Rápido
+```bash
+# Menu interativo com opções:
+# 1. Sincronizar + Deploy
+# 2. Apenas sincronizar
+# 3. Apenas deploy
+./quick-deploy.sh
+```
+
+### Deploy para Produção
+```bash
+# Deploy completo para servidor
+./deploy.sh
+```
+
+### Debug de Autenticação
+```bash
+# Testar sistema de login
+./debug-login.sh
+```
+
 ## Desenvolvimento
 
 ### Iniciar o projeto
