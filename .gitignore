@@ -18,6 +18,22 @@ yarn-error.log
 # IDEs
 /.idea
 /.vscode
+
+# Arquivos temporários de desenvolvimento
+*.backup
+test-*.html
+public/test-*.html
+
+# Scripts de desenvolvimento temporários (manter apenas os principais)
+clean-labels.sh
+fix-icons.sh
+remove-icons.sh
+remove-labels.sh
+deploy-production.sh
+
+# Arquivos CSS temporários
+resources/css/enhanced-forms-old.css
+resources/css/enhanced-forms-new.css
 *.swp
 *.swo
 
