@@ -38,8 +38,15 @@
 
                     <!-- Rank -->
                     <div>
+                        <label for="rank_id" class="label-enhanced">
+                            
+                        
+                            
+                        
+                            Posto/Graduação *
+                        </label>
                         <select id="rank_id" name="rank_id" required class="select-enhanced">
-                            <option value="" disabled selected>Selecione seu Posto/Graduação</option>
+                            <option value="">Selecione seu posto/graduação</option>
                             @foreach($ranks as $rank)
                                 <option value="{{ $rank->id }}" {{ old('rank_id') == $rank->id ? 'selected' : '' }}>
                                     {{ $rank->abbreviation }} - {{ $rank->name }}
@@ -53,8 +60,15 @@
 
                     <!-- Organization -->
                     <div>
+                        <label for="organization_id" class="label-enhanced">
+                            
+                        
+                            
+                        
+                            Organização Militar *
+                        </label>
                         <select id="organization_id" name="organization_id" required class="select-enhanced">
-                            <option value="" disabled selected>Selecione sua Organização Militar</option>
+                            <option value="">Selecione sua Organização Militar</option>
                             @foreach($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
                                     {{ $organization->abbreviation }} - {{ $organization->name }}

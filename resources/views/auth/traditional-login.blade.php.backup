@@ -60,6 +60,13 @@
                 
                 <!-- Email -->
                 <div class="field-group">
+                    <label for="email" class="label-enhanced">
+                            
+                        
+                            
+                        
+                        Email Institucional
+                    </label>
                     <input 
                         id="email" 
                         name="email" 
@@ -68,12 +75,19 @@
                         required 
                         value="{{ old('email') }}"
                         class="input-enhanced"
-                        placeholder="Email Institucional (ex: nome@exercito.mil.br)"
+                        placeholder="seu.email@militar.gov.br"
                     >
                 </div>
 
                 <!-- Password -->
                 <div class="field-group">
+                    <label for="password" class="label-enhanced">
+                            
+                        
+                            
+                        
+                        Senha de Acesso
+                    </label>
                     <input 
                         id="password" 
                         name="password" 
@@ -81,7 +95,7 @@
                         autocomplete="current-password" 
                         required 
                         class="input-enhanced"
-                        placeholder="Senha"
+                        placeholder="Digite sua senha"
                     >
                 </div>
 

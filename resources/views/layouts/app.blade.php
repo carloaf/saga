@@ -14,8 +14,12 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Enhanced Forms CSS -->
+    <link href="{{ asset('css/enhanced-forms.css') }}" rel="stylesheet">
+    
     <!-- Custom Styles -->
     <style>
+        @import url('https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.3/dist/forms.min.css');
         /* Custom styles if needed */
     </style>
 </head>

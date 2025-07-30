@@ -49,33 +49,47 @@
             <div class="p-6">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Gerar Relatórios</h3>
                 
-                <form method="GET" action="{{ route('admin.reports.generate') }}" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label for="report_type" class="block text-sm font-medium text-gray-700">Tipo de Relatório</label>
-                            <select id="report_type" name="report_type" required
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                                <option value="">Selecione...</option>
-                                <option value="daily_meals">Mapa do Rancho Diário</option>
-                                <option value="weekly_summary">Resumo Semanal</option>
-                                <option value="monthly_summary">Resumo Mensal</option>
-                                <option value="organization_breakdown">Quebra por Organização</option>
-                                <option value="user_activity">Atividade dos Usuários</option>
+                <form method="GET" action="{{ route('admin.reports.generate') }}" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="field-group">
+                            <label for="report_type" class="label-enhanced">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Tipo de Relatório</span>
+                            </label>
+                            <select id="report_type" name="report_type" required class="select-enhanced">
+                                <option value="">Selecione o tipo de relatório</option>
+                                <option value="daily_meals">📋 Mapa do Rancho Diário</option>
+                                <option value="weekly_summary">📊 Resumo Semanal</option>
+                                <option value="monthly_summary">📈 Resumo Mensal</option>
+                                <option value="organization_breakdown">🏢 Quebra por Organização</option>
+                                <option value="user_activity">👤 Atividade dos Usuários</option>
                             </select>
                         </div>
                         
-                        <div>
-                            <label for="start_date" class="block text-sm font-medium text-gray-700">Data Inicial</label>
+                        <div class="field-group">
+                            <label for="start_date" class="label-enhanced">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Data Inicial</span>
+                            </label>
                             <input type="date" id="start_date" name="start_date" required
                                    value="{{ request('start_date', today()->format('Y-m-d')) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                                   class="input-enhanced">
                         </div>
                         
-                        <div>
-                            <label for="end_date" class="block text-sm font-medium text-gray-700">Data Final</label>
+                        <div class="field-group">
+                            <label for="end_date" class="label-enhanced">
+                                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span>Data Final</span>
+                            </label>
                             <input type="date" id="end_date" name="end_date" required
                                    value="{{ request('end_date', today()->format('Y-m-d')) }}"
-                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                                   class="input-enhanced">
                         </div>
                     </div>
                     
