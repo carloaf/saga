@@ -5,11 +5,11 @@
 
 echo "🚀 Iniciando Deploy do SAGA para Produção..."
 
-# Verificar se estamos na branch production
+# Verificar se estamos na branch main
 CURRENT_BRANCH=$(git branch --show-current)
-if [ "$CURRENT_BRANCH" != "production" ]; then
-    echo "⚠️  Mudando para branch production..."
-    git checkout production
+if [ "$CURRENT_BRANCH" != "main" ]; then
+    echo "⚠️  Mudando para branch main..."
+    git checkout main
 fi
 
 # Verificar status do git
@@ -18,7 +18,7 @@ git status
 
 # Pull das últimas mudanças
 echo "📥 Atualizando código da produção..."
-git pull origin production
+git pull origin main
 
 # Verificar se Docker está rodando
 echo "🐳 Verificando Docker..."

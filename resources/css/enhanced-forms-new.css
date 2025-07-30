@@ -1,0 +1,163 @@
+/* Custom SAGA Design System - Input-Only Design */
+
+/* Field Group Container */
+.field-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Enhanced Input Fields - Focus on Placeholders */
+.input-enhanced {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background-color: white;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-height: 48px;
+}
+
+.input-enhanced::placeholder {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.input-enhanced:hover {
+    border-color: #9ca3af;
+}
+
+.input-enhanced:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.input-enhanced:focus::placeholder {
+    color: #9ca3af;
+}
+
+.input-enhanced:disabled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Enhanced Select Fields */
+.select-enhanced {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 0.875rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background-color: white;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    appearance: none;
+    min-height: 48px;
+}
+
+.select-enhanced:hover {
+    border-color: #9ca3af;
+}
+
+.select-enhanced:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.select-enhanced:disabled {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    cursor: not-allowed;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%9ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* Placeholder styling for select first option */
+.select-enhanced option:first-child {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Radio Button Enhanced Styling */
+.radio-enhanced {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+    background: white;
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-enhanced:checked {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+}
+
+.radio-enhanced:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+}
+
+.radio-enhanced:hover {
+    border-color: #9ca3af;
+}
+
+.radio-enhanced:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Gender Options Container */
+.gender-options {
+    display: flex;
+    gap: 24px;
+    margin-top: 12px;
+}
+
+.gender-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gender-option label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+}
+
+/* Form Container Spacing */
+.form-container .grid {
+    gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .input-enhanced,
+    .select-enhanced {
+        padding: 12px 14px;
+        min-height: 44px;
+    }
+    
+    .field-group {
+        margin-bottom: 1.25rem;
+    }
+}
