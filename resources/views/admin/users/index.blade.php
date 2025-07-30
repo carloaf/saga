@@ -38,9 +38,6 @@
                                     Organização
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                    Gênero
-                                </th>
-                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                     Data Prontidão OM
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -82,9 +79,6 @@
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     {{ $user->organization ? $user->organization->name : 'N/A' }}
-                                </td>
-                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    {{ $user->gender === 'male' ? 'Masculino' : ($user->gender === 'female' ? 'Feminino' : 'N/A') }}
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     {{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('d/m/Y') : 'N/A' }}
