@@ -14,6 +14,7 @@ use App\Exports\UserActivityExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -57,7 +58,7 @@ class AdminController extends Controller
     {
         // Verificação de acesso
         if (!Auth::user() || Auth::user()->role !== 'superuser') {
-            return response()->json(['success' => false, 'message' => 'Acesso negado.'], 403);
+            return response()->json(['success' => false, 'message' => 'Acesso negado. Apenas superusuários podem acessar esta área.'], 403);
         }
 
         try {
@@ -69,7 +70,8 @@ class AdminController extends Controller
                 'organization_id' => 'nullable|exists:organizations,id',
                 'gender' => 'required|in:male,female',
                 'ready_at_om_date' => 'required|date',
-                'is_active' => 'required|boolean'
+                'is_active' => 'required|boolean',
+                'role' => 'required|in:user,superuser'
             ]);
 
             $user->update($validatedData);
@@ -99,13 +101,13 @@ class AdminController extends Controller
                 'organization_id' => 'nullable|exists:organizations,id',
                 'gender' => 'required|in:male,female',
                 'ready_at_om_date' => 'required|date',
+                'role' => 'required|in:user,superuser',
                 'is_active' => 'required|boolean'
             ]);
 
             // Adicionar campos padrão para usuário criado manualmente
             $validatedData['google_id'] = 'manual_' . time() . '_' . rand(1000, 9999);
             $validatedData['email_verified_at'] = now();
-            $validatedData['role'] = 'user'; // Usuários criados pelo admin são 'user' por padrão
 
             $user = User::create($validatedData);
 
