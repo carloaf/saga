@@ -44,6 +44,9 @@
                                     Data Prontidão OM
                                 </th>
                                 <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                    Tipo
+                                </th>
+                                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                     Status
                                 </th>
                                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -88,6 +91,12 @@
                                 </td>
                                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                     <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
+                                        {{ $user->role === 'superuser' ? 'bg-purple-50 text-purple-700 ring-purple-600/20' : 'bg-blue-50 text-blue-700 ring-blue-600/20' }}">
+                                        {{ $user->role === 'superuser' ? '🛡️ Superusuário' : '👤 Usuário' }}
+                                    </span>
+                                </td>
+                                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                    <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset
                                         {{ $user->is_active ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/20' }}">
                                         {{ $user->is_active ? 'Ativo' : 'Inativo' }}
                                     </span>
@@ -101,8 +110,9 @@
                                             data-rank-id="{{ $user->rank_id ?? '' }}"
                                             data-organization-id="{{ $user->organization_id ?? '' }}"
                                             data-gender="{{ $user->gender ?? '' }}"
-                                            data-ready-date="{{ $user->ready_at_om_date ?? '' }}"
+                                            data-ready-date="{{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('Y-m-d') : '' }}"
                                             data-is-active="{{ $user->is_active ? 1 : 0 }}"
+                                            data-role="{{ $user->role ?? 'user' }}"
                                             onclick="openEditModal(this)"
                                             class="text-green-600 hover:text-green-900">
                                         Editar
@@ -311,6 +321,19 @@
                             </div>
                             
                             <div>
+                                <label for="createRole" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Tipo de Usuário
+                                </label>
+                                <div class="mt-2">
+                                    <select id="createRole" name="role" 
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="user" selected>Usuário Normal</option>
+                                        <option value="superuser">Superusuário</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
                                 <label for="createStatus" class="block text-sm font-medium leading-6 text-gray-900">
                                     Status
                                 </label>
@@ -463,6 +486,19 @@
                                     </select>
                                 </div>
                             </div>
+                            
+                            <div>
+                                <label for="editRole" class="block text-sm font-medium leading-6 text-gray-900">
+                                    Tipo de Usuário
+                                </label>
+                                <div class="mt-2">
+                                    <select id="editRole" name="role" 
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6">
+                                        <option value="user">👤 Usuário Normal</option>
+                                        <option value="superuser">🛡️ Superusuário</option>
+                                    </select>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -579,6 +615,7 @@
         const gender = button.getAttribute('data-gender');
         const readyDate = button.getAttribute('data-ready-date');
         const isActive = button.getAttribute('data-is-active');
+        const role = button.getAttribute('data-role');
         
         // Preenche os campos do formulário
         document.getElementById('editUserId').value = userId;
@@ -590,6 +627,7 @@
         document.getElementById('editGender').value = gender || '';
         document.getElementById('editReadyDate').value = readyDate || '';
         document.getElementById('editStatus').value = isActive;
+        document.getElementById('editRole').value = role || 'user';
         
         // Mostra o modal
         const modal = document.getElementById('editModal');
@@ -641,7 +679,8 @@
                 organization_id: formData.get('organization_id') || null,
                 gender: formData.get('gender'),
                 ready_at_om_date: formData.get('ready_at_om_date'),
-                is_active: formData.get('is_active') === '1'
+                is_active: formData.get('is_active') === '1',
+                role: formData.get('role')
             })
         })
         .then(response => response.json())
