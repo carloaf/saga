@@ -162,6 +162,12 @@ main() {
         exit 1
     fi
     
+    # Configurar pull strategy se não estiver configurada
+    if ! git config pull.rebase > /dev/null 2>&1; then
+        log_info "Configurando estratégia de pull..."
+        git config pull.rebase false
+    fi
+    
     # Verificar conectividade com remoto
     log_info "Verificando conectividade com repositório remoto..."
     if ! git ls-remote origin > /dev/null 2>&1; then
