@@ -24,7 +24,7 @@ class AdminController extends Controller
     /**
      * Display the admin users page with statistics cards
      */
-    public function users()
+    public function users(Request $request)
     {
         // Verificação de acesso
         if (!Auth::user() || Auth::user()->role !== 'superuser') {
@@ -37,17 +37,49 @@ class AdminController extends Controller
         $inactiveUsers = User::where('is_active', false)->count();
         $recentUsers = User::where('created_at', '>=', now()->subDays(30))->count();
 
+        // Query base para usuários
+        $query = User::with(['rank', 'organization']);
+
+        // Aplicar filtros se fornecidos
+        if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('war_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $status = $request->get('status');
+            if ($status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->get('role'));
+        }
+
         // Buscar usuários com paginação
-        $users = User::with(['rank', 'organization'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $users = $query->orderBy('created_at', 'desc')
+                       ->paginate(10)
+                       ->appends($request->query());
+
+        // Buscar dados necessários para os modais
+        $ranks = Rank::orderBy('name')->get();
+        $organizations = Organization::orderBy('name')->get();
 
         return view('admin.users.index', compact(
             'users',
             'totalUsers',
             'activeUsers', 
             'inactiveUsers',
-            'recentUsers'
+            'recentUsers',
+            'ranks',
+            'organizations'
         ));
     }
 

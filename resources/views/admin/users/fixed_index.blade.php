@@ -296,25 +296,20 @@
 
         <!-- Enhanced Pagination -->
         <div class="mt-6 bg-white rounded-2xl shadow-lg border border-gray-100 px-6 py-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-                <!-- Results Info - Left Side -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-3 h-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-sm"></div>
-                    <div class="flex items-center space-x-2">
-                        <p class="text-sm text-gray-700 font-medium">
-                            Mostrando
-                            <span class="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">{{ $users->firstItem() ?? 0 }}</span>
-                            até
-                            <span class="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">{{ $users->lastItem() ?? 0 }}</span>
-                            de
-                            <span class="font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">{{ $users->total() }}</span>
-                            resultados
-                        </p>
-                    </div>
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <p class="text-sm text-gray-700 font-medium">
+                        Mostrando
+                        <span class="font-bold text-blue-600">{{ $users->firstItem() ?? 0 }}</span>
+                        até
+                        <span class="font-bold text-blue-600">{{ $users->lastItem() ?? 0 }}</span>
+                        de
+                        <span class="font-bold text-blue-600">{{ $users->total() }}</span>
+                        resultados
+                    </p>
                 </div>
-                
-                <!-- Pagination Controls - Right Side -->
-                <div class="pagination-wrapper">
+                <div class="flex items-center space-x-1">
                     {{ $users->appends(request()->query())->links('custom-pagination') }}
                 </div>
             </div>
@@ -325,67 +320,64 @@
 <!-- Modal de Criação -->
 <div id="createModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
     <!-- Background backdrop -->
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
     <div class="fixed inset-0 z-10 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <!-- Modal panel -->
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-gray-100" style="max-height:90vh; overflow-y:auto;">
-                <!-- Header com gradiente -->
-                <div class="bg-gradient-to-r from-green-600 via-green-700 to-emerald-800 px-6 py-4 rounded-t-2xl">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 h-12 w-12 rounded-xl bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center">
-                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl" style="max-height:90vh; overflow-y:auto;">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                         </div>
-                        <div class="ml-4 flex-1">
-                            <h3 class="text-xl font-bold text-white" id="modal-title">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
                                 Novo Usuário
                             </h3>
-                            <p class="text-green-100 text-sm font-medium">
-                                Preencha os dados para criar um novo usuário no sistema SAGA
-                            </p>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">
+                                    Preencha os dados para criar um novo usuário no sistema.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Conteúdo do modal -->
-                <div class="bg-white px-6 py-6">
                     
-                    <div class="mt-2">
-                        <form id="createUserForm" class="space-y-5">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div class="md:col-span-2">
-                                    <label for="createFullName" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Nome Completo <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="createFullName" name="full_name" required
-                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                </div>
-                                
-                                <div>
-                                    <label for="createWarName" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Nome de Guerra <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" id="createWarName" name="war_name" required
-                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                </div>
-                                
-                                <div>
-                                    <label for="createEmail" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Email <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="email" id="createEmail" name="email" required
-                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                </div>
+                    <div class="mt-6">
+                        <form id="createUserForm" class="space-y-4">
+                            <div>
+                                <label for="createFullName" class="block text-sm font-medium text-gray-700">
+                                    Nome Completo <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="createFullName" name="full_name" required
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            
+                            <div>
+                                <label for="createWarName" class="block text-sm font-medium text-gray-700">
+                                    Nome de Guerra <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="createWarName" name="war_name" required
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            
+                            <div>
+                                <label for="createEmail" class="block text-sm font-medium text-gray-700">
+                                    Email <span class="text-red-500">*</span>
+                                </label>
+                                <input type="email" id="createEmail" name="email" required
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
 
+                            <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label for="createRank" class="block text-sm font-semibold text-gray-900 mb-2">
+                                    <label for="createRank" class="block text-sm font-medium text-gray-700">
                                         Posto/Graduação <span class="text-red-500">*</span>
                                     </label>
                                     <select id="createRank" name="rank_id" required
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
+                                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                         <option value="">Selecione...</option>
                                         @foreach($ranks as $rank)
                                             <option value="{{ $rank->id }}">{{ $rank->name }}</option>
@@ -394,79 +386,77 @@
                                 </div>
 
                                 <div>
-                                    <label for="createOrganization" class="block text-sm font-semibold text-gray-900 mb-2">
+                                    <label for="createOrganization" class="block text-sm font-medium text-gray-700">
                                         Organização <span class="text-red-500">*</span>
                                     </label>
                                     <select id="createOrganization" name="organization_id" required
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
+                                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                         <option value="">Selecione...</option>
                                         @foreach($organizations as $org)
                                             <option value="{{ $org->id }}">{{ $org->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
+                            </div>
 
-                                <div>
-                                    <label for="createGender" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Gênero <span class="text-red-500">*</span>
-                                    </label>
-                                    <select id="createGender" name="gender" required
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                        <option value="">Selecione o gênero</option>
-                                        <option value="male">Masculino</option>
-                                        <option value="female">Feminino</option>
-                                    </select>
-                                </div>
+                            <div>
+                                <label for="createGender" class="block text-sm font-medium text-gray-700">
+                                    Gênero <span class="text-red-500">*</span>
+                                </label>
+                                <select id="createGender" name="gender" required
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    <option value="">Selecione o gênero</option>
+                                    <option value="male">Masculino</option>
+                                    <option value="female">Feminino</option>
+                                </select>
+                            </div>
 
-                                <div>
-                                    <label for="createReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Data de Prontidão na OM <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" id="createReadyDate" name="ready_at_om_date" required
-                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                </div>
-                                
-                                <div>
-                                    <label for="createRole" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Tipo de Usuário
-                                    </label>
-                                    <select id="createRole" name="role" 
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                        <option value="user" selected>👤 Usuário Normal</option>
-                                        <option value="superuser">🛡️ Superusuário</option>
-                                    </select>
-                                </div>
-                                
-                                <div>
-                                    <label for="createStatus" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Status
-                                    </label>
-                                    <select id="createStatus" name="is_active" 
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                        <option value="1" selected>✅ Ativo</option>
-                                        <option value="0">❌ Inativo</option>
-                                    </select>
-                                </div>
+                            <div>
+                                <label for="createReadyDate" class="block text-sm font-medium text-gray-700">
+                                    Data de Prontidão na OM <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="createReadyDate" name="ready_at_om_date" required
+                                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            
+                            <div>
+                                <label for="createRole" class="block text-sm font-medium text-gray-700">
+                                    Tipo de Usuário
+                                </label>
+                                <select id="createRole" name="role" 
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    <option value="user" selected>👤 Usuário Normal</option>
+                                    <option value="superuser">🛡️ Superusuário</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="createStatus" class="block text-sm font-medium text-gray-700">
+                                    Status
+                                </label>
+                                <select id="createStatus" name="is_active" 
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                    <option value="1" selected>✅ Ativo</option>
+                                    <option value="0">❌ Inativo</option>
+                                </select>
                             </div>
                         </form>
                     </div>
                 </div>
-                
-                <!-- Footer com botões -->
-                <div class="bg-gradient-to-r from-gray-50 to-green-50 px-6 py-4 flex justify-end space-x-3 rounded-b-2xl border-t border-gray-200">
-                    <button type="button" onclick="closeCreateModal()" 
-                            class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all transform hover:scale-105">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                        Cancelar
-                    </button>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
                     <button type="button" onclick="createUser()" 
-                            class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 transform hover:scale-105 transition-all">
+                            class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 transform hover:scale-105 transition-all">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Criar Usuário
+                    </button>
+                    <button type="button" onclick="closeCreateModal()" 
+                            class="inline-flex justify-center items-center px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancelar
                     </button>
                 </div>
             </div>
@@ -476,47 +466,36 @@
 
 <!-- Modal de Edição (único, sempre presente, visível só quando ativado) -->
 <div id="editModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
-    <div class="fixed inset-0 overflow-y-auto">
-        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-gray-100" style="max-height:90vh; overflow-y:auto;">
-                <!-- Header com gradiente -->
-                <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 px-6 py-4 rounded-t-2xl">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0 h-12 w-12 rounded-xl bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center">
-                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                        </div>
-                        <div class="ml-4 flex-1">
-                            <h3 class="text-xl font-bold text-white" id="modal-title">Editar Usuário</h3>
-                            <p class="text-blue-100 text-sm font-medium">
-                                Atualize as informações do usuário no sistema SAGA
-                            </p>
-                        </div>
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    <div class="flex min-h-full items-center justify-center p-4 text-center">
+        <div class="relative w-full max-w-2xl bg-white rounded-lg shadow-xl overflow-y-auto" style="max-height:90vh;">
+            <div class="px-6 py-6">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
                     </div>
+                    <h3 class="ml-4 text-lg font-medium text-gray-900" id="modal-title">Editar Usuário</h3>
                 </div>
-                
-                <!-- Conteúdo do modal -->
-                <div class="bg-white px-6 py-6">
-                <form id="editUserForm" class="space-y-5">
+                <form id="editUserForm" class="space-y-4">
                     <input type="hidden" id="editUserId" name="user_id">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="md:col-span-2">
-                            <label for="editFullName" class="block text-sm font-semibold text-gray-900 mb-2">Nome Completo</label>
-                            <input type="text" id="editFullName" name="full_name" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                        </div>
+                    <div>
+                        <label for="editFullName" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                        <input type="text" id="editFullName" name="full_name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editWarName" class="block text-sm font-medium text-gray-700">Nome de Guerra</label>
+                        <input type="text" id="editWarName" name="war_name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="editEmail" name="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label for="editWarName" class="block text-sm font-semibold text-gray-900 mb-2">Nome de Guerra</label>
-                            <input type="text" id="editWarName" name="war_name" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                        </div>
-                        <div>
-                            <label for="editEmail" class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
-                            <input type="email" id="editEmail" name="email" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                        </div>
-                        <div>
-                            <label for="editRank" class="block text-sm font-semibold text-gray-900 mb-2">Posto/Graduação</label>
-                            <select id="editRank" name="rank_id" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                            <label for="editRank" class="block text-sm font-medium text-gray-700">Posto/Graduação</label>
+                            <select id="editRank" name="rank_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                 <option value="">Selecione...</option>
                                 @foreach($ranks as $rank)
                                     <option value="{{ $rank->id }}">{{ $rank->name }}</option>
@@ -524,57 +503,55 @@
                             </select>
                         </div>
                         <div>
-                            <label for="editOrganization" class="block text-sm font-semibold text-gray-900 mb-2">Organização</label>
-                            <select id="editOrganization" name="organization_id" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                            <label for="editOrganization" class="block text-sm font-medium text-gray-700">Organização</label>
+                            <select id="editOrganization" name="organization_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                 <option value="">Selecione...</option>
                                 @foreach($organizations as $org)
                                     <option value="{{ $org->id }}">{{ $org->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label for="editGender" class="block text-sm font-semibold text-gray-900 mb-2">Gênero</label>
-                            <select id="editGender" name="gender" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                                <option value="">Selecione o gênero</option>
-                                <option value="male">Masculino</option>
-                                <option value="female">Feminino</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="editReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">Data de Prontidão na OM</label>
-                            <input type="date" id="editReadyDate" name="ready_at_om_date" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                        </div>
-                        <div>
-                            <label for="editStatus" class="block text-sm font-semibold text-gray-900 mb-2">Status</label>
-                            <select id="editStatus" name="is_active" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                                <option value="1">✅ Ativo</option>
-                                <option value="0">❌ Inativo</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="editRole" class="block text-sm font-semibold text-gray-900 mb-2">Tipo de Usuário</label>
-                            <select id="editRole" name="role" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                                <option value="user">👤 Usuário Normal</option>
-                                <option value="superuser">🛡️ Superusuário</option>
-                            </select>
-                        </div>
+                    </div>
+                    <div>
+                        <label for="editGender" class="block text-sm font-medium text-gray-700">Gênero</label>
+                        <select id="editGender" name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="">Selecione o gênero</option>
+                            <option value="male">Masculino</option>
+                            <option value="female">Feminino</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editReadyDate" class="block text-sm font-medium text-gray-700">Data de Prontidão na OM</label>
+                        <input type="date" id="editReadyDate" name="ready_at_om_date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="editStatus" class="block text-sm font-medium text-gray-700">Status</label>
+                        <select id="editStatus" name="is_active" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="1">✅ Ativo</option>
+                            <option value="0">❌ Inativo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editRole" class="block text-sm font-medium text-gray-700">Tipo de Usuário</label>
+                        <select id="editRole" name="role" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="user">👤 Usuário Normal</option>
+                            <option value="superuser">🛡️ Superusuário</option>
+                        </select>
                     </div>
                 </form>
-                    <!-- Footer com botões -->
-                    <div class="bg-gradient-to-r from-gray-50 to-blue-50 px-6 py-4 flex justify-end space-x-3 rounded-b-2xl border-t border-gray-200 -mx-6 -mb-6 mt-8">
-                        <button type="button" onclick="closeEditModal()" class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm hover:bg-gray-50 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all transform hover:scale-105">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                            Cancelar
-                        </button>
-                        <button type="button" onclick="updateUser()" class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transform hover:scale-105 transition-all">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            Salvar Alterações
-                        </button>
-                    </div>
+                <div class="mt-6 flex flex-col sm:flex-row sm:justify-end gap-3">
+                    <button type="button" onclick="closeEditModal()" class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Cancelar
+                    </button>
+                    <button type="button" onclick="updateUser()" class="inline-flex justify-center items-center px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transform hover:scale-105 transition-all">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Salvar Alterações
+                    </button>
                 </div>
             </div>
         </div>
@@ -846,85 +823,6 @@
     /* Optimize table spacing */
     .whitespace-nowrap.py-5 { padding-top: 1rem; padding-bottom: 1rem; }
     
-    /* Modal width constraints */
-    #editModal .sm\\:max-w-2xl {
-        max-width: 42rem !important;
-        width: 90% !important;
-    }
-    
-    #createModal .sm\\:max-w-2xl {
-        max-width: 42rem !important;
-        width: 90% !important;
-    }
-    
-    /* Enhanced modal animations */
-    .modal-enter {
-        animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    
-    .modal-exit {
-        animation: modalSlideOut 0.2s ease-in-out;
-    }
-    
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-    
-    @keyframes modalSlideOut {
-        from {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        to {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-        }
-    }
-    
-    /* Enhanced form inputs */
-    .form-input-enhanced {
-        background: linear-gradient(145deg, #ffffff, #f8fafc);
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-    
-    .form-input-enhanced:focus {
-        background: #ffffff;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transform: translateY(-1px);
-    }
-    
-    /* Enhanced buttons */
-    .btn-enhanced {
-        background: linear-gradient(145deg, #ffffff, #f8fafc);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-    }
-    
-    .btn-enhanced:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        transform: translateY(-2px);
-    }
-    
-    .btn-primary-enhanced {
-        background: linear-gradient(145deg, #3b82f6, #2563eb);
-        box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.4);
-        transition: all 0.3s ease;
-    }
-    
-    .btn-primary-enhanced:hover {
-        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-        transform: translateY(-3px);
-    }
-    
     /* Force proper responsive behavior */
     @media (max-width: 640px) {
         .header-controls {
@@ -935,174 +833,31 @@
         .cards-grid {
             grid-template-columns: 1fr;
         }
-        
-        #editModal .sm\\:max-w-2xl,
-        #createModal .sm\\:max-w-2xl {
-            max-width: 95vw !important;
-            width: 95% !important;
-            margin: 1rem !important;
-        }
-        
-        /* Mobile form adjustments */
-        .grid.md\\:grid-cols-2 {
-            grid-template-columns: 1fr !important;
-        }
     }
     
     @media (min-width: 640px) and (max-width: 1024px) {
         .cards-grid {
             grid-template-columns: repeat(2, 1fr);
         }
-        
-        #editModal .sm\\:max-w-2xl,
-        #createModal .sm\\:max-w-2xl {
-            max-width: 80vw !important;
-            width: 80% !important;
-        }
-    }
-    
-    @media (min-width: 1024px) {
-        #editModal .sm\\:max-w-2xl,
-        #createModal .sm\\:max-w-2xl {
-            max-width: 42rem !important;
-            width: auto !important;
-        }
     }
     
     /* Custom scrollbar for modals */
     div[style*="max-height:90vh"]::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
     }
     
     div[style*="max-height:90vh"]::-webkit-scrollbar-track {
-        background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
-        border-radius: 6px;
+        background: #f1f5f9;
+        border-radius: 3px;
     }
     
     div[style*="max-height:90vh"]::-webkit-scrollbar-thumb {
-        background: linear-gradient(145deg, #cbd5e1, #94a3b8);
-        border-radius: 6px;
-        border: 2px solid transparent;
-        background-clip: padding-box;
+        background: #cbd5e1;
+        border-radius: 3px;
     }
     
     div[style*="max-height:90vh"]::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(145deg, #94a3b8, #64748b);
-    }
-    
-    /* Enhanced modal backdrop */
-    .modal-backdrop {
-        backdrop-filter: blur(8px);
-        background: rgba(17, 24, 39, 0.4);
-    }
-    
-    /* Enhanced gradient headers */
-    .modal-header-gradient {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .modal-header-gradient::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
-        animation: shimmer 3s infinite;
-    }
-    
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
-    }
-    
-    /* Enhanced form labels */
-    .form-label-enhanced {
-        font-weight: 600;
-        color: #1f2937;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        font-size: 0.875rem;
-    }
-    
-    .form-label-enhanced::before {
-        content: '';
-        width: 3px;
-        height: 3px;
-        background: #3b82f6;
-        border-radius: 50%;
-        margin-right: 0.5rem;
-    }
-    
-    /* Required field indicator */
-    .required-field::after {
-        content: '*';
-        color: #ef4444;
-        margin-left: 0.25rem;
-        font-weight: bold;
-    }
-    
-    /* Enhanced Pagination Styles */
-    .pagination-wrapper {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 100%;
-    }
-    
-    .pagination-wrapper nav {
-        width: auto;
-    }
-    
-    /* Ensure pagination controls stay on the right */
-    @media (min-width: 640px) {
-        .pagination-wrapper {
-            margin-left: auto;
-            width: auto;
-        }
-    }
-    
-    /* Mobile pagination full width */
-    @media (max-width: 639px) {
-        .pagination-wrapper {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .pagination-wrapper nav {
-            width: 100%;
-        }
-    }
-    
-    /* Additional pagination hover effects */
-    .pagination-wrapper .pagination-number-link:hover {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        border-color: #3b82f6;
-        color: #1d4ed8;
-        transform: translateY(-2px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
-    }
-    
-    .pagination-wrapper .pagination-arrow-active:hover {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        border-color: #3b82f6;
-        color: #1d4ed8;
-        transform: translateY(-2px) scale(1.1);
-        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.25);
-    }
-    
-    /* Results info styling enhancement */
-    .text-blue-600.bg-blue-50 {
-        transition: all 0.2s ease;
-    }
-    
-    .text-blue-600.bg-blue-50:hover {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        transform: scale(1.05);
+        background: #94a3b8;
     }
 </style>
 @endsection
