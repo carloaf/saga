@@ -3,18 +3,50 @@
 @section('title', 'Relatórios Administrativos')
 
 @section('content')
-<div class="px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-            <h1 class="text-2xl font-semibold leading-6 text-gray-900">📊 Relatórios e Estatísticas</h1>
-            <p class="mt-2 text-sm text-gray-700">Gere relatórios detalhados sobre o sistema de agendamento de refeições</p>
+<div class="bg-gray-50">
+    <!-- Enhanced Header with Gradient -->
+    <div class="bg-gradient-to-r from-green-600 via-emerald-700 to-teal-800 shadow-xl">
+        <div class="px-4 sm:px-6 lg:px-8 py-6">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <div class="flex items-center space-x-4">
+                        <!-- Back to Dashboard Button -->
+                        <a href="{{ route('dashboard') }}" class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm hover:bg-opacity-30 transition-all duration-200 group">
+                            <svg class="w-6 h-6 text-white group-hover:text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </a>
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">📊 Relatórios e Estatísticas</h1>
+                            <p class="mt-2 text-green-100 font-medium">Gere relatórios detalhados sobre o sistema de agendamento de refeições</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 sm:mt-0 sm:ml-16 flex flex-col sm:flex-row gap-3 header-controls">
+                    <!-- Quick Export Button -->
+                    <button type="button" onclick="openQuickExportModal()" 
+                            class="bg-white bg-opacity-20 backdrop-blur-sm hover:bg-opacity-30 text-white font-semibold px-6 py-3 rounded-lg border border-white border-opacity-30 transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Exportar Rápido</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="px-4 sm:px-6 lg:px-8 py-4">
+
     <!-- Alertas -->
     @if(session('success'))
-        <div class="mt-4 rounded-md bg-green-50 p-4">
+        <div class="mb-4 rounded-md bg-green-50 p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -29,7 +61,7 @@
     @endif
 
     @if(session('error'))
-        <div class="mt-4 rounded-md bg-red-50 p-4">
+        <div class="mb-4 rounded-md bg-red-50 p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
                     <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -43,11 +75,18 @@
         </div>
     @endif
 
-    <div class="mt-8 space-y-6">
+    <div class="space-y-6">
         <!-- Formulário de Geração de Relatórios -->
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100">
             <div class="p-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Gerar Relatórios</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </div>
+                    Gerar Relatórios
+                </h3>
                 
                 <form method="GET" action="{{ route('admin.reports.generate') }}" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -363,6 +402,82 @@
 
 @section('scripts')
 <script>
+    // Função para o botão de exportação rápida
+    function openQuickExportModal() {
+        // Criar modal dinâmico para exportação rápida
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+        modal.innerHTML = `
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Exportação Rápida</h3>
+                    <div class="mt-4 space-y-3">
+                        <a href="${generateReportUrl('daily_meals', 'today')}" 
+                           class="block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300">
+                            📊 Refeições de Hoje
+                        </a>
+                        <a href="${generateReportUrl('weekly_summary', 'week')}" 
+                           class="block w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition duration-300">
+                            📈 Resumo Semanal
+                        </a>
+                        <a href="${generateReportUrl('organization_breakdown', 'month')}" 
+                           class="block w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition duration-300">
+                            🏢 Por Organização (Mês)
+                        </a>
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button onclick="closeQuickExportModal()" 
+                                class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 transition duration-300">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Adicionar evento para fechar ao clicar no backdrop
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeQuickExportModal();
+            }
+        });
+    }
+    
+    function closeQuickExportModal() {
+        const modal = document.querySelector('.fixed.inset-0.bg-gray-600');
+        if (modal) {
+            modal.remove();
+        }
+    }
+    
+    function generateReportUrl(type, period) {
+        const today = new Date();
+        let startDate, endDate;
+        
+        switch(period) {
+            case 'today':
+                startDate = endDate = today.toISOString().split('T')[0];
+                break;
+            case 'week':
+                startDate = new Date(today.setDate(today.getDate() - 7)).toISOString().split('T')[0];
+                endDate = new Date().toISOString().split('T')[0];
+                break;
+            case 'month':
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+                break;
+        }
+        
+        return `/admin/reports/generate?report_type=${type}&start_date=${startDate}&end_date=${endDate}&format=pdf`;
+    }
+
     // Validação do formulário
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('form');
@@ -413,5 +528,71 @@
         });
     });
 </script>
+
+<style>
+    /* Enhanced Reports Page Styles */
+    .header-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    @media (min-width: 640px) {
+        .header-controls {
+            flex-direction: row;
+        }
+    }
+    
+    /* Quick export button hover effects */
+    .header-controls button:hover {
+        background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.35) 100%);
+    }
+    
+    /* Enhanced form elements */
+    .bg-white.shadow-xl {
+        transition: all 0.3s ease;
+    }
+    
+    .bg-white.shadow-xl:hover {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        transform: translateY(-2px);
+    }
+    
+    /* Report cards styling */
+    .report-card {
+        background: linear-gradient(145deg, #ffffff, #f8fafc);
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .report-card:hover {
+        background: linear-gradient(145deg, #f8fafc, #f1f5f9);
+        border-color: #cbd5e1;
+        transform: translateY(-3px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Green gradient theming for reports */
+    .text-green-100 {
+        color: rgb(220 252 231);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+        .header-controls {
+            width: 100%;
+        }
+        
+        .header-controls button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
 @endsection
+
+    </div>
+</div>
 @endsection
