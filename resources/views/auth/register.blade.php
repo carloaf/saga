@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - SAGA</title>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('android-chrome-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="{{ asset('css/enhanced-forms.css') }}" rel="stylesheet">
     <style>
@@ -15,9 +24,7 @@
         <!-- Logo -->
         <div class="mb-6">
             <div class="flex items-center">
-                <svg class="w-10 h-10 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C9,20 10,19 10,18C10,17 9,16 8,16C7,16 6,17 6,18C6,18.5 6.2,19 6.5,19.4L5.5,21.5C5.1,21.3 4.8,21 4.5,20.5C4.2,20 4,19.5 4,19C4,17.5 4.8,16.2 6,15.5L7,14C8,13 9.5,12.5 11,12.5C12.5,12.5 14,13 15,14L16,15.5C17.2,16.2 18,17.5 18,19C18,19.5 17.8,20 17.5,20.5C17.2,21 16.9,21.3 16.5,21.5L15.5,19.4C15.8,19 16,18.5 16,18C16,17 15,16 14,16C13,16 12,17 12,18C12,19 13,20 14,20C14.36,20 14.86,19.87 15.34,19.7L16.29,22L18.18,21.34C16.1,16.17 14,10 17,8Z"/>
-                </svg>
+                <img src="{{ asset('images/folhaint_transparent.png') }}" alt="11º D Sup Logo" class="w-10 h-10 object-contain">
                 <h1 class="ml-2 text-2xl font-bold text-gray-900">SAGA</h1>
             </div>
             <p class="text-sm text-gray-600 text-center mt-1">Sistema de Agendamento e Gestão de Arranchamento</p>

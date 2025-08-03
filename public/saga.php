@@ -38,9 +38,7 @@ try {
         <!-- Header -->
         <div class="bg-white/10 backdrop-blur-md rounded-lg p-6 mb-6">
             <h1 class="text-4xl font-bold text-white text-center mb-2 flex items-center justify-center">
-                <svg class="w-10 h-10 mr-3 text-yellow-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C9,20 10,19 10,18C10,17 9,16 8,16C7,16 6,17 6,18C6,18.5 6.2,19 6.5,19.4L5.5,21.5C5.1,21.3 4.8,21 4.5,20.5C4.2,20 4,19.5 4,19C4,17.5 4.8,16.2 6,15.5L7,14C8,13 9.5,12.5 11,12.5C12.5,12.5 14,13 15,14L16,15.5C17.2,16.2 18,17.5 18,19C18,19.5 17.8,20 17.5,20.5C17.2,21 16.9,21.3 16.5,21.5L15.5,19.4C15.8,19 16,18.5 16,18C16,17 15,16 14,16C13,16 12,17 12,18C12,19 13,20 14,20C14.36,20 14.86,19.87 15.34,19.7L16.29,22L18.18,21.34C16.1,16.17 14,10 17,8Z"/>
-                </svg>
+                <img src="images/folhaint_transparent.png" alt="11º D Sup Logo" class="w-10 h-10 mr-3 object-contain">
                 <?= SAGA_NAME ?>
             </h1>
             <p class="text-blue-200 text-center">Sistema Militar de Reserva de Refeições</p>
