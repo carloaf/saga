@@ -142,7 +142,7 @@
 
         <!-- Footer -->
         <div class="mt-6 text-center text-xs text-gray-500">
-            © 2025 SAGA - Forças Armadas do Brasil
+            © 2025 SAGA - 11º D Sup
         </div>
     </div>
 </body>
