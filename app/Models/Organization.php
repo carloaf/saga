@@ -11,6 +11,7 @@ class Organization extends Model
 
     protected $fillable = [
         'name',
+        'abbreviation',
         'is_host',
     ];
 
@@ -31,5 +32,10 @@ class Organization extends Model
     public function scopeGuest($query)
     {
         return $query->where('is_host', false);
+    }
+
+    public function getDisplayName()
+    {
+        return $this->abbreviation ?: $this->name;
     }
 }

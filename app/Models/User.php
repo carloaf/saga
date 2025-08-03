@@ -19,6 +19,8 @@ class User extends Authenticatable
         'avatar_url',
         'rank_id',
         'organization_id',
+        'subunit',
+        'armed_force',
         'gender',
         'ready_at_om_date',
         'is_active',
@@ -72,5 +74,27 @@ class User extends Authenticatable
             ->whereDate('booking_date', $date)
             ->where('meal_type', $mealType)
             ->exists();
+    }
+
+    public function getArmedForceFullName()
+    {
+        $forces = [
+            'FAB' => 'Força Aérea Brasileira',
+            'MB' => 'Marinha do Brasil',
+            'EB' => 'Exército Brasileiro'
+        ];
+        
+        return $forces[$this->armed_force] ?? null;
+    }
+
+    public function getArmedForceColor()
+    {
+        $colors = [
+            'FAB' => 'text-blue-600',
+            'MB' => 'text-indigo-600',
+            'EB' => 'text-green-600'
+        ];
+        
+        return $colors[$this->armed_force] ?? 'text-gray-600';
     }
 }

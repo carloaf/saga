@@ -11,6 +11,7 @@ class Rank extends Model
 
     protected $fillable = [
         'name',
+        'abbreviation',
         'order',
     ];
 
@@ -22,5 +23,10 @@ class Rank extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('order');
+    }
+
+    public function getDisplayName()
+    {
+        return $this->abbreviation ?: $this->name;
     }
 }

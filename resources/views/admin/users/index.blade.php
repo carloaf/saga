@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Administração de Usuários')
 
@@ -193,13 +193,19 @@
                                 Usuário & Contato
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                                Posto/Graduação
+                                Posto/Grad
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                                Organização
+                                SU
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                                Data Prontidão OM
+                                OM
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                Força
+                            </th>
+                            <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                                Pronto OM
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
                                 Tipo
@@ -243,13 +249,42 @@
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-800">
-                                    {{ $user->rank ? $user->rank->name : 'N/A' }}
+                                    {{ $user->rank ? $user->rank->getDisplayName() : 'N/A' }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
+                                @if($user->subunit)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800">
+                                        {{ $user->subunit }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400 text-xs">N/A</span>
+                                @endif
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-100 text-blue-800">
-                                    {{ $user->organization ? $user->organization->name : 'N/A' }}
+                                    @if($user->organization)
+                                        {{ $user->organization->getDisplayName() }}
+                                    @else
+                                        N/A
+                                    @endif
                                 </span>
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
+                                @if($user->armed_force)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium 
+                                        {{ $user->armed_force === 'FAB' ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ $user->armed_force === 'MB' ? 'bg-indigo-100 text-indigo-800' : '' }}
+                                        {{ $user->armed_force === 'EB' ? 'bg-green-100 text-green-800' : '' }}">
+                                        <span class="w-2 h-2 rounded-full mr-1.5
+                                            {{ $user->armed_force === 'FAB' ? 'bg-blue-500' : '' }}
+                                            {{ $user->armed_force === 'MB' ? 'bg-indigo-500' : '' }}
+                                            {{ $user->armed_force === 'EB' ? 'bg-green-500' : '' }}"></span>
+                                        {{ $user->armed_force }}
+                                    </span>
+                                @else
+                                    <span class="text-gray-400 text-xs">N/A</span>
+                                @endif
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600 font-medium">
                                 {{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('d/m/Y') : 'N/A' }}
@@ -275,16 +310,18 @@
                                         data-email="{{ $user->email }}"
                                         data-rank-id="{{ $user->rank_id ?? '' }}"
                                         data-organization-id="{{ $user->organization_id ?? '' }}"
+                                        data-subunit="{{ $user->subunit ?? '' }}"
+                                        data-armed-force="{{ $user->armed_force ?? '' }}"
                                         data-gender="{{ $user->gender ?? '' }}"
                                         data-ready-date="{{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('Y-m-d') : '' }}"
                                         data-is-active="{{ $user->is_active ? 1 : 0 }}"
                                         data-role="{{ $user->role ?? 'user' }}"
                                         onclick="openEditModal(this)"
-                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 group-hover:shadow-md">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        title="Editar usuário"
+                                        class="inline-flex items-center justify-center w-8 h-8 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 group-hover:shadow-md">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
-                                    Editar
                                 </button>
                             </td>
                         </tr>
@@ -407,6 +444,28 @@
                                 </div>
 
                                 <div>
+                                    <label for="createSubunit" class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Subunidade (SU)
+                                    </label>
+                                    <input type="text" id="createSubunit" name="subunit" 
+                                           placeholder="Ex: 1ª SU, 2ª SU, etc."
+                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
+                                </div>
+
+                                <div>
+                                    <label for="createArmedForce" class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Força Armada
+                                    </label>
+                                    <select id="createArmedForce" name="armed_force"
+                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
+                                        <option value="">Selecione...</option>
+                                        <option value="FAB">🛩️ FAB - Força Aérea Brasileira</option>
+                                        <option value="MB">⚓ MB - Marinha do Brasil</option>
+                                        <option value="EB">🪖 EB - Exército Brasileiro</option>
+                                    </select>
+                                </div>
+
+                                <div>
                                     <label for="createGender" class="block text-sm font-semibold text-gray-900 mb-2">
                                         Gênero <span class="text-red-500">*</span>
                                     </label>
@@ -420,7 +479,7 @@
 
                                 <div>
                                     <label for="createReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Data de Prontidão na OM <span class="text-red-500">*</span>
+                                        Pronto OM <span class="text-red-500">*</span>
                                     </label>
                                     <input type="date" id="createReadyDate" name="ready_at_om_date" required
                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
@@ -533,6 +592,21 @@
                             </select>
                         </div>
                         <div>
+                            <label for="editSubunit" class="block text-sm font-semibold text-gray-900 mb-2">Subunidade (SU)</label>
+                            <input type="text" id="editSubunit" name="subunit" 
+                                   placeholder="Ex: 1ª SU, 2ª SU, etc."
+                                   class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                        </div>
+                        <div>
+                            <label for="editArmedForce" class="block text-sm font-semibold text-gray-900 mb-2">Força Armada</label>
+                            <select id="editArmedForce" name="armed_force" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                                <option value="">Selecione...</option>
+                                <option value="FAB">🛩️ FAB - Força Aérea Brasileira</option>
+                                <option value="MB">⚓ MB - Marinha do Brasil</option>
+                                <option value="EB">🪖 EB - Exército Brasileiro</option>
+                            </select>
+                        </div>
+                        <div>
                             <label for="editGender" class="block text-sm font-semibold text-gray-900 mb-2">Gênero</label>
                             <select id="editGender" name="gender" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="">Selecione o gênero</option>
@@ -541,7 +615,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="editReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">Data de Prontidão na OM</label>
+                            <label for="editReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">Pronto OM</label>
                             <input type="date" id="editReadyDate" name="ready_at_om_date" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                         </div>
                         <div>
@@ -677,6 +751,8 @@
         const email = button.getAttribute('data-email');
         const rankId = button.getAttribute('data-rank-id');
         const organizationId = button.getAttribute('data-organization-id');
+        const subunit = button.getAttribute('data-subunit');
+        const armedForce = button.getAttribute('data-armed-force');
         const gender = button.getAttribute('data-gender');
         const readyDate = button.getAttribute('data-ready-date');
         const isActive = button.getAttribute('data-is-active');
@@ -689,6 +765,8 @@
         document.getElementById('editEmail').value = email;
         document.getElementById('editRank').value = rankId || '';
         document.getElementById('editOrganization').value = organizationId || '';
+        document.getElementById('editSubunit').value = subunit || '';
+        document.getElementById('editArmedForce').value = armedForce || '';
         document.getElementById('editGender').value = gender || '';
         document.getElementById('editReadyDate').value = readyDate || '';
         document.getElementById('editStatus').value = isActive;
