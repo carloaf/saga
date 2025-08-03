@@ -42,7 +42,7 @@
                     <select id="filterRole" class="rounded-lg bg-white bg-opacity-90 backdrop-blur-sm border border-gray-300 px-3 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent sm:text-sm">
                         <option value="">Todos os tipos</option>
                         <option value="user">Usuários</option>
-                        <option value="superuser">Superusuários</option>
+                        <option value="superuser">Gerentes</option>
                     </select>
                     <!-- New User Button -->
                     <button type="button" onclick="openCreateModal()" 
@@ -256,8 +256,8 @@
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
                                 <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
-                                    {{ $user->role === 'superuser' ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300' }}">
-                                    {{ $user->role === 'superuser' ? '🛡️ Superusuário' : '👤 Usuário' }}
+                                    {{ $user->role === 'manager' ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300' }}">
+                                    {{ $user->role === 'manager' ? '🛡️ Gerente' : '👤 Usuário' }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
@@ -426,7 +426,7 @@
                                 <select id="createRole" name="role" 
                                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     <option value="user" selected>👤 Usuário Normal</option>
-                                    <option value="superuser">🛡️ Superusuário</option>
+                                    <option value="superuser">🛡️ Gerente</option>
                                 </select>
                             </div>
                             
@@ -535,7 +535,7 @@
                         <label for="editRole" class="block text-sm font-medium text-gray-700">Tipo de Usuário</label>
                         <select id="editRole" name="role" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="user">👤 Usuário Normal</option>
-                            <option value="superuser">🛡️ Superusuário</option>
+                            <option value="superuser">🛡️ Gerente</option>
                         </select>
                     </div>
                 </form>

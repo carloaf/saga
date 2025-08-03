@@ -55,7 +55,12 @@ class User extends Authenticatable
 
     public function isSuperuser()
     {
-        return $this->role === 'superuser';
+        return $this->role === 'manager';
+    }
+
+    public function isManager()
+    {
+        return $this->role === 'manager';
     }
 
     public function hasRole($role)

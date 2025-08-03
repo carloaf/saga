@@ -78,7 +78,7 @@ Route::get('/dev-admin-login', function () {
             'war_name' => 'ADMIN',
             'google_id' => 'dev-admin-123',
             'email_verified_at' => now(),
-            'role' => 'superuser',
+            'role' => 'manager',
             'is_active' => true,
             'rank_id' => 1,
             'organization_id' => 1,

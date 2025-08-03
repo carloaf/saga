@@ -27,8 +27,8 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
+            abort(403, 'Acesso negado. Apenas gerentes podem acessar esta área.');
         }
 
         // Estatísticas dos usuários
@@ -89,8 +89,8 @@ class AdminController extends Controller
     public function updateUser(Request $request, User $user)
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
-            return response()->json(['success' => false, 'message' => 'Acesso negado. Apenas superusuários podem acessar esta área.'], 403);
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
+            return response()->json(['success' => false, 'message' => 'Acesso negado. Apenas managers podem acessar esta área.'], 403);
         }
 
         try {
@@ -105,7 +105,7 @@ class AdminController extends Controller
                 'gender' => 'required|in:male,female',
                 'ready_at_om_date' => 'required|date',
                 'is_active' => 'required|boolean',
-                'role' => 'required|in:user,superuser'
+                'role' => 'required|in:user,manager'
             ]);
 
             $user->update($validatedData);
@@ -122,7 +122,7 @@ class AdminController extends Controller
     public function storeUser(Request $request)
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
             return response()->json(['success' => false, 'message' => 'Acesso negado.'], 403);
         }
 
@@ -137,7 +137,7 @@ class AdminController extends Controller
                 'armed_force' => 'nullable|in:FAB,MB,EB',
                 'gender' => 'required|in:male,female',
                 'ready_at_om_date' => 'required|date',
-                'role' => 'required|in:user,superuser',
+                'role' => 'required|in:user,manager',
                 'is_active' => 'required|boolean'
             ]);
 
@@ -163,7 +163,7 @@ class AdminController extends Controller
     public function toggleUserStatus(Request $request, User $user)
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
             return response()->json(['success' => false, 'message' => 'Acesso negado.'], 403);
         }
 
@@ -186,8 +186,8 @@ class AdminController extends Controller
     public function reports()
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
+            abort(403, 'Acesso negado. Apenas managers podem acessar esta área.');
         }
 
         // Estatísticas do dia atual
@@ -235,8 +235,8 @@ class AdminController extends Controller
     public function generateReport(Request $request)
     {
         // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
+        if (!Auth::user() || Auth::user()->role !== 'manager') {
+            abort(403, 'Acesso negado. Apenas managers podem acessar esta área.');
         }
 
         $request->validate([

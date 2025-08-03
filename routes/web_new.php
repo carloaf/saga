@@ -57,7 +57,7 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/reports', function () {
             // Verificação simples de role
-            if (!Auth::user() || Auth::user()->role !== 'superuser') {
+            if (!Auth::user() || Auth::user()->role !== 'manager') {
                 abort(403, 'Acesso negado. Apenas superusuários podem acessar esta área.');
             }
             
@@ -76,7 +76,7 @@ Route::get('/dev-admin-login', function () {
             'war_name' => 'ADMIN',
             'google_id' => 'dev-admin-123',
             'email_verified_at' => now(),
-            'role' => 'superuser',
+            'role' => 'manager',
             'is_active' => true,
             'rank_id' => 1,
             'organization_id' => 1,

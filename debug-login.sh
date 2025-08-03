@@ -67,7 +67,7 @@ if (\$testUser) {
             'ready_at_om_date' => now(),
             'rank_id' => 1,
             'organization_id' => 1,
-            'role' => 'superuser'
+            'role' => 'manager'
         ]);
         echo 'Usuário criado: admin@test.com / senha: 123456789' . PHP_EOL;
     } catch (Exception \$e) {

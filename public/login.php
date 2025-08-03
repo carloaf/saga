@@ -19,10 +19,10 @@ else {
         'id' => 2,
         'name' => 'Administrador SAGA',
         'email' => 'admin@saga.mil.br',
-        'role' => 'superuser'
+        'role' => 'manager'
     ];
     $loginType = 'Administrador';
-    $role = 'superuser';
+    $role = 'manager';
 }
 ?>
 <!DOCTYPE html>
@@ -86,7 +86,7 @@ else {
                 </div>
             </div>
 
-            <?php if ($role === 'superuser'): ?>
+            <?php if ($role === 'manager'): ?>
             <!-- Admin Features -->
             <div class="border-t border-white/20 pt-4">
                 <h3 class="text-lg font-semibold text-yellow-200 mb-2">🛡️ Área Administrativa:</h3>

@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
         
         // Roles disponíveis:
         // 'user' - Usuário padrão (militares)
-        // 'superuser' - Administrador do sistema
+        // 'manager' - Administrador do sistema
         
         // Criar usuário admin padrão se não existir
         if (!User::where('email', 'admin@saga.mil.br')->exists()) {
@@ -27,7 +27,7 @@ class RoleSeeder extends Seeder
                 'organization_id' => 1, // Assumindo que existe uma organização
                 'gender' => 'male',
                 'ready_at_om_date' => now()->format('Y-m-d'),
-                'role' => 'superuser',
+                'role' => 'manager',
                 'is_active' => true,
             ]);
         }

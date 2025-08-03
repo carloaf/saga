@@ -109,7 +109,7 @@ docker-compose exec app php artisan tinker
 No Tinker:
 ```php
 $user = User::where('email', 'seu_email@gmail.com')->first();
-$user->assignRole('superuser');
+$user->assignRole('manager');
 exit
 ```
 
