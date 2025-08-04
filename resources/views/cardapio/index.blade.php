@@ -40,10 +40,20 @@
     </header>
 
     <div class="container mx-auto py-8 px-4">
-        <!-- Título -->
+        <!-- Título e Botões -->
         <div class="mb-8 text-center">
             <h2 class="text-3xl font-bold text-gray-800 mb-2">📅 Cardápio da Semana</h2>
-            <p class="text-gray-600">Planejamento das refeições para militares do 11º D Sup</p>
+            <p class="text-gray-600 mb-4">
+                Semana de {{ $weekStart->format('d/m/Y') }} - {{ $weekStart->copy()->endOfWeek(\Carbon\Carbon::FRIDAY)->format('d/m/Y') }}
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="{{ route('cardapio.edit') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                    ✏️ Editar Cardápio
+                </a>
+                <button onclick="window.print()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+                    🖨️ Imprimir
+                </button>
+            </div>
         </div>
 
         <!-- Cards do Cardápio -->
@@ -55,6 +65,9 @@
                     <h3 class="text-lg font-bold text-center capitalize">
                         {{ ucfirst($dia) }}-feira
                     </h3>
+                    <p class="text-center text-green-200 text-sm mt-1">
+                        {{ $weekDates[$dia]->format('d/m') }}
+                    </p>
                 </div>
 
                 <!-- Conteúdo -->

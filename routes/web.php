@@ -55,6 +55,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Cardápio routes (apenas para superusers)
     Route::get('/cardapio', [App\Http\Controllers\CardapioController::class, 'index'])->name('cardapio.index');
+    Route::get('/cardapio/edit', [App\Http\Controllers\CardapioController::class, 'edit'])->name('cardapio.edit');
+    Route::put('/cardapio', [App\Http\Controllers\CardapioController::class, 'update'])->name('cardapio.update');
+    Route::get('/cardapio/week/{week_start}', [App\Http\Controllers\CardapioController::class, 'getWeekMenu'])->name('cardapio.week');
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     

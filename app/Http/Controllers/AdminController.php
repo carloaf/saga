@@ -185,9 +185,9 @@ class AdminController extends Controller
      */
     public function reports()
     {
-        // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'manager') {
-            abort(403, 'Acesso negado. Apenas managers podem acessar esta área.');
+        // Verificação de acesso - Managers e Superusers podem acessar
+        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'superuser'])) {
+            abort(403, 'Acesso negado. Apenas managers e superusuários podem acessar esta área.');
         }
 
         // Estatísticas do dia atual
@@ -234,9 +234,9 @@ class AdminController extends Controller
      */
     public function generateReport(Request $request)
     {
-        // Verificação de acesso
-        if (!Auth::user() || Auth::user()->role !== 'manager') {
-            abort(403, 'Acesso negado. Apenas managers podem acessar esta área.');
+        // Verificação de acesso - Managers e Superusers podem acessar
+        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'superuser'])) {
+            abort(403, 'Acesso negado. Apenas managers e superusuários podem acessar esta área.');
         }
 
         $request->validate([
