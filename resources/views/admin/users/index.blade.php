@@ -43,6 +43,7 @@
                         <option value="">Todos os tipos</option>
                         <option value="user">Usuários</option>
                         <option value="manager">Gerentes</option>
+                        <option value="superuser">Superusuários</option>
                     </select>
                     <!-- New User Button -->
                     <button type="button" onclick="openCreateModal()" 
@@ -291,8 +292,20 @@
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
                                 <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
-                                    {{ $user->role === 'manager' ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300' }}">
-                                    {{ $user->role === 'manager' ? '🛡️ Gerente' : '👤 Usuário' }}
+                                    @if($user->role === 'manager')
+                                        bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300
+                                    @elseif($user->role === 'superuser')
+                                        bg-gradient-to-r from-yellow-100 to-amber-200 text-amber-800 border border-amber-300
+                                    @else
+                                        bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300
+                                    @endif">
+                                    @if($user->role === 'manager')
+                                        🛡️ Gerente
+                                    @elseif($user->role === 'superuser')
+                                        ⭐ Superusuário
+                                    @else
+                                        👤 Usuário
+                                    @endif
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
@@ -492,7 +505,8 @@
                                     <select id="createRole" name="role" 
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
                                         <option value="user" selected>👤 Usuário Normal</option>
-                                        <option value="superuser">🛡️ Gerente</option>
+                                        <option value="manager">🛡️ Gerente</option>
+                                        <option value="superuser">⭐ Superusuário</option>
                                     </select>
                                 </div>
                                 
@@ -629,7 +643,8 @@
                             <label for="editRole" class="block text-sm font-semibold text-gray-900 mb-2">Tipo de Usuário</label>
                             <select id="editRole" name="role" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="user">👤 Usuário Normal</option>
-                                <option value="superuser">🛡️ Gerente</option>
+                                <option value="manager">🛡️ Gerente</option>
+                                <option value="superuser">⭐ Superusuário</option>
                             </select>
                         </div>
                     </div>

@@ -53,6 +53,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/profile/preferences', [App\Http\Controllers\ProfileController::class, 'updatePreferences'])->name('profile.preferences');
     Route::get('/profile/dashboard-data', [App\Http\Controllers\ProfileController::class, 'getDashboardData'])->name('profile.dashboard-data');
     
+    // Cardápio routes (apenas para superusers)
+    Route::get('/cardapio', [App\Http\Controllers\CardapioController::class, 'index'])->name('cardapio.index');
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Admin routes

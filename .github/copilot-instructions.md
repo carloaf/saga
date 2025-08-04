@@ -31,7 +31,8 @@ This is a Laravel-based military meal booking system (SAGA) that allows military
 
 2. **User Roles**:
    - `user`: Standard military personnel
-   - `manager`: Administrative access
+   - `manager`: Administrative access (Gestão de Usuários + Relatórios)
+   - `superuser`: Special access (Reservas, Perfil, Relatórios + Cardápio da Semana)
 
 3. **Data Models**:
    - `User`: Military personnel with rank and organization

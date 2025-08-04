@@ -283,7 +283,7 @@
                             </a>
 
                             @if(auth()->user()->role === 'manager')
-                            <!-- Gestão de Usuários -->
+                            <!-- Gestão de Usuários - Apenas para Managers -->
                             <a href="{{ route('admin.users.index') }}" class="group bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-2xl p-6 border border-purple-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
@@ -300,8 +300,30 @@
                                 <h4 class="text-lg font-bold text-purple-900 mb-2">Gestão de Usuários</h4>
                                 <p class="text-sm text-purple-700">Administre usuários e permissões do sistema</p>
                             </a>
+                            @endif
 
-                            <!-- Relatórios Avançados -->
+                            @if(auth()->user()->role === 'superuser')
+                            <!-- Cardápio da Semana - Apenas para Superusers -->
+                            <a href="{{ route('cardapio.index') }}" class="group bg-gradient-to-br from-amber-50 to-yellow-100 hover:from-amber-100 hover:to-yellow-200 rounded-2xl p-6 border border-amber-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 00-2 2v2m0 0V9a2 2 0 012-2m0 0V7a2 2 0 012-2h6a2 2 0 012 2v2M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="w-6 h-6 bg-amber-200 rounded-full flex items-center justify-center group-hover:bg-amber-300 transition-colors">
+                                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h4 class="text-lg font-bold text-amber-900 mb-2">Cardápio da Semana</h4>
+                                <p class="text-sm text-amber-700">Visualize o planejamento das refeições da semana</p>
+                            </a>
+                            @endif
+
+                            @if(auth()->user()->role === 'manager' || auth()->user()->role === 'superuser')
+                            <!-- Relatórios Avançados - Para Managers e Superusers -->
                             <a href="{{ route('admin.reports.index') }}" class="group bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-2xl p-6 border border-orange-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
@@ -318,8 +340,10 @@
                                 <h4 class="text-lg font-bold text-orange-900 mb-2">Relatórios Avançados</h4>
                                 <p class="text-sm text-orange-700">Analise dados e exporte relatórios detalhados</p>
                             </a>
-                            @else
-                            <!-- Para usuários normais - cards adicionais ou espaço -->
+                            @endif
+
+                            @if(auth()->user()->role === 'user')
+                            <!-- Para usuários normais - card informativo -->
                             <div class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 border border-gray-200 opacity-50">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -329,7 +353,7 @@
                                     </div>
                                 </div>
                                 <h4 class="text-lg font-bold text-gray-600 mb-2">Acesso Restrito</h4>
-                                <p class="text-sm text-gray-500">Funcionalidades administrativas disponíveis apenas para superusuários</p>
+                                <p class="text-sm text-gray-500">Funcionalidades administrativas disponíveis apenas para usuários especiais</p>
                             </div>
                             @endif
                         </div>
