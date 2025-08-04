@@ -223,8 +223,8 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
+    <main class="max-w-7xl mx-auto pb-6 sm:px-6 lg:px-8">
+        <div class="px-4 pb-6 sm:px-0">
             <div class="space-y-6">
                 <!-- Enhanced Navigation Menu -->
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100">
@@ -318,7 +318,7 @@
                                     </div>
                                 </div>
                                 <h4 class="text-lg font-bold text-amber-900 mb-2">Cardápio da Semana</h4>
-                                <p class="text-sm text-amber-700">Visualize o planejamento das refeições da semana</p>
+                                <p class="text-sm text-amber-700">Visualize e edite o planejamento das refeições da semana</p>
                             </a>
                             @endif
 
@@ -365,7 +365,7 @@
                     <!-- Daily Bookings Chart -->
                     <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 relative flex flex-col h-full">
                         <!-- Header with gradient -->
-                        <div class="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 px-6 py-5 border-b border-gray-200">
+                        <div class="bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 px-6 py-3 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -441,7 +441,7 @@
                     <!-- Origin Breakdown Chart -->
                     <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 relative flex flex-col h-full">
                         <!-- Header with gradient -->
-                        <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 px-6 py-5 border-b border-gray-200">
+                        <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 px-6 py-3 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -510,7 +510,7 @@
                     <!-- Meal Comparison Chart -->
                     <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 relative flex flex-col h-full">
                         <!-- Header with gradient -->
-                        <div class="bg-gradient-to-r from-orange-50 via-yellow-50 to-amber-50 px-6 py-5 border-b border-gray-200">
+                        <div class="bg-gradient-to-r from-orange-50 via-yellow-50 to-amber-50 px-6 py-3 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -587,7 +587,7 @@
                     <!-- Top Ranks Chart -->
                     <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 relative flex flex-col h-full">
                         <!-- Header with gradient -->
-                        <div class="bg-gradient-to-r from-purple-50 via-pink-50 to-red-50 px-6 py-5 border-b border-gray-200">
+                        <div class="bg-gradient-to-r from-purple-50 via-pink-50 to-red-50 px-6 py-3 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -622,79 +622,199 @@
                         <!-- Menu content with enhanced styling -->
                         <div class="p-6 bg-gradient-to-br from-white to-gray-50">
                             <!-- Weekly menu days -->
-                            <div class="space-y-4">
-                                <!-- Segunda-feira -->
-                                <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                                                <span class="text-white text-sm font-bold">S</span>
+                            <div class="space-y-2">
+                                @if($weeklyMenu && $weekDates)
+                                    <!-- Segunda-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showMenuModal('segunda', '{{ $weekDates['segunda']->format('d/m') }}')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">S</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-green-800">Segunda-feira</h4>
+                                                    <p class="text-sm text-green-600">{{ $weekDates['segunda']->format('d/m') }}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 class="font-semibold text-green-800">Segunda-feira</h4>
-                                                <p class="text-sm text-green-600">{{ \Carbon\Carbon::now()->startOfWeek()->format('d/m') }}</p>
+                                            <div class="text-right">
+                                                <div class="text-xs text-green-600 font-medium">🍽️ Clique para ver</div>
                                             </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-xs text-green-600 font-medium">🍽️ Café & Almoço</div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Terça-feira -->
-                                <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                                                <span class="text-white text-sm font-bold">T</span>
+                                    <!-- Terça-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showMenuModal('terca', '{{ $weekDates['terca']->format('d/m') }}')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">T</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-blue-800">Terça-feira</h4>
+                                                    <p class="text-sm text-blue-600">{{ $weekDates['terca']->format('d/m') }}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 class="font-semibold text-blue-800">Terça-feira</h4>
-                                                <p class="text-sm text-blue-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDay()->format('d/m') }}</p>
+                                            <div class="text-right">
+                                                <div class="text-xs text-blue-600 font-medium">🍽️ Clique para ver</div>
                                             </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-xs text-blue-600 font-medium">🍽️ Café & Almoço</div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Quarta-feira -->
-                                <div class="p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-100">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                                                <span class="text-white text-sm font-bold">Q</span>
+                                    <!-- Quarta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showMenuModal('quarta', '{{ $weekDates['quarta']->format('d/m') }}')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">Q</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-purple-800">Quarta-feira</h4>
+                                                    <p class="text-sm text-purple-600">{{ $weekDates['quarta']->format('d/m') }}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 class="font-semibold text-purple-800">Quarta-feira</h4>
-                                                <p class="text-sm text-purple-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDays(2)->format('d/m') }}</p>
+                                            <div class="text-right">
+                                                <div class="text-xs text-purple-600 font-medium">🍽️ Clique para ver</div>
                                             </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-xs text-purple-600 font-medium">🍽️ Café & Almoço</div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Quinta-feira -->
-                                <div class="p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                                                <span class="text-white text-sm font-bold">Q</span>
+                                    <!-- Quinta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showMenuModal('quinta', '{{ $weekDates['quinta']->format('d/m') }}')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">Q</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-orange-800">Quinta-feira</h4>
+                                                    <p class="text-sm text-orange-600">{{ $weekDates['quinta']->format('d/m') }}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 class="font-semibold text-orange-800">Quinta-feira</h4>
-                                                <p class="text-sm text-orange-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDays(3)->format('d/m') }}</p>
+                                            <div class="text-right">
+                                                <div class="text-xs text-orange-600 font-medium">🍽️ Clique para ver</div>
                                             </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <div class="text-xs text-orange-600 font-medium">🍽️ Café & Almoço</div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
+
+                                    <!-- Sexta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-xl border border-red-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showMenuModal('sexta', '{{ $weekDates['sexta']->format('d/m') }}')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">S</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-red-800">Sexta-feira</h4>
+                                                    <p class="text-sm text-red-600">{{ $weekDates['sexta']->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-red-600 font-medium">☕ Só café</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- Exibição quando não há cardápio cadastrado -->
+                                    <!-- Segunda-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showNoMenuMessage('Segunda-feira')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">S</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-green-800">Segunda-feira</h4>
+                                                    <p class="text-sm text-green-600">{{ \Carbon\Carbon::now()->startOfWeek()->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-green-600 font-medium">🍽️ Clique para ver</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Terça-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showNoMenuMessage('Terça-feira')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">T</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-blue-800">Terça-feira</h4>
+                                                    <p class="text-sm text-blue-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDay()->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-blue-600 font-medium">🍽️ Clique para ver</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quarta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showNoMenuMessage('Quarta-feira')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">Q</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-purple-800">Quarta-feira</h4>
+                                                    <p class="text-sm text-purple-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDays(2)->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-purple-600 font-medium">🍽️ Clique para ver</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quinta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showNoMenuMessage('Quinta-feira')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">Q</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-orange-800">Quinta-feira</h4>
+                                                    <p class="text-sm text-orange-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDays(3)->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-orange-600 font-medium">🍽️ Clique para ver</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sexta-feira -->
+                                    <div class="p-3 bg-gradient-to-r from-red-50 to-pink-50 rounded-xl border border-red-100 cursor-pointer hover:shadow-md transition-all duration-200" 
+                                         onclick="showNoMenuMessage('Sexta-feira')">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                                                    <span class="text-white text-sm font-bold">S</span>
+                                                </div>
+                                                <div>
+                                                    <h4 class="font-semibold text-red-800">Sexta-feira</h4>
+                                                    <p class="text-sm text-red-600">{{ \Carbon\Carbon::now()->startOfWeek()->addDays(4)->format('d/m') }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-xs text-red-600 font-medium">☕ Só café</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             
                             <!-- Info footer -->
                             <div class="mt-4 flex items-center justify-between text-sm">
@@ -708,6 +828,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <!-- Quick Stats -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -877,6 +998,106 @@
                         beginAtZero: true
                     }
                 }
+            }
+        });
+    </script>
+
+    <!-- Modal para Cardápio do Dia -->
+    <div id="dayMenuModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-4 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-2">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-lg font-bold text-gray-900" id="modalTitle">Cardápio do Dia</h3>
+                    <button onclick="closeDayMenuModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        <h4 class="font-bold text-gray-800 mb-1 flex items-center">
+                            ☕ Café da Manhã
+                        </h4>
+                        <p class="text-sm text-gray-600" id="modalCafe">-</p>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200" id="modalAlmocoDiv">
+                        <h4 class="font-bold text-gray-800 mb-1 flex items-center">
+                            🍽️ Almoço
+                        </h4>
+                        <p class="text-sm text-gray-600" id="modalAlmoco">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do cardápio vindo do PHP
+        @if($weeklyMenu)
+        const weeklyMenuData = @json($weeklyMenu);
+        @else
+        const weeklyMenuData = null;
+        @endif
+        
+        function showMenuModal(dia, data) {
+            // Mapear nomes dos dias
+            const diasNomes = {
+                'segunda': 'Segunda-feira',
+                'terca': 'Terça-feira',
+                'quarta': 'Quarta-feira',
+                'quinta': 'Quinta-feira',
+                'sexta': 'Sexta-feira'
+            };
+            
+            // Verificar se temos dados do cardápio
+            if (!weeklyMenuData || !weeklyMenuData[dia]) {
+                alert('Cardápio não encontrado para este dia.');
+                return;
+            }
+            
+            const dayMenu = weeklyMenuData[dia];
+            
+            // Atualizar título
+            document.getElementById('modalTitle').textContent = diasNomes[dia] + ' - ' + data;
+            
+            // Atualizar conteúdo
+            document.getElementById('modalCafe').textContent = dayMenu.cafe || 'Não informado';
+            
+            // Para sexta-feira, não há almoço
+            if (dia === 'sexta') {
+                document.getElementById('modalAlmoco').textContent = 'Não há almoço às sextas-feiras';
+                document.getElementById('modalAlmocoDiv').style.display = 'block';
+                document.getElementById('modalAlmocoDiv').classList.add('opacity-50');
+            } else {
+                document.getElementById('modalAlmoco').textContent = dayMenu.almoco || 'Não informado';
+                document.getElementById('modalAlmocoDiv').style.display = 'block';
+                document.getElementById('modalAlmocoDiv').classList.remove('opacity-50');
+            }
+            
+            // Mostrar modal
+            document.getElementById('dayMenuModal').classList.remove('hidden');
+        }
+        
+        function showNoMenuMessage(dia) {
+            alert('Cardápio para ' + dia + ' ainda não foi cadastrado. Entre em contato com a administração.');
+        }
+        
+        function showDayMenu(dia, data, cafe, almoco) {
+            // Função mantida para compatibilidade - redireciona para showMenuModal
+            showMenuModal(dia, data);
+        }
+        
+        function closeDayMenuModal() {
+            document.getElementById('dayMenuModal').classList.add('hidden');
+        }
+        
+        // Fechar modal ao clicar fora dele
+        document.getElementById('dayMenuModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDayMenuModal();
             }
         });
     </script>

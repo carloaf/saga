@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Organization;
+use App\Models\WeeklyMenu;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -24,8 +26,33 @@ class DashboardController extends Controller
             'mealComparison' => $this->getMealComparisonData($dateRange),
             'topRanks' => $this->getTopRanksData($dateRange),
         ];
+
+        // Get weekly menu for all users
+        $weeklyMenu = null;
+        $weekDates = null;
+        if (Auth::user()) {
+            $currentWeekMenu = WeeklyMenu::getCurrentWeekMenu();
+            $weeklyMenu = $currentWeekMenu ? $currentWeekMenu->menu_data : null;
+            
+            // Calculate week dates
+            $now = Carbon::now();
+            $weekStart = $now->copy()->startOfWeek(Carbon::MONDAY);
+            
+            // Se for sexta-feira, sábado ou domingo, pega a próxima semana
+            if ($now->dayOfWeek >= Carbon::FRIDAY) {
+                $weekStart->addWeek();
+            }
+
+            $weekDates = [
+                'segunda' => $weekStart->copy(),
+                'terca' => $weekStart->copy()->addDay(),
+                'quarta' => $weekStart->copy()->addDays(2),
+                'quinta' => $weekStart->copy()->addDays(3),
+                'sexta' => $weekStart->copy()->addDays(4)
+            ];
+        }
         
-        return view('dashboard.index', compact('chartData', 'period'));
+        return view('dashboard.index', compact('chartData', 'period', 'weeklyMenu', 'weekDates'));
     }
     
     private function getDateRange($period)

@@ -89,7 +89,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">☕ Café da Manhã</label>
-                            <textarea name="menu[segunda][cafe]" rows="3" 
+                            <textarea name="menu[segunda][cafe]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                       placeholder="Ex: Café, Pão Francês, Manteiga, Leite"
                                       required>{{ old('menu.segunda.cafe', $cardapio['segunda']['cafe'] ?? '') }}</textarea>
@@ -97,7 +97,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">🍽️ Almoço</label>
-                            <textarea name="menu[segunda][almoco]" rows="3" 
+                            <textarea name="menu[segunda][almoco]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                       placeholder="Ex: Arroz, Feijão, Carne Assada, Salada Verde"
                                       required>{{ old('menu.segunda.almoco', $cardapio['segunda']['almoco'] ?? '') }}</textarea>
@@ -115,7 +115,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">☕ Café da Manhã</label>
-                            <textarea name="menu[terca][cafe]" rows="3" 
+                            <textarea name="menu[terca][cafe]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                       placeholder="Ex: Café, Pão de Forma, Requeijão, Leite"
                                       required>{{ old('menu.terca.cafe', $cardapio['terca']['cafe'] ?? '') }}</textarea>
@@ -123,7 +123,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">🍽️ Almoço</label>
-                            <textarea name="menu[terca][almoco]" rows="3" 
+                            <textarea name="menu[terca][almoco]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                       placeholder="Ex: Arroz, Feijão, Frango Grelhado, Legumes"
                                       required>{{ old('menu.terca.almoco', $cardapio['terca']['almoco'] ?? '') }}</textarea>
@@ -141,7 +141,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">☕ Café da Manhã</label>
-                            <textarea name="menu[quarta][cafe]" rows="3" 
+                            <textarea name="menu[quarta][cafe]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                       placeholder="Ex: Café, Pão Francês, Presunto e Queijo, Leite"
                                       required>{{ old('menu.quarta.cafe', $cardapio['quarta']['cafe'] ?? '') }}</textarea>
@@ -149,7 +149,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">🍽️ Almoço</label>
-                            <textarea name="menu[quarta][almoco]" rows="3" 
+                            <textarea name="menu[quarta][almoco]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                       placeholder="Ex: Arroz, Feijão, Peixe Assado, Salada Mista"
                                       required>{{ old('menu.quarta.almoco', $cardapio['quarta']['almoco'] ?? '') }}</textarea>
@@ -167,7 +167,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">☕ Café da Manhã</label>
-                            <textarea name="menu[quinta][cafe]" rows="3" 
+                            <textarea name="menu[quinta][cafe]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                       placeholder="Ex: Café, Pão de Forma, Manteiga, Leite"
                                       required>{{ old('menu.quinta.cafe', $cardapio['quinta']['cafe'] ?? '') }}</textarea>
@@ -175,7 +175,7 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">🍽️ Almoço</label>
-                            <textarea name="menu[quinta][almoco]" rows="3" 
+                            <textarea name="menu[quinta][almoco]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                                       placeholder="Ex: Arroz, Feijão, Carne de Porco, Purê de Batata"
                                       required>{{ old('menu.quinta.almoco', $cardapio['quinta']['almoco'] ?? '') }}</textarea>
@@ -193,7 +193,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">☕ Café da Manhã</label>
-                            <textarea name="menu[sexta][cafe]" rows="3" 
+                            <textarea name="menu[sexta][cafe]" rows="6" 
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                                       placeholder="Ex: Café, Pão Francês, Geleia, Leite"
                                       required>{{ old('menu.sexta.cafe', $cardapio['sexta']['cafe'] ?? '') }}</textarea>
