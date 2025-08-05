@@ -11,6 +11,46 @@ use Carbon\Carbon;
 class BookingController extends Controller
 {
     /**
+     * Check if booking deadline has passed for a given date
+     * Rule: After 13:00 of the current day, block bookings for the next day
+     */
+    private function hasBookingDeadlinePassed($bookingDate)
+    {
+        $now = Carbon::now();
+        $bookingDateCarbon = Carbon::parse($bookingDate);
+        
+        // If trying to book for today, always allow (handled by other logic)
+        if ($bookingDateCarbon->isToday()) {
+            return false;
+        }
+        
+        // If trying to book for tomorrow and it's past 13:00 today, block it
+        if ($bookingDateCarbon->isTomorrow() && $now->hour >= 13) {
+            return true;
+        }
+        
+        // For dates further in the future, check if it's past 13:00 of the day before
+        $deadlineDateTime = $bookingDateCarbon->copy()->subDay()->setTime(13, 0, 0);
+        
+        return $now->gte($deadlineDateTime);
+    }
+
+    /**
+     * Get the deadline message for a given booking date
+     */
+    private function getDeadlineMessage($bookingDate)
+    {
+        $bookingDateCarbon = Carbon::parse($bookingDate);
+        
+        if ($bookingDateCarbon->isTomorrow()) {
+            return 'Não é possível fazer reservas para amanhã após às 13h de hoje.';
+        }
+        
+        $deadlineDateTime = $bookingDateCarbon->copy()->subDay()->setTime(13, 0, 0);
+        return 'Prazo expirado para ' . $bookingDateCarbon->format('d/m/Y') . ' (limite: ' . $deadlineDateTime->format('d/m/Y \à\s H:i') . ')';
+    }
+
+    /**
      * Display the bookings index page
      */
     public function index()
@@ -134,11 +174,13 @@ class BookingController extends Controller
                     continue;
                 }
                 
-                // Check if it's past 13h (1 PM) of the day before the booking
-                $deadlineDateTime = $date->copy()->subDay()->setTime(13, 0, 0);
-                
-                if ($now->gte($deadlineDateTime)) {
-                    $errors[] = "Prazo expirado para " . $date->format('d/m/Y') . " (limite: " . $deadlineDateTime->format('d/m/Y \à\s H:i') . ")";
+                // Check if booking deadline has passed
+                if ($this->hasBookingDeadlinePassed($date)) {
+                    if ($date->isTomorrow()) {
+                        $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de hoje";
+                    } else {
+                        $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nPrazo para reserva expirou";
+                    }
                     continue;
                 }
                 
@@ -169,14 +211,13 @@ class BookingController extends Controller
             }
             
             if (count($reservations) > 0) {
-                $message = count($reservations) . " reserva(s) de café da manhã realizadas com sucesso!";
+                $message = "✅ " . count($reservations) . " reserva(s) de café realizadas!";
                 if (count($errors) > 0) {
-                    $message .= " Alguns erros: " . implode(', ', $errors);
+                    $message .= "\n\n⚠️ Avisos:\n" . implode("\n", $errors);
                 }
-                return response()->json(['success' => true, 'message' => $message]);
+                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $weekStart->format('d/m/Y')]);
             } else {
-                $errorMessage = count($errors) > 0 ? implode(', ', $errors) : 'Nenhuma reserva nova foi necessária ou possível.';
-                return response()->json(['success' => false, 'message' => $errorMessage]);
+                return response()->json(['success' => false, 'message' => 'Nenhuma reserva realizada.', 'type' => 'warning']);
             }
             
         } catch (\Exception $e) {
@@ -228,11 +269,13 @@ class BookingController extends Controller
                     continue;
                 }
                 
-                // Check if it's past 13h (1 PM) of the day before the booking
-                $deadlineDateTime = $date->copy()->subDay()->setTime(13, 0, 0);
-                
-                if ($now->gte($deadlineDateTime)) {
-                    $errors[] = "Prazo expirado para " . $date->format('d/m/Y') . " (limite: " . $deadlineDateTime->format('d/m/Y \à\s H:i') . ")";
+                // Check if booking deadline has passed
+                if ($this->hasBookingDeadlinePassed($date)) {
+                    if ($date->isTomorrow()) {
+                        $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de hoje";
+                    } else {
+                        $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nPrazo para reserva expirou";
+                    }
                     continue;
                 }
                 
@@ -263,14 +306,13 @@ class BookingController extends Controller
             }
             
             if (count($reservations) > 0) {
-                $message = count($reservations) . " reserva(s) de almoço realizadas com sucesso!";
+                $message = "✅ " . count($reservations) . " reserva(s) de almoço realizadas!";
                 if (count($errors) > 0) {
-                    $message .= " Alguns erros: " . implode(', ', $errors);
+                    $message .= "\n\n⚠️ Avisos:\n" . implode("\n", $errors);
                 }
-                return response()->json(['success' => true, 'message' => $message]);
+                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $weekStart->format('d/m/Y')]);
             } else {
-                $errorMessage = count($errors) > 0 ? implode(', ', $errors) : 'Nenhuma reserva nova foi necessária ou possível.';
-                return response()->json(['success' => false, 'message' => $errorMessage]);
+                return response()->json(['success' => false, 'message' => 'Nenhuma reserva realizada.', 'type' => 'warning']);
             }
             
         } catch (\Exception $e) {
@@ -304,13 +346,11 @@ class BookingController extends Controller
                 ], 400);
             }
             
-            // Check if it's past 13h (1 PM) of the day before the booking
-            $deadlineDateTime = $date->copy()->subDay()->setTime(13, 0, 0);
-            
-            if ($now->gte($deadlineDateTime)) {
+            // Check if booking deadline has passed
+            if ($this->hasBookingDeadlinePassed($date)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Não é possível fazer reservas após às 13h do dia anterior. Prazo expirado em ' . $deadlineDateTime->format('d/m/Y \à\s H:i') . '.'
+                    'message' => $this->getDeadlineMessage($date)
                 ], 400);
             }
             
@@ -423,13 +463,11 @@ class BookingController extends Controller
                 ], 400);
             }
             
-            // Check if it's past 13h (1 PM) of the day before the booking
-            $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
-            
-            if ($now->gte($deadlineDateTime)) {
+            // Check if booking deadline has passed (same rule for cancellation)
+            if ($this->hasBookingDeadlinePassed($bookingDate)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Não é possível cancelar reservas após às 13h do dia anterior. Prazo expirado em ' . $deadlineDateTime->format('d/m/Y \à\s H:i') . '.'
+                    'message' => 'Não é possível cancelar reservas: ' . $this->getDeadlineMessage($bookingDate)
                 ], 400);
             }
             

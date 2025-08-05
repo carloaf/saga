@@ -803,7 +803,8 @@ function getRankSymbol($rankName) {
             const toastMessage = document.getElementById('toast-message');
             const toastDiv = toast.querySelector('div');
             
-            toastMessage.textContent = message;
+            // Convert line breaks to HTML breaks for proper display
+            toastMessage.innerHTML = message.replace(/\n/g, '<br>');
             
             // Update toast color based on type
             if (type === 'error') {
@@ -875,5 +876,14 @@ function getRankSymbol($rankName) {
             }
         });
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-25 border-t border-gray-100 mt-8">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-sm text-gray-400 italic">
+                © 2025 SAGA - Desenv: Augusto
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

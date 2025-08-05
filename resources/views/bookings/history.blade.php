@@ -81,81 +81,158 @@
                 </div>
             </div>
 
-            <!-- Booking History Table -->
+            <!-- Booking History -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">📋 Todas as Reservas</h3>
                     
                     @if($allBookings->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Refeição</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dia da Semana</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reservado em</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($allBookings as $booking)
+                        @php
+                            $bookingsCount = $allBookings->count();
+                            $useColumns = $bookingsCount >= 12;
+                            $halfCount = $useColumns ? ceil($bookingsCount / 2) : $bookingsCount;
+                            $firstColumnBookings = $allBookings->take($halfCount);
+                            $secondColumnBookings = $useColumns ? $allBookings->skip($halfCount) : collect();
+                        @endphp
+                        
+                        <div class="{{ $useColumns ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : '' }}">
+                            <!-- Primeira coluna ou coluna única -->
+                            <div class="space-y-2">
+                                @foreach($firstColumnBookings as $booking)
+                                    @php
+                                        $bookingDate = \Carbon\Carbon::parse($booking->booking_date);
+                                        $isPast = $bookingDate->isPast();
+                                        $isToday = $bookingDate->isToday();
+                                        
+                                        // Check if cancellation deadline has passed using the new rule
+                                        $now = \Carbon\Carbon::now();
+                                        $canCancel = !$isPast && !$isToday;
+                                        
+                                        if ($canCancel) {
+                                            if ($bookingDate->isTomorrow() && $now->hour >= 13) {
+                                                $canCancel = false;
+                                            } else {
+                                                $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
+                                                $canCancel = $now->lt($deadlineDateTime);
+                                            }
+                                        }
+                                        
+                                        // Garantir que status seja tratado corretamente
+                                        $bookingStatus = $booking->status ?? 'confirmed';
+                                        $bookingStatus = trim(strtolower($bookingStatus));
+                                    @endphp
+                                    <div class="flex justify-between items-center py-3 px-4 {{ $isPast ? 'bg-gray-50' : 'bg-blue-50' }} rounded-lg border-l-4 {{ $isPast ? 'border-gray-300' : 'border-blue-400' }}">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-3 h-3 rounded-full {{ $booking->meal_type === 'breakfast' ? 'bg-green-500' : 'bg-blue-500' }}"></div>
+                                            <div class="flex flex-col">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-sm font-medium">{{ $bookingDate->format('d/m/Y') }}</span>
+                                                    <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                                </div>
+                                                <div class="flex items-center space-x-2 mt-1">
+                                                    <span class="text-xs px-2 py-1 rounded-full 
+                                                        {{ $bookingStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                                           ($bookingStatus === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                                        {{ $bookingStatus === 'confirmed' ? 'Confirmada' : 
+                                                           ($bookingStatus === 'cancelled' ? 'Cancelada' : ucfirst($bookingStatus)) }}
+                                                    </span>
+                                                    <span class="text-xs text-gray-500">{{ $bookingDate->locale('pt_BR')->isoFormat('dddd') }}</span>
+                                                    <span class="text-xs text-gray-400">{{ $booking->created_at->format('d/m/Y H:i') }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center">
+                                            @if($canCancel && $bookingStatus === 'confirmed')
+                                                <button onclick="cancelBooking('{{ $booking->id }}', this)" class="text-red-600 hover:text-red-800 transition duration-300 p-1" title="Cancelar reserva">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            @elseif($isPast)
+                                                <span class="text-gray-400 text-sm">{{ $bookingStatus === 'cancelled' ? 'Cancelada' : 'Concluída' }}</span>
+                                            @elseif($bookingStatus === 'cancelled')
+                                                <span class="text-red-400 text-sm">Cancelada</span>
+                                            @else
+                                                <span class="text-gray-400 p-1" title="Não cancelável">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                    </svg>
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <!-- Segunda coluna (apenas quando há 12+ registros) -->
+                            @if($useColumns && $secondColumnBookings->count() > 0)
+                                <div class="space-y-2">
+                                    @foreach($secondColumnBookings as $booking)
                                         @php
                                             $bookingDate = \Carbon\Carbon::parse($booking->booking_date);
                                             $isPast = $bookingDate->isPast();
                                             $isToday = $bookingDate->isToday();
-                                            $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
-                                            $canCancel = !$isPast && !$isToday && \Carbon\Carbon::now()->lt($deadlineDateTime);
+                                            
+                                            // Check if cancellation deadline has passed using the new rule
+                                            $now = \Carbon\Carbon::now();
+                                            $canCancel = !$isPast && !$isToday;
+                                            
+                                            if ($canCancel) {
+                                                if ($bookingDate->isTomorrow() && $now->hour >= 13) {
+                                                    $canCancel = false;
+                                                } else {
+                                                    $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
+                                                    $canCancel = $now->lt($deadlineDateTime);
+                                                }
+                                            }
+                                            
+                                            // Garantir que status seja tratado corretamente
+                                            $bookingStatus = $booking->status ?? 'confirmed';
+                                            $bookingStatus = trim(strtolower($bookingStatus));
                                         @endphp
-                                        <tr class="{{ $isPast ? 'bg-gray-50' : '' }}">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {{ $bookingDate->format('d/m/Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                <div class="flex items-center">
-                                                    <span class="w-3 h-3 rounded-full {{ $booking->meal_type === 'breakfast' ? 'bg-green-500' : 'bg-blue-500' }} mr-2"></span>
-                                                    {{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}
+                                        <div class="flex justify-between items-center py-3 px-4 {{ $isPast ? 'bg-gray-50' : 'bg-blue-50' }} rounded-lg border-l-4 {{ $isPast ? 'border-gray-300' : 'border-blue-400' }}">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-3 h-3 rounded-full {{ $booking->meal_type === 'breakfast' ? 'bg-green-500' : 'bg-blue-500' }}"></div>
+                                                <div class="flex flex-col">
+                                                    <div class="flex items-center space-x-2">
+                                                        <span class="text-sm font-medium">{{ $bookingDate->format('d/m/Y') }}</span>
+                                                        <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                                    </div>
+                                                    <div class="flex items-center space-x-2 mt-1">
+                                                        <span class="text-xs px-2 py-1 rounded-full 
+                                                            {{ $bookingStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 
+                                                               ($bookingStatus === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                                            {{ $bookingStatus === 'confirmed' ? 'Confirmada' : 
+                                                               ($bookingStatus === 'cancelled' ? 'Cancelada' : ucfirst($bookingStatus)) }}
+                                                        </span>
+                                                        <span class="text-xs text-gray-500">{{ $bookingDate->locale('pt_BR')->isoFormat('dddd') }}</span>
+                                                        <span class="text-xs text-gray-400">{{ $booking->created_at->format('d/m/Y H:i') }}</span>
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    {{ $booking->status === 'confirmed' ? 'bg-green-100 text-green-800' : 
-                                                       ($booking->status === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                                    {{ ucfirst($booking->status) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $bookingDate->locale('pt_BR')->isoFormat('dddd') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $booking->created_at->format('d/m/Y H:i') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                @if($canCancel && $booking->status === 'confirmed')
-                                                    <button onclick="cancelBooking('{{ $booking->id }}', this)" 
-                                                            class="text-red-600 hover:text-red-900 transition duration-300 p-1"
-                                                            title="Cancelar reserva">
+                                            </div>
+                                            <div class="flex items-center">
+                                                @if($canCancel && $bookingStatus === 'confirmed')
+                                                    <button onclick="cancelBooking('{{ $booking->id }}', this)" class="text-red-600 hover:text-red-800 transition duration-300 p-1" title="Cancelar reserva">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                         </svg>
                                                     </button>
                                                 @elseif($isPast)
-                                                    <span class="text-gray-400">Concluída</span>
-                                                @elseif($booking->status === 'cancelled')
-                                                    <span class="text-red-400">Cancelada</span>
+                                                    <span class="text-gray-400 text-sm">{{ $bookingStatus === 'cancelled' ? 'Cancelada' : 'Concluída' }}</span>
+                                                @elseif($bookingStatus === 'cancelled')
+                                                    <span class="text-red-400 text-sm">Cancelada</span>
                                                 @else
                                                     <span class="text-gray-400 p-1" title="Não cancelável">
                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                                         </svg>
                                                     </span>
                                                 @endif
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </div>
                                     @endforeach
-                                </tbody>
-                            </table>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Pagination -->
@@ -219,7 +296,8 @@
             const toastMessage = document.getElementById('toast-message');
             const toastDiv = toast.querySelector('div');
             
-            toastMessage.textContent = message;
+            // Convert line breaks to HTML breaks for proper display
+            toastMessage.innerHTML = message.replace(/\n/g, '<br>');
             
             // Update toast color based on type
             if (type === 'error') {
@@ -272,5 +350,14 @@
             });
         }
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-25 border-t border-gray-100 mt-8">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-sm text-gray-400 italic">
+                © 2025 SAGA - Desenv: Augusto
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

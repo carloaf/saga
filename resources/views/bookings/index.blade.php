@@ -100,9 +100,18 @@
                                 $isWeekend = $date->isWeekend();
                                 $isTooFar = $date->gt($maxBookingDate);
                                 
-                                // Check if deadline (13h of the day before) has passed
-                                $deadlineDateTime = $date->copy()->subDay()->setTime(13, 0, 0);
-                                $deadlinePassed = Carbon\Carbon::now()->gte($deadlineDateTime);
+                                // Check if deadline has passed using the same logic as backend
+                                $now = Carbon\Carbon::now();
+                                $deadlinePassed = false;
+                                
+                                // Se é hoje ou passou, não pode reservar
+                                if ($date->isPast() || $date->isToday()) {
+                                    $deadlinePassed = true;
+                                }
+                                // Se é amanhã e já passou das 13h hoje, bloquear
+                                else if ($date->isTomorrow() && $now->hour >= 13) {
+                                    $deadlinePassed = true;
+                                }
                                 
                                 $isBookable = $isCurrentMonth && !$isPast && !$isWeekend && !$isTooFar && !$deadlinePassed;
                                 $isFriday = $date->isFriday();
@@ -115,7 +124,7 @@
                             <div class="p-2 text-center relative min-h-[70px] flex flex-col justify-between
                                 {{ !$isCurrentMonth ? 'text-gray-400' : '' }}
                                 {{ $isToday ? 'bg-blue-100 font-bold' : '' }}
-                                {{ $isWeekend || $isPast || $isTooFar ? 'bg-gray-100 text-gray-400' : 'border cursor-pointer hover:bg-blue-50' }}
+                                {{ !$isBookable ? 'bg-gray-100 text-gray-400' : 'border cursor-pointer hover:bg-blue-50' }}
                                 {{ $isBookable ? 'calendar-day' : '' }}"
                                 @if($isBookable)
                                     data-date="{{ $date->format('Y-m-d') }}" 
@@ -189,8 +198,19 @@
                                         $bookingDate = \Carbon\Carbon::parse($booking->booking_date);
                                         $isPast = $bookingDate->isPast();
                                         $isToday = $bookingDate->isToday();
-                                        $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
-                                        $canCancel = !$isPast && !$isToday && \Carbon\Carbon::now()->lt($deadlineDateTime);
+                                        
+                                        // Check if cancellation deadline has passed using the new rule
+                                        $now = \Carbon\Carbon::now();
+                                        $canCancel = !$isPast && !$isToday;
+                                        
+                                        if ($canCancel) {
+                                            if ($bookingDate->isTomorrow() && $now->hour >= 13) {
+                                                $canCancel = false;
+                                            } else {
+                                                $deadlineDateTime = $bookingDate->copy()->subDay()->setTime(13, 0, 0);
+                                                $canCancel = $now->lt($deadlineDateTime);
+                                            }
+                                        }
                                         
                                         // Garantir que status seja tratado corretamente
                                         $bookingStatus = $booking->status ?? 'confirmed';
@@ -335,9 +355,9 @@
     </main>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
-        <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
-            <span id="toast-message">Mensagem</span>
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden max-w-md">
+        <div class="bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg">
+            <div id="toast-message" class="text-sm leading-relaxed whitespace-pre-line">Mensagem</div>
         </div>
     </div>
 
@@ -392,6 +412,9 @@
     <script>
         // CSRF Token for AJAX requests
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        
+        // Month bookings data
+        const monthBookings = @json($monthBookings);
 
         // Toast notification function
         function showToast(message, type = 'success') {
@@ -399,20 +422,25 @@
             const toastMessage = document.getElementById('toast-message');
             const toastDiv = toast.querySelector('div');
             
-            toastMessage.textContent = message;
+            // Convert line breaks to HTML breaks for proper display
+            toastMessage.innerHTML = message.replace(/\n/g, '<br>');
             
             // Update toast color based on type
             if (type === 'error') {
-                toastDiv.className = 'bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
+                toastDiv.className = 'bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg';
+            } else if (type === 'warning') {
+                toastDiv.className = 'bg-yellow-500 text-white px-6 py-4 rounded-lg shadow-lg';
             } else {
-                toastDiv.className = 'bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+                toastDiv.className = 'bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg';
             }
             
             toast.classList.remove('hidden');
             
+            // Increase timeout for longer messages
+            const timeout = message.length > 100 ? 8000 : 7000;
             setTimeout(() => {
                 toast.classList.add('hidden');
-            }, 5000);
+            }, timeout);
         }
 
         // Show/hide loading modal
@@ -445,7 +473,8 @@
                     // Reload page to update bookings
                     setTimeout(() => location.reload(), 2000);
                 } else {
-                    showToast(data.message, 'error');
+                    const toastType = data.type || 'error';
+                    showToast(data.message, toastType);
                 }
             })
             .catch(error => {
@@ -480,7 +509,8 @@
                     // Reload page to update bookings
                     setTimeout(() => location.reload(), 2000);
                 } else {
-                    showToast(data.message, 'error');
+                    const toastType = data.type || 'error';
+                    showToast(data.message, toastType);
                 }
             })
             .catch(error => {
@@ -543,6 +573,7 @@
             
             const modal = document.getElementById('booking-modal');
             const modalDate = document.getElementById('modal-date');
+            const breakfastButton = document.getElementById('btn-book-breakfast');
             const lunchButton = document.getElementById('btn-book-lunch');
             
             // Format date for display
@@ -556,15 +587,43 @@
             
             modalDate.textContent = formattedDate;
             
-            // Disable lunch button on Friday
+            // Check existing bookings for this date
+            const dayBookings = monthBookings[date] || [];
+            const hasBreakfast = dayBookings.some(booking => booking.meal_type === 'breakfast');
+            const hasLunch = dayBookings.some(booking => booking.meal_type === 'lunch');
+            
+            // Reset buttons to default state
+            breakfastButton.disabled = false;
+            breakfastButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            breakfastButton.title = '';
+            
+            lunchButton.disabled = false;
+            lunchButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            lunchButton.title = '';
+            
+            // Disable breakfast button if already booked
+            if (hasBreakfast) {
+                breakfastButton.disabled = true;
+                breakfastButton.classList.add('opacity-50', 'cursor-not-allowed');
+                breakfastButton.title = 'Você já possui uma reserva de café da manhã para este dia';
+                breakfastButton.innerHTML = '☕ Café já Reservado';
+            } else {
+                breakfastButton.innerHTML = '☕ Reservar Café da Manhã';
+            }
+            
+            // Disable lunch button if Friday or already booked
             if (isFridaySelected) {
                 lunchButton.disabled = true;
                 lunchButton.classList.add('opacity-50', 'cursor-not-allowed');
                 lunchButton.title = 'Almoço não disponível às sextas-feiras';
+                lunchButton.innerHTML = '🍽️ Almoço Indisponível';
+            } else if (hasLunch) {
+                lunchButton.disabled = true;
+                lunchButton.classList.add('opacity-50', 'cursor-not-allowed');
+                lunchButton.title = 'Você já possui uma reserva de almoço para este dia';
+                lunchButton.innerHTML = '🍽️ Almoço já Reservado';
             } else {
-                lunchButton.disabled = false;
-                lunchButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                lunchButton.title = '';
+                lunchButton.innerHTML = '🍽️ Reservar Almoço';
             }
             
             modal.classList.remove('hidden');
@@ -581,6 +640,12 @@
             const button = mealType === 'breakfast' ? 
                 document.getElementById('btn-book-breakfast') : 
                 document.getElementById('btn-book-lunch');
+            
+            // Check if button is disabled
+            if (button.disabled) {
+                showToast('Esta reserva não está disponível', 'warning');
+                return;
+            }
             
             button.disabled = true;
             button.innerHTML = '⏳ Reservando...';
@@ -628,5 +693,14 @@
             }
         });
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-25 border-t border-gray-100 mt-8">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-sm text-gray-400 italic">
+                © 2025 SAGA - Desenv: Augusto
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
