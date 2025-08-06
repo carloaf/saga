@@ -163,57 +163,81 @@
 
             <!-- Quick Stats Bar -->
             <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-4 border border-white border-opacity-20">
+                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-3 border border-white border-opacity-20">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm">Hoje</p>
-                            <p class="text-white text-2xl font-bold">{{ $todayStats['total'] ?? 0 }}</p>
+                        <div class="flex-1">
+                            <p class="text-green-100 text-sm mb-1">Hoje</p>
+                            <div class="flex items-center space-x-3">
+                                <p class="text-white text-xl font-bold">{{ $todayStats['total'] ?? 0 }}</p>
+                                <div class="flex space-x-2">
+                                    <span class="text-green-200 text-xs bg-green-400 bg-opacity-20 px-1.5 py-0.5 rounded">☕ {{ $todayStats['breakfast'] ?? 0 }}</span>
+                                    <span class="text-green-200 text-xs bg-green-400 bg-opacity-20 px-1.5 py-0.5 rounded">🍽️ {{ $todayStats['lunch'] ?? 0 }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-10 h-10 bg-green-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 bg-green-400 bg-opacity-20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-4 border border-white border-opacity-20">
+                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-3 border border-white border-opacity-20">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm">Esta Semana</p>
-                            <p class="text-white text-2xl font-bold">{{ $weekStats['total'] ?? 0 }}</p>
+                        <div class="flex-1">
+                            <p class="text-green-100 text-sm mb-1">Esta Semana</p>
+                            <div class="flex items-center space-x-3">
+                                <p class="text-white text-xl font-bold">{{ $weekStats['total'] ?? 0 }}</p>
+                                <div class="flex space-x-2">
+                                    <span class="text-blue-200 text-xs px-1.5 py-0.5 rounded">☕ {{ $weekStats['breakfast'] ?? 0 }}</span>
+                                    <span class="text-blue-200 text-xs px-1.5 py-0.5 rounded">🍽️ {{ $weekStats['lunch'] ?? 0 }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-10 h-10 bg-blue-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 bg-blue-400 bg-opacity-20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-4 border border-white border-opacity-20">
+                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-3 border border-white border-opacity-20">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm">Este Mês</p>
-                            <p class="text-white text-2xl font-bold">{{ $monthStats['total'] ?? 0 }}</p>
+                        <div class="flex-1">
+                            <p class="text-green-100 text-sm mb-1">Este Mês</p>
+                            <div class="flex items-center space-x-3">
+                                <p class="text-white text-xl font-bold">{{ $monthStats['total'] ?? 0 }}</p>
+                                <div class="flex space-x-2">
+                                    <span class="text-purple-200 text-xs px-1.5 py-0.5 rounded">☕ {{ $monthStats['breakfast'] ?? 0 }}</span>
+                                    <span class="text-purple-200 text-xs px-1.5 py-0.5 rounded">🍽️ {{ $monthStats['lunch'] ?? 0 }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-10 h-10 bg-purple-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 bg-purple-400 bg-opacity-20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-4 border border-white border-opacity-20">
+                <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-lg p-3 border border-white border-opacity-20">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-green-100 text-sm">Usuários Online</p>
-                            <p class="text-white text-2xl font-bold">{{ $onlineUsers ?? 1 }}</p>
+                        <div class="flex-1">
+                            <p class="text-green-100 text-sm mb-1">Amanhã</p>
+                            <div class="flex items-center space-x-3">
+                                <p class="text-white text-xl font-bold">{{ $upcomingMeals['total'] ?? 0 }}</p>
+                                <div class="flex space-x-2">
+                                    <span class="text-orange-200 text-xs bg-orange-400 bg-opacity-20 px-1.5 py-0.5 rounded">☕ {{ $upcomingMeals['breakfast'] ?? 0 }}</span>
+                                    <span class="text-orange-200 text-xs bg-orange-400 bg-opacity-20 px-1.5 py-0.5 rounded">🍽️ {{ $upcomingMeals['lunch'] ?? 0 }}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="w-10 h-10 bg-orange-400 bg-opacity-20 rounded-full flex items-center justify-center">
-                            <svg class="w-5 h-5 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        <div class="w-8 h-8 bg-orange-400 bg-opacity-20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                     </div>
@@ -476,14 +500,39 @@
                         <!-- Chart content with enhanced styling -->
                         <div class="p-6 bg-gradient-to-br from-white to-gray-50">
                             <!-- Quick stats -->
-                            <div class="grid grid-cols-2 gap-4 mb-4">
-                                <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                    <div class="text-lg font-bold text-blue-600">{{ $chartStats['total_orgs'] ?? 0 }}</div>
-                                    <div class="text-xs text-blue-500 font-medium">Organizações Ativas</div>
+                            <div class="grid grid-cols-3 gap-3 mb-4">
+                                <!-- Própria OM -->
+                                <div class="text-center p-3 bg-green-50 rounded-xl border border-green-100 hover:shadow-md transition-all duration-200">
+                                    <div class="w-8 h-8 bg-green-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="text-lg font-bold text-green-600">{{ $originData['Própria OM'] ?? 0 }}</div>
+                                    <div class="text-xs text-green-500 font-medium">Própria OM</div>
                                 </div>
-                                <div class="text-center p-3 bg-indigo-50 rounded-xl border border-indigo-100">
-                                    <div class="text-lg font-bold text-indigo-600">{{ $chartStats['top_org'] ?? 'N/A' }}</div>
-                                    <div class="text-xs text-indigo-500 font-medium">Maior Participação</div>
+                                
+                                <!-- Outras OM -->
+                                <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100 hover:shadow-md transition-all duration-200">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="text-lg font-bold text-blue-600">{{ $originData['Outras OM'] ?? 0 }}</div>
+                                    <div class="text-xs text-blue-500 font-medium">Outras OM</div>
+                                </div>
+                                
+                                <!-- Outras Forças -->
+                                <div class="text-center p-3 bg-amber-50 rounded-xl border border-amber-100 hover:shadow-md transition-all duration-200">
+                                    <div class="w-8 h-8 bg-amber-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="text-lg font-bold text-amber-600">{{ $originData['Outras Forças'] ?? 0 }}</div>
+                                    <div class="text-xs text-amber-500 font-medium">Outras Forças</div>
                                 </div>
                             </div>
                             
@@ -496,10 +545,7 @@
                             </div>
                             
                             <!-- Legend/Info -->
-                            <div class="mt-4 flex items-center justify-between text-sm">
-                                <div class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                                    Gráfico de Rosca
-                                </div>
+                            <div class="mt-4 flex items-center justify-end text-sm">
                                 <div class="text-xs text-gray-500">
                                     Dados do mês atual
                                 </div>
@@ -577,7 +623,7 @@
                                     </div>
                                 </div>
                                 <div class="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                                    Gráfico de Barras
+                                    Dados do mês
                                 </div>
                             </div>
                         </div>
@@ -842,7 +888,7 @@
                                 </div>
                                 <div class="ml-5">
                                     <p class="text-sm font-medium text-gray-500">Total Cafés</p>
-                                    <p class="text-2xl font-semibold text-gray-900">145</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ $chartStats['breakfast_total'] ?? 0 }}</p>
                                 </div>
                             </div>
                         </div>
@@ -858,7 +904,7 @@
                                 </div>
                                 <div class="ml-5">
                                     <p class="text-sm font-medium text-gray-500">Total Almoços</p>
-                                    <p class="text-2xl font-semibold text-gray-900">198</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ $chartStats['lunch_total'] ?? 0 }}</p>
                                 </div>
                             </div>
                         </div>
@@ -874,7 +920,7 @@
                                 </div>
                                 <div class="ml-5">
                                     <p class="text-sm font-medium text-gray-500">Própria OM</p>
-                                    <p class="text-2xl font-semibold text-gray-900">234</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ $chartStats['propria_om_total'] ?? 0 }}</p>
                                 </div>
                             </div>
                         </div>
@@ -890,7 +936,7 @@
                                 </div>
                                 <div class="ml-5">
                                     <p class="text-sm font-medium text-gray-500">Outras OMs</p>
-                                    <p class="text-2xl font-semibold text-gray-900">109</p>
+                                    <p class="text-2xl font-semibold text-gray-900">{{ $chartStats['outras_om_total'] ?? 0 }}</p>
                                 </div>
                             </div>
                         </div>
@@ -901,84 +947,82 @@
     </main>
 
     <script>
-        // Dados exemplo para os gráficos
+        // Dados reais dos gráficos vindos do controller
+        const chartData = @json($chartData);
+        
+        // Preparar dados para o gráfico de reservas diárias
+        const dailyBookingsData = chartData.dailyBookings || {};
+        const dailyLabels = Object.keys(dailyBookingsData.total || {});
+        const totalValues = Object.values(dailyBookingsData.total || {});
+        const breakfastValues = Object.values(dailyBookingsData.breakfast || {});
+        const lunchValues = Object.values(dailyBookingsData.lunch || {});
+        
+        // Preparar dados para o gráfico de origem
+        const originData = chartData.originBreakdown || {};
+        const originLabels = Object.keys(originData);
+        const originValues = Object.values(originData);
+        
+        // Preparar dados para o gráfico de comparação de refeições
+        const mealComparisonData = chartData.mealComparison || {};
+        const mealDays = Object.keys(mealComparisonData);
+        const mealCafeValues = mealDays.map(day => mealComparisonData[day] ? (mealComparisonData[day]['Café'] || 0) : 0);
+        const mealAlmocoValues = mealDays.map(day => mealComparisonData[day] ? (mealComparisonData[day]['Almoço'] || 0) : 0);
+        
+        // Dados exemplo para outros gráficos (serão atualizados posteriormente)
         const sampleData = {
-            dailyBookings: ['15/01', '16/01', '17/01', '18/01', '19/01', '20/01', '21/01'],
-            dailyValues: [23, 34, 28, 45, 38, 29, 31],
-            originLabels: ['Própria OM', 'Outras OMs'],
-            originValues: [234, 109],
-            mealLabels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex'],
-            cafeValues: [28, 32, 25, 35, 29],
-            almocoValues: [35, 38, 30, 42, 33],
+            originLabels: originLabels.length > 0 ? originLabels : ['Própria OM', 'Outras OM', 'Outras Forças'],
+            originValues: originValues.length > 0 ? originValues : [0, 0, 0],
+            mealLabels: mealDays.length > 0 ? mealDays : ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
+            cafeValues: mealCafeValues.length > 0 ? mealCafeValues : [0, 0, 0, 0, 0],
+            almocoValues: mealAlmocoValues.length > 0 ? mealAlmocoValues : [0, 0, 0, 0, 0],
             rankLabels: ['Soldado', 'Cabo', 'Sargento', 'Tenente', 'Capitão'],
             rankValues: [45, 32, 28, 18, 12]
         };
 
-        // Daily Bookings Chart
+        // Daily Bookings Chart - Usando dados reais com detalhamento
         const dailyBookingsCtx = document.getElementById('dailyBookingsChart').getContext('2d');
         new Chart(dailyBookingsCtx, {
             type: 'line',
             data: {
-                labels: sampleData.dailyBookings,
-                datasets: [{
-                    label: 'Arranchados',
-                    data: sampleData.dailyValues,
-                    borderColor: 'rgb(34, 197, 94)',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                }
-            }
-        });
-
-        // Origin Chart
-        const originCtx = document.getElementById('originChart').getContext('2d');
-        new Chart(originCtx, {
-            type: 'doughnut',
-            data: {
-                labels: sampleData.originLabels,
-                datasets: [{
-                    data: sampleData.originValues,
-                    backgroundColor: ['#10b981', '#f59e0b']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-
-        // Meal Comparison Chart
-        const mealCtx = document.getElementById('mealComparisonChart').getContext('2d');
-        new Chart(mealCtx, {
-            type: 'bar',
-            data: {
-                labels: sampleData.mealLabels,
+                labels: dailyLabels.length > 0 ? dailyLabels : ['Sem dados'],
                 datasets: [
                     {
-                        label: 'Café',
-                        data: sampleData.cafeValues,
-                        backgroundColor: '#10b981'
+                        label: 'Café da Manhã',
+                        data: breakfastValues.length > 0 ? breakfastValues : [0],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: 'rgb(34, 197, 94)',
+                        pointBorderColor: 'rgb(34, 197, 94)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     },
                     {
                         label: 'Almoço',
-                        data: sampleData.almocoValues,
-                        backgroundColor: '#3b82f6'
+                        data: lunchValues.length > 0 ? lunchValues : [0],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: 'rgb(59, 130, 246)',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Total',
+                        data: totalValues.length > 0 ? totalValues : [0],
+                        borderColor: 'rgb(156, 163, 175)',
+                        backgroundColor: 'rgba(156, 163, 175, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: 'rgb(156, 163, 175)',
+                        pointBorderColor: 'rgb(156, 163, 175)',
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderDash: [5, 5],
+                        borderWidth: 2
                     }
                 ]
             },
@@ -988,15 +1032,251 @@
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: 'white',
+                        bodyColor: 'white',
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 1,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 12
+                        },
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                return 'Dia ' + tooltipItems[0].label;
+                            },
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y;
+                                return `${label}: ${value} arranchados`;
+                            },
+                            afterBody: function(tooltipItems) {
+                                const total = tooltipItems.reduce((sum, item) => {
+                                    if (item.dataset.label !== 'Total') {
+                                        return sum + item.parsed.y;
+                                    }
+                                    return sum;
+                                }, 0);
+                                return [`Total do dia: ${total} arranchados`];
+                            }
+                        }
                     }
                 },
                 scales: {
-                    x: { stacked: true },
-                    y: { 
-                        stacked: true,
-                        beginAtZero: true
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 11
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Número de Arranchados',
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Últimos 7 dias',
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
                     }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Origin Chart - Usando dados reais do banco
+        const originCtx = document.getElementById('originChart').getContext('2d');
+        new Chart(originCtx, {
+            type: 'doughnut',
+            data: {
+                labels: sampleData.originLabels,
+                datasets: [{
+                    data: sampleData.originValues,
+                    backgroundColor: [
+                        '#10b981', // Verde para Própria OM
+                        '#3b82f6', // Azul para Outras OM (Exército)
+                        '#f59e0b'  // Âmbar para Outras Forças (Marinha/Aeronáutica)
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Meal Comparison Chart - Usando dados reais do banco
+        const mealCtx = document.getElementById('mealComparisonChart').getContext('2d');
+        new Chart(mealCtx, {
+            type: 'bar',
+            data: {
+                labels: sampleData.mealLabels,
+                datasets: [
+                    {
+                        label: 'Café da Manhã',
+                        data: sampleData.cafeValues,
+                        backgroundColor: '#10b981',
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Almoço',
+                        data: sampleData.almocoValues,
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#2563eb',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'rect',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#e5e7eb',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.parsed.y || 0;
+                                return `${label}: ${value} reservas`;
+                            },
+                            footer: function(tooltipItems) {
+                                let total = 0;
+                                tooltipItems.forEach(function(tooltipItem) {
+                                    total += tooltipItem.parsed.y;
+                                });
+                                return `Total: ${total} reservas`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { 
+                        stacked: false,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    y: { 
+                        stacked: false,
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(156, 163, 175, 0.2)'
+                        },
+                        ticks: {
+                            font: {
+                                size: 10
+                            },
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
                 }
             }
         });

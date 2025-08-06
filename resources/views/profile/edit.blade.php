@@ -432,7 +432,7 @@ function getRankSymbol($rankName) {
                                     <svg class="w-4 h-4 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
                                     </svg>
-                                    E-mail Institucional
+                                    E-mail
                                 </label>
                                 <div class="relative">
                                     <input type="email" name="email" id="email" 
@@ -523,6 +523,138 @@ function getRankSymbol($rankName) {
                                     </svg>
                                     <span class="font-medium">11º Depósito de Suprimento</span> é a organização padrão do sistema
                                 </p>
+                            </div>
+                            
+                            <!-- Subunidade -->
+                            <div class="form-group">
+                                <label for="subunit" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
+                                    <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    Subunidade
+                                </label>
+                                <div class="gradient-border">
+                                    <input type="text" name="subunit" id="subunit" 
+                                           value="{{ auth()->user()->subunit }}"
+                                           class="form-input block w-full px-4 py-4 border-0 rounded-lg shadow-sm text-gray-900 placeholder-gray-500 font-medium"
+                                           placeholder="Ex: 1ª Cia, 2º Pelotão, Seção de TI">
+                                </div>
+                            </div>
+                            
+                            <!-- Força Armada -->
+                            <div class="form-group">
+                                <label for="armed_force" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
+                                    <svg class="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16l-3-9m3 9l3-9"></path>
+                                    </svg>
+                                    Força Armada
+                                </label>
+                                <div class="gradient-border">
+                                    <div class="relative">
+                                        <select name="armed_force" id="armed_force" 
+                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
+                                            <option value="EB" {{ auth()->user()->armed_force == 'EB' ? 'selected' : '' }}>🪖 Exército Brasileiro (EB)</option>
+                                            <option value="MB" {{ auth()->user()->armed_force == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
+                                            <option value="FAB" {{ auth()->user()->armed_force == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Gênero -->
+                            <div class="form-group">
+                                <label for="gender" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
+                                    <svg class="w-4 h-4 mr-2 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                    Gênero
+                                </label>
+                                <div class="gradient-border">
+                                    <div class="relative">
+                                        <select name="gender" id="gender" 
+                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
+                                            <option value="">Selecione o gênero</option>
+                                            <option value="M" {{ auth()->user()->gender == 'M' ? 'selected' : '' }}>👨 Masculino</option>
+                                            <option value="F" {{ auth()->user()->gender == 'F' ? 'selected' : '' }}>👩 Feminino</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Data de Pronto na OM -->
+                            <div class="form-group">
+                                <label for="ready_at_om_date" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
+                                    <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Data de Pronto na OM
+                                </label>
+                                <div class="gradient-border">
+                                    <input type="date" name="ready_at_om_date" id="ready_at_om_date" 
+                                           value="{{ auth()->user()->ready_at_om_date ? auth()->user()->ready_at_om_date->format('Y-m-d') : '' }}"
+                                           class="form-input block w-full px-4 py-4 border-0 rounded-lg shadow-sm text-gray-900 font-medium"
+                                           max="{{ date('Y-m-d') }}">
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500 flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Data em que se apresentou na organização militar
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Seção Adicional: Informações Complementares -->
+                        <div class="pt-8 border-t border-gray-200">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-900">Informações Complementares</h4>
+                                    <p class="text-sm text-gray-600">Dados adicionais para melhor identificação</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Status Ativo -->
+                                <div class="form-group lg:col-span-2">
+                                    <label class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Status da Conta
+                                    </label>
+                                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                            <span class="text-sm font-medium text-green-800">
+                                                {{ auth()->user()->is_active ? 'Conta Ativa' : 'Conta Inativa' }}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center space-x-2 text-xs text-green-600">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                            <span>Protegido</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         

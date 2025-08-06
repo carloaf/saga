@@ -85,6 +85,10 @@ class ProfileController extends Controller
             'war_name' => 'required|string|max:100',
             'rank_id' => 'required|exists:ranks,id',
             'organization_id' => 'required|exists:organizations,id',
+            'subunit' => 'nullable|string|max:100',
+            'armed_force' => 'required|in:EB,MB,FAB',
+            'gender' => 'nullable|string|in:M,F',
+            'ready_at_om_date' => 'nullable|date|before_or_equal:today',
         ]);
 
         /** @var \App\Models\User $user */
@@ -94,11 +98,16 @@ class ProfileController extends Controller
             return redirect()->route('login')->with('error', 'Usuário não autenticado.');
         }
         
-        $user->full_name = $request->full_name;
-        $user->war_name = $request->war_name;
-        $user->rank_id = $request->rank_id;
-        $user->organization_id = $request->organization_id;
-        $user->save();
+        $user->update([
+            'full_name' => $request->full_name,
+            'war_name' => $request->war_name,
+            'rank_id' => $request->rank_id,
+            'organization_id' => $request->organization_id,
+            'subunit' => $request->subunit,
+            'armed_force' => $request->armed_force,
+            'gender' => $request->gender,
+            'ready_at_om_date' => $request->ready_at_om_date ? Carbon::parse($request->ready_at_om_date) : null,
+        ]);
 
         return redirect()->route('profile.edit')->with('success', 'Perfil atualizado com sucesso!');
     }
