@@ -137,6 +137,13 @@ function getRankSymbol($rankName) {
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Meu Perfil - SAGA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração para remover avisos de desenvolvimento do Tailwind CDN
+        tailwind.config = {
+            devtools: false,
+        }
+    </script>
+    <link href="{{ asset('css/vendor/tailwind-forms.css') }}" rel="stylesheet">
     <style>
         /* Custom styles for enhanced form elements */
         .form-group {
@@ -444,12 +451,6 @@ function getRankSymbol($rankName) {
                                         </svg>
                                     </div>
                                 </div>
-                                <p class="mt-2 text-xs text-gray-500 flex items-center bg-yellow-50 px-3 py-2 rounded-lg">
-                                    <svg class="w-4 h-4 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    E-mail vinculado ao Google OAuth não pode ser alterado
-                                </p>
                             </div>
                             
                             <!-- Posto/Graduação -->
@@ -501,10 +502,13 @@ function getRankSymbol($rankName) {
                                                         // Se não tem organização, selecionar "11º Depósito de Suprimento" como padrão
                                                         $isSelected = $organization->name === '11º Depósito de Suprimento';
                                                     }
+                                                    $is11DSup = $organization->name === '11º Depósito de Suprimento';
                                                 @endphp
-                                                <option value="{{ $organization->id }}" {{ $isSelected ? 'selected' : '' }}>
+                                                <option value="{{ $organization->id }}" 
+                                                        data-name="{{ $organization->name }}"
+                                                        {{ $isSelected ? 'selected' : '' }}>
                                                     {{ $organization->name }}
-                                                    @if($organization->name === '11º Depósito de Suprimento')
+                                                    @if($is11DSup)
                                                         ⭐
                                                     @endif
                                                 </option>
@@ -526,7 +530,7 @@ function getRankSymbol($rankName) {
                             </div>
                             
                             <!-- Subunidade -->
-                            <div class="form-group">
+                            <div class="form-group" id="subunit-group" style="{{ auth()->user()->organization && auth()->user()->organization->name == '11º Depósito de Suprimento' ? '' : 'display: none;' }}">
                                 <label for="subunit" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
                                     <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -535,10 +539,21 @@ function getRankSymbol($rankName) {
                                     Subunidade
                                 </label>
                                 <div class="gradient-border">
-                                    <input type="text" name="subunit" id="subunit" 
-                                           value="{{ auth()->user()->subunit }}"
-                                           class="form-input block w-full px-4 py-4 border-0 rounded-lg shadow-sm text-gray-900 placeholder-gray-500 font-medium"
-                                           placeholder="Ex: 1ª Cia, 2º Pelotão, Seção de TI">
+                                    <div class="relative">
+                                        <select name="subunit" id="subunit" 
+                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900"
+                                                {{ auth()->user()->organization && auth()->user()->organization->name == '11º Depósito de Suprimento' ? 'required' : '' }}>
+                                            <option value="" disabled {{ !auth()->user()->subunit ? 'selected' : '' }}>Selecione sua SU</option>
+                                            <option value="1" {{ auth()->user()->subunit == '1' ? 'selected' : '' }}>1</option>
+                                            <option value="2" {{ auth()->user()->subunit == '2' ? 'selected' : '' }}>2</option>
+                                            <option value="3" {{ auth()->user()->subunit == '3' ? 'selected' : '' }}>3</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -601,10 +616,28 @@ function getRankSymbol($rankName) {
                                     Data de Pronto na OM
                                 </label>
                                 <div class="gradient-border">
-                                    <input type="date" name="ready_at_om_date" id="ready_at_om_date" 
-                                           value="{{ auth()->user()->ready_at_om_date ? auth()->user()->ready_at_om_date->format('Y-m-d') : '' }}"
-                                           class="form-input block w-full px-4 py-4 border-0 rounded-lg shadow-sm text-gray-900 font-medium"
-                                           max="{{ date('Y-m-d') }}">
+                                    <div class="relative">
+                                        <input type="text" 
+                                               id="ready_at_om_date_display"
+                                               value="{{ auth()->user()->ready_at_om_date ? auth()->user()->ready_at_om_date->format('d/m/Y') : '' }}"
+                                               class="form-input block w-full px-4 py-4 pr-12 border-0 rounded-lg shadow-sm text-gray-900 font-medium"
+                                               placeholder="dd/mm/yyyy"
+                                               readonly
+                                               onclick="openProfileDatePicker()"
+                                               style="cursor: pointer;">
+                                        <input type="date" 
+                                               name="ready_at_om_date" 
+                                               id="ready_at_om_date" 
+                                               value="{{ auth()->user()->ready_at_om_date ? auth()->user()->ready_at_om_date->format('Y-m-d') : '' }}"
+                                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                               max="{{ date('Y-m-d') }}"
+                                               onchange="updateProfileDisplayDate(this)">
+                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                                 <p class="mt-2 text-xs text-gray-500 flex items-center">
                                     <svg class="w-4 h-4 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -983,6 +1016,58 @@ function getRankSymbol($rankName) {
                 });
             });
         });
+
+        // Alternar visibilidade do campo de subunidade com base na organização selecionada
+        function toggleSectionField() {
+            const organizationSelect = document.getElementById('organization_id');
+            const subunitGroup = document.getElementById('subunit-group');
+            const subunitSelect = document.getElementById('subunit');
+            
+            if (organizationSelect && subunitGroup && subunitSelect) {
+                const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
+                const organizationName = selectedOption.getAttribute('data-name');
+                
+                if (organizationName === '11º Depósito de Suprimento') {
+                    subunitGroup.style.display = '';
+                    subunitSelect.setAttribute('required', 'required');
+                } else {
+                    subunitGroup.style.display = 'none';
+                    subunitSelect.removeAttribute('required');
+                    // Limpar valor quando a organização não for 11º Depósito
+                    subunitSelect.value = '';
+                }
+            }
+        }
+        
+        // Configurar event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const organizationSelect = document.getElementById('organization_id');
+            if (organizationSelect) {
+                // Verificar estado inicial
+                toggleSectionField();
+                
+                // Configurar para verificar quando alterado
+                organizationSelect.addEventListener('change', toggleSectionField);
+            }
+        });
+        
+        // Funções para o campo de data
+        function openProfileDatePicker() {
+            document.getElementById('ready_at_om_date').click();
+        }
+
+        function updateProfileDisplayDate(dateInput) {
+            const displayInput = document.getElementById('ready_at_om_date_display');
+            if (dateInput.value) {
+                const date = new Date(dateInput.value + 'T00:00:00');
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                displayInput.value = `${day}/${month}/${year}`;
+            } else {
+                displayInput.value = '';
+            }
+        }
 
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {

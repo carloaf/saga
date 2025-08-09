@@ -14,10 +14,14 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração para remover avisos de desenvolvimento do Tailwind CDN
+        tailwind.config = {
+            devtools: false,
+        }
+    </script>
     <link href="{{ asset('css/enhanced-forms.css') }}" rel="stylesheet">
-    <style>
-        @import url('https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.3/dist/forms.min.css');
-    </style>
+    <link href="{{ asset('css/vendor/tailwind-forms.css') }}" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
@@ -130,10 +134,6 @@
 
             <!-- Other Options -->
             <div class="space-y-3">
-                <a href="{{ route('login') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    🔄 Voltar para Google OAuth
-                </a>
-                
                 <a href="{{ route('auth.register') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     ➕ Criar Nova Conta
                 </a>

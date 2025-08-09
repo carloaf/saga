@@ -14,10 +14,14 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração para remover avisos de desenvolvimento do Tailwind CDN
+        tailwind.config = {
+            devtools: false,
+        }
+    </script>
     <link href="{{ asset('css/enhanced-forms.css') }}" rel="stylesheet">
-    <style>
-        @import url('https://cdn.jsdelivr.net/npm/@tailwindcss/forms@0.5.3/dist/forms.min.css');
-    </style>
+    <link href="{{ asset('css/vendor/tailwind-forms.css') }}" rel="stylesheet">
 </head>
 <body class="bg-gray-100 font-sans antialiased">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
@@ -140,7 +144,7 @@
                             <option value="" disabled selected>Selecione seu Posto/Graduação</option>
                             @foreach($ranks as $rank)
                                 <option value="{{ $rank->id }}" {{ old('rank_id') == $rank->id ? 'selected' : '' }}>
-                                    {{ $rank->abbreviation }} - {{ $rank->name }}
+                                    {{ $rank->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -153,13 +157,45 @@
                             name="organization_id" 
                             required 
                             class="select-enhanced"
+                            onchange="toggleSectionField()"
                         >
                             <option value="" disabled selected>Selecione sua Organização Militar</option>
                             @foreach($organizations as $organization)
-                                <option value="{{ $organization->id }}" {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
+                                <option value="{{ $organization->id }}" 
+                                        data-name="{{ $organization->name }}"
+                                        {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
                                     {{ $organization->abbreviation }} - {{ $organization->name }}
                                 </option>
                             @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Seção (apenas para 11º Depósito de Suprimento) -->
+                    <div class="field-group" id="section_container" style="display: none;">
+                        <select 
+                            id="section" 
+                            name="section" 
+                            class="select-enhanced"
+                        >
+                            <option value="" disabled selected>Selecione sua SU</option>
+                            <option value="1" {{ old('section') == '1' ? 'selected' : '' }}>1</option>
+                            <option value="2" {{ old('section') == '2' ? 'selected' : '' }}>2</option>
+                            <option value="3" {{ old('section') == '3' ? 'selected' : '' }}>3</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Força Armada -->
+                    <div class="field-group">
+                        <select 
+                            id="armed_force" 
+                            name="armed_force" 
+                            required 
+                            class="select-enhanced"
+                        >
+                            <option value="" disabled selected>Selecione sua Força Armada</option>
+                            <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>🪖 Exército Brasileiro (EB)</option>
+                            <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
+                            <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
                         </select>
                     </div>
 
@@ -171,8 +207,8 @@
                                     id="male" 
                                     name="gender" 
                                     type="radio" 
-                                    value="male" 
-                                    {{ old('gender') == 'male' ? 'checked' : '' }}
+                                    value="M" 
+                                    {{ old('gender') == 'M' ? 'checked' : '' }}
                                     class="radio-enhanced"
                                 >
                                 <label for="male" class="ml-3 block text-sm font-medium text-gray-900">Masculino</label>
@@ -182,8 +218,8 @@
                                     id="female" 
                                     name="gender" 
                                     type="radio" 
-                                    value="female" 
-                                    {{ old('gender') == 'female' ? 'checked' : '' }}
+                                    value="F" 
+                                    {{ old('gender') == 'F' ? 'checked' : '' }}
                                     class="radio-enhanced"
                                 >
                                 <label for="female" class="ml-3 block text-sm font-medium text-gray-900">Feminino</label>
@@ -193,14 +229,35 @@
 
                     <!-- Data de Apresentação na OM -->
                     <div class="field-group">
-                        <input 
-                            id="ready_at_om_date" 
-                            name="ready_at_om_date" 
-                            type="date" 
-                            required 
-                            value="{{ old('ready_at_om_date') }}"
-                            class="input-enhanced"
-                        >
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data Pronto OM</label>
+                        <div class="relative">
+                            <input 
+                                id="ready_at_om_date_display" 
+                                type="text" 
+                                required 
+                                value="{{ old('ready_at_om_date') ? \Carbon\Carbon::parse(old('ready_at_om_date'))->format('d/m/Y') : '' }}"
+                                class="input-enhanced pr-10"
+                                placeholder="dd/mm/yyyy"
+                                maxlength="10"
+                                readonly
+                                onclick="openDatePicker()"
+                                style="cursor: pointer;"
+                            >
+                            <input 
+                                id="ready_at_om_date" 
+                                name="ready_at_om_date" 
+                                type="date" 
+                                required 
+                                value="{{ old('ready_at_om_date') }}"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                onchange="updateDisplayDate(this)"
+                            >
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -230,10 +287,6 @@
                 <a href="{{ route('auth.traditional-login') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     🔑 Já tenho conta - Fazer Login
                 </a>
-                
-                <a href="{{ route('login') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    🔄 Voltar para Google OAuth
-                </a>
             </div>
 
             <!-- Info -->
@@ -249,5 +302,56 @@
             © 2025 SAGA - 11º D Sup
         </div>
     </div>
+
+    <script>
+        function toggleSectionField() {
+            const organizationSelect = document.getElementById('organization_id');
+            const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
+            const organizationName = selectedOption.getAttribute('data-name');
+            const sectionContainer = document.getElementById('section_container');
+            const sectionField = document.getElementById('section');
+            
+            if (organizationName === '11º Depósito de Suprimento') {
+                sectionContainer.style.display = 'block';
+                sectionField.required = true;
+            } else {
+                sectionContainer.style.display = 'none';
+                sectionField.required = false;
+                sectionField.value = '';
+            }
+        }
+        
+        // Função para abrir o date picker
+        function openDatePicker() {
+            document.getElementById('ready_at_om_date').showPicker();
+        }
+        
+        // Função para atualizar a data exibida
+        function updateDisplayDate(dateInput) {
+            const displayInput = document.getElementById('ready_at_om_date_display');
+            
+            if (dateInput.value) {
+                // Converter de YYYY-MM-DD para DD/MM/YYYY
+                const dateParts = dateInput.value.split('-');
+                if (dateParts.length === 3) {
+                    const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+                    displayInput.value = formattedDate;
+                }
+            } else {
+                displayInput.value = '';
+            }
+        }
+        
+        // Execute on page load to set initial state
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleSectionField();
+            
+            // Atualizar a exibição da data inicial se existir
+            const dateInput = document.getElementById('ready_at_om_date');
+            if (dateInput && dateInput.value) {
+                updateDisplayDate(dateInput);
+            }
+        });
+    </script>
 </body>
 </html>

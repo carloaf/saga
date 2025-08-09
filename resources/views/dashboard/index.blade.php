@@ -14,6 +14,12 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('android-chrome-512x512.png') }}">
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuração para remover avisos de desenvolvimento do Tailwind CDN
+        tailwind.config = {
+            devtools: false,
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .header-enhanced {

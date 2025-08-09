@@ -1,6 +1,6 @@
 FROM php:8.4-apache
 
-# Instalar dependências do sistema
+# Instalar dependências do sistema incluindo Node.js
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
     unzip \
-    zip
+    zip \
+    nodejs \
+    npm
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -35,6 +37,9 @@ COPY --chown=www-data:www-data . /var/www/html
 
 # Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader --no-scripts --no-cache
+
+# Install npm dependencies and build assets
+RUN npm install && npm run build
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
