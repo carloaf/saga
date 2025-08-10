@@ -40,7 +40,8 @@
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <div class="min-h-screen">
-        <!-- Navigation -->
+        <!-- Navigation - Only for authenticated users -->
+        @auth
         <nav class="bg-white shadow">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
@@ -49,7 +50,6 @@
                             <h1 class="text-xl font-bold text-green-600">SAGA</h1>
                         </div>
                         
-                        @auth
                         <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
                             <a href="{{ route('dashboard') }}" 
                                class="border-green-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
@@ -70,10 +70,8 @@
                             </a>
                             @endif
                         </div>
-                        @endauth
                     </div>
 
-                    @auth
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
                             @if(auth()->user()->avatar_url)
@@ -89,10 +87,10 @@
                             </button>
                         </form>
                     </div>
-                    @endauth
                 </div>
             </div>
         </nav>
+        @endauth
 
         <!-- Page Heading -->
         @if (isset($header))
@@ -121,6 +119,15 @@
                 @yield('content')
             </div>
         </main>
+        
+        <!-- Footer -->
+        <footer class="bg-gray-50 border-t border-gray-200 mt-auto">
+            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <p class="text-sm text-gray-500">© 2025 SAGA - Desenv: Augusto</p>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

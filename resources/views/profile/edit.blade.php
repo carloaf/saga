@@ -225,19 +225,29 @@ function getRankSymbol($rankName) {
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
-    <header class="bg-white shadow">
+    <header class="bg-gradient-to-r from-green-600 to-green-700 shadow-lg">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-900">
-                    👤 Meu Perfil
-                </h1>
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('dashboard') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">
+                            👤 Meu Perfil
+                        </h1>
+                        <p class="text-green-100">Gerencie suas informações pessoais</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="{{ route('dashboard') }}" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
                         ← Voltar ao Dashboard
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200">
                             Sair
                         </button>
                     </form>
