@@ -69,7 +69,7 @@ class AdminController extends Controller
                        ->appends($request->query());
 
         // Buscar dados necessários para os modais
-        $ranks = Rank::orderBy('name')->get();
+        $ranks = Rank::ordered()->where('name', '!=', 'Usuário Externo')->get();
         $organizations = Organization::orderBy('name')->get();
 
         return view('admin.users.index', compact(
@@ -102,7 +102,7 @@ class AdminController extends Controller
                 'organization_id' => 'nullable|exists:organizations,id',
                 'subunit' => 'nullable|string|max:255',
                 'armed_force' => 'nullable|in:FAB,MB,EB',
-                'gender' => 'required|in:male,female',
+                'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
                 'is_active' => 'required|boolean',
                 'role' => 'required|in:user,manager,superuser'
@@ -135,7 +135,7 @@ class AdminController extends Controller
                 'organization_id' => 'nullable|exists:organizations,id',
                 'subunit' => 'nullable|string|max:255',
                 'armed_force' => 'nullable|in:FAB,MB,EB',
-                'gender' => 'required|in:male,female',
+                'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
                 'role' => 'required|in:user,manager,superuser',
                 'is_active' => 'required|boolean'

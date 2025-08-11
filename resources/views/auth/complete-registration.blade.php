@@ -51,9 +51,26 @@
                         @enderror
                     </div>
 
-                    <!-- Organization -->
+                    <!-- Armed Force -->
                     <div>
-                        <select id="organization_id" name="organization_id" required class="select-enhanced">
+                        <label for="armed_force" class="block text-sm font-medium text-gray-700">Força Armada *</label>
+                        <select id="armed_force" name="armed_force" required 
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                                onchange="toggleOrganizationField()">
+                            <option value="" disabled selected>Selecione sua Força Armada</option>
+                            <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>Exército Brasileiro (EB)</option>
+                            <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>Marinha do Brasil (MB)</option>
+                            <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>Força Aérea Brasileira (FAB)</option>
+                        </select>
+                        @error('armed_force')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Organization (conditional) -->
+                    <div id="organization-field" style="display: none;">
+                        <label for="organization_id" class="block text-sm font-medium text-gray-700">Organização Militar *</label>
+                        <select id="organization_id" name="organization_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                             <option value="" disabled selected>Selecione sua Organização Militar</option>
                             @foreach($organizations as $organization)
                                 <option value="{{ $organization->id }}" {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
@@ -71,12 +88,12 @@
                         <label class="block text-sm font-medium text-gray-700">Sexo *</label>
                         <div class="mt-2 space-y-2">
                             <label class="flex items-center">
-                                <input type="radio" name="gender" value="male" {{ old('gender') === 'male' ? 'checked' : '' }}
+                                <input type="radio" name="gender" value="M" {{ old('gender') === 'M' ? 'checked' : '' }}
                                        class="text-green-600 focus:ring-green-500">
                                 <span class="ml-2">Masculino</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="radio" name="gender" value="female" {{ old('gender') === 'female' ? 'checked' : '' }}
+                                <input type="radio" name="gender" value="F" {{ old('gender') === 'F' ? 'checked' : '' }}
                                        class="text-green-600 focus:ring-green-500">
                                 <span class="ml-2">Feminino</span>
                             </label>
@@ -108,4 +125,28 @@
             </div>
         </div>
     </div>
+
+<script>
+function toggleOrganizationField() {
+    const armedForceSelect = document.getElementById('armed_force');
+    const organizationField = document.getElementById('organization-field');
+    const organizationSelect = document.getElementById('organization_id');
+    
+    if (armedForceSelect.value === 'EB') {
+        // Mostrar campo de organização para Exército Brasileiro
+        organizationField.style.display = 'block';
+        organizationSelect.required = true;
+    } else {
+        // Ocultar campo de organização para outras forças
+        organizationField.style.display = 'none';
+        organizationSelect.required = false;
+        organizationSelect.value = '';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleOrganizationField();
+});
+</script>
 </x-app-layout>

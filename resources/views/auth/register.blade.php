@@ -237,13 +237,29 @@
                                 </select>
                             </div>
 
-                            <!-- Organização Militar -->
+                            <!-- Força Armada -->
                             <div>
+                                <label for="armed_force" class="block text-sm font-medium text-gray-700 mb-2">Força Armada *</label>
+                                <select 
+                                    id="armed_force" 
+                                    name="armed_force" 
+                                    required 
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
+                                    onchange="toggleOrganizationField()"
+                                >
+                                    <option value="">Selecione sua força armada</option>
+                                    <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>Exército Brasileiro (EB)</option>
+                                    <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>Marinha do Brasil (MB)</option>
+                                    <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>Força Aérea Brasileira (FAB)</option>
+                                </select>
+                            </div>
+
+                            <!-- Organização Militar (condicional) -->
+                            <div id="organization-field" class="md:col-span-2" style="display: none;">
                                 <label for="organization_id" class="block text-sm font-medium text-gray-700 mb-2">Organização Militar *</label>
                                 <select 
                                     id="organization_id" 
                                     name="organization_id" 
-                                    required 
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
                                     onchange="toggleSectionField()"
                                 >
@@ -258,39 +274,23 @@
                                 </select>
                             </div>
 
-                            <!-- Campo SU (condicional) -->
+                            <!-- Campo Cia (condicional) -->
                             <div id="section-field" class="md:col-span-2" style="display: none;">
-                                <label for="section" class="block text-sm font-medium text-gray-700 mb-2">Selecionar sua SU</label>
+                                <label for="section" class="block text-sm font-medium text-gray-700 mb-2">Selecionar sua Cia</label>
                                 <div class="flex space-x-4">
                                     <label class="flex items-center">
                                         <input type="radio" name="section" value="1" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '1' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">1ª</span>
+                                        <span class="ml-2 text-sm text-gray-700">1ª Cia</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="section" value="2" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '2' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">2ª</span>
+                                        <span class="ml-2 text-sm text-gray-700">2ª Cia</span>
                                     </label>
                                     <label class="flex items-center">
                                         <input type="radio" name="section" value="3" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '3' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">3ª</span>
+                                        <span class="ml-2 text-sm text-gray-700">3ª Cia</span>
                                     </label>
                                 </div>
-                            </div>
-
-                            <!-- Força Armada -->
-                            <div>
-                                <label for="armed_force" class="block text-sm font-medium text-gray-700 mb-2">Força Armada *</label>
-                                <select 
-                                    id="armed_force" 
-                                    name="armed_force" 
-                                    required 
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                >
-                                    <option value="">Selecione sua força armada</option>
-                                    <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>Exército Brasileiro (EB)</option>
-                                    <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>Marinha do Brasil (MB)</option>
-                                    <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>Força Aérea Brasileira (FAB)</option>
-                                </select>
                             </div>
 
                             <!-- Gênero -->
@@ -379,11 +379,37 @@
 </div>
 
 <script>
+function toggleOrganizationField() {
+    const armedForceSelect = document.getElementById('armed_force');
+    const organizationField = document.getElementById('organization-field');
+    const organizationSelect = document.getElementById('organization_id');
+    const sectionField = document.getElementById('section-field');
+    
+    if (armedForceSelect.value === 'EB') {
+        // Mostrar campo de organização para Exército Brasileiro
+        organizationField.style.display = 'block';
+        organizationSelect.required = true;
+        
+        // Verificar se já tem organização selecionada para mostrar SU
+        toggleSectionField();
+    } else {
+        // Ocultar campo de organização para outras forças
+        organizationField.style.display = 'none';
+        organizationSelect.required = false;
+        organizationSelect.value = '';
+        
+        // Ocultar campo SU também
+        sectionField.style.display = 'none';
+        const sectionInputs = document.querySelectorAll('input[name="section"]');
+        sectionInputs.forEach(input => input.checked = false);
+    }
+}
+
 function toggleSectionField() {
     const organizationSelect = document.getElementById('organization_id');
     const sectionField = document.getElementById('section-field');
     
-    // Show section field for specific organizations that have SU divisions
+            // Show section field for specific organizations that have Cia divisions
     if (organizationSelect.value) {
         // You can add specific organization IDs here that require SU selection
         sectionField.style.display = 'block';
@@ -414,7 +440,7 @@ function updateDisplayDate(input) {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    toggleSectionField();
+    toggleOrganizationField();
     
     // Set initial date display if there's an old value
     const dateInput = document.getElementById('ready_at_om_date');

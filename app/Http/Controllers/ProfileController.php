@@ -84,12 +84,19 @@ class ProfileController extends Controller
             'full_name' => 'required|string|max:255',
             'war_name' => 'required|string|max:100',
             'rank_id' => 'required|exists:ranks,id',
-            'organization_id' => 'required|exists:organizations,id',
+            'organization_id' => 'nullable|exists:organizations,id',
             'subunit' => 'nullable|string|max:100',
             'armed_force' => 'required|in:EB,MB,FAB',
             'gender' => 'nullable|string|in:M,F',
             'ready_at_om_date' => 'nullable|date|before_or_equal:today',
         ]);
+
+        // Validação condicional: organization_id é obrigatório apenas para EB
+        if ($request->armed_force === 'EB' && !$request->organization_id) {
+            return back()->withErrors([
+                'organization_id' => 'Organização Militar é obrigatória para membros do Exército Brasileiro.'
+            ])->withInput();
+        }
 
         /** @var \App\Models\User $user */
         $user = Auth::user();

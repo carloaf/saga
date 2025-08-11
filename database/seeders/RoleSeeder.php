@@ -25,7 +25,7 @@ class RoleSeeder extends Seeder
                 'google_id' => 'admin_saga_system',
                 'rank_id' => 1, // Assumindo que existe um rank
                 'organization_id' => 1, // Assumindo que existe uma organização
-                'gender' => 'male',
+                'gender' => 'M',
                 'ready_at_om_date' => now()->format('Y-m-d'),
                 'role' => 'manager',
                 'is_active' => true,

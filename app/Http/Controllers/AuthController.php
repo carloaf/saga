@@ -62,7 +62,7 @@ class AuthController extends Controller
             return redirect('/login');
         }
         
-        $ranks = Rank::ordered()->get();
+        $ranks = Rank::ordered()->where('name', '!=', 'Usuário Externo')->get();
         $organizations = Organization::all();
         
         return view('auth.complete-registration', compact('googleUser', 'ranks', 'organizations'));
@@ -79,10 +79,18 @@ class AuthController extends Controller
         $validated = $request->validate([
             'war_name' => 'required|string|max:255',
             'rank_id' => 'required|exists:ranks,id',
-            'organization_id' => 'required|exists:organizations,id',
-            'gender' => 'required|in:male,female',
+            'organization_id' => 'nullable|exists:organizations,id',
+            'armed_force' => 'required|in:EB,MB,FAB',
+            'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
         ]);
+
+        // Validação condicional: organization_id é obrigatório apenas para EB
+        if ($request->armed_force === 'EB' && !$request->organization_id) {
+            return back()->withErrors([
+                'organization_id' => 'Organização Militar é obrigatória para membros do Exército Brasileiro.'
+            ])->withInput();
+        }
         
         $user = User::create([
             'google_id' => $googleUser['id'],
@@ -92,6 +100,7 @@ class AuthController extends Controller
             'avatar_url' => $googleUser['avatar'],
             'rank_id' => $validated['rank_id'],
             'organization_id' => $validated['organization_id'],
+            'armed_force' => $validated['armed_force'],
             'gender' => $validated['gender'],
             'ready_at_om_date' => $validated['ready_at_om_date'],
         ]);
@@ -148,7 +157,7 @@ class AuthController extends Controller
      */
     public function showRegister()
     {
-        $ranks = Rank::ordered()->get();
+        $ranks = Rank::ordered()->where('name', '!=', 'Usuário Externo')->get();
         $organizations = Organization::all();
         
         return view('auth.register', compact('ranks', 'organizations'));
@@ -165,12 +174,19 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'rank_id' => 'required|exists:ranks,id',
-            'organization_id' => 'required|exists:organizations,id',
+            'organization_id' => 'nullable|exists:organizations,id',
             'section' => 'nullable|in:1,2,3',
             'armed_force' => 'required|in:EB,MB,FAB',
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
         ]);
+
+        // Validação condicional: organization_id é obrigatório apenas para EB
+        if ($request->armed_force === 'EB' && !$request->organization_id) {
+            return back()->withErrors([
+                'organization_id' => 'Organização Militar é obrigatória para membros do Exército Brasileiro.'
+            ])->withInput();
+        }
 
         $user = User::create([
             'full_name' => $request->full_name,

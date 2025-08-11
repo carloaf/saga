@@ -23,7 +23,7 @@ class SuperuserSeeder extends Seeder
             'role' => 'superuser',
             'organization_id' => 1,
             'rank_id' => 1,
-            'gender' => 'male',
+            'gender' => 'M',
             'ready_at_om_date' => now(),
             'is_active' => true,
             'subunit' => '1ª Cia',

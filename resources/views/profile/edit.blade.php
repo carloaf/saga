@@ -553,10 +553,10 @@ function getRankSymbol($rankName) {
                                         <select name="subunit" id="subunit" 
                                                 class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900"
                                                 {{ auth()->user()->organization && auth()->user()->organization->name == '11º Depósito de Suprimento' ? 'required' : '' }}>
-                                            <option value="" disabled {{ !auth()->user()->subunit ? 'selected' : '' }}>Selecione sua SU</option>
-                                            <option value="1" {{ auth()->user()->subunit == '1' ? 'selected' : '' }}>1</option>
-                                            <option value="2" {{ auth()->user()->subunit == '2' ? 'selected' : '' }}>2</option>
-                                            <option value="3" {{ auth()->user()->subunit == '3' ? 'selected' : '' }}>3</option>
+                                            <option value="" disabled {{ !auth()->user()->subunit ? 'selected' : '' }}>Selecione sua Cia</option>
+                                            <option value="1" {{ auth()->user()->subunit == '1' ? 'selected' : '' }}>1ª Cia</option>
+                                            <option value="2" {{ auth()->user()->subunit == '2' ? 'selected' : '' }}>2ª Cia</option>
+                                            <option value="3" {{ auth()->user()->subunit == '3' ? 'selected' : '' }}>3ª Cia</option>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -578,7 +578,8 @@ function getRankSymbol($rankName) {
                                 <div class="gradient-border">
                                     <div class="relative">
                                         <select name="armed_force" id="armed_force" 
-                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
+                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900"
+                                                onchange="toggleOrganizationField()">
                                             <option value="EB" {{ auth()->user()->armed_force == 'EB' ? 'selected' : '' }}>🪖 Exército Brasileiro (EB)</option>
                                             <option value="MB" {{ auth()->user()->armed_force == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
                                             <option value="FAB" {{ auth()->user()->armed_force == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
@@ -1027,6 +1028,43 @@ function getRankSymbol($rankName) {
             });
         });
 
+        // Alternar visibilidade do campo de organização baseado na força armada
+        function toggleOrganizationField() {
+            const armedForceSelect = document.getElementById('armed_force');
+            const organizationSelect = document.getElementById('organization_id');
+            const subunitGroup = document.getElementById('subunit-group');
+            
+            // Encontrar o grupo da organização usando o label
+            const organizationLabel = document.querySelector('label[for="organization_id"]');
+            const organizationGroup = organizationLabel ? organizationLabel.closest('.form-group') : null;
+            
+            if (armedForceSelect && organizationGroup && organizationSelect) {
+                if (armedForceSelect.value === 'EB') {
+                    // Mostrar campo de organização para Exército Brasileiro
+                    organizationGroup.style.display = '';
+                    organizationSelect.setAttribute('required', 'required');
+                    
+                    // Verificar se já tem organização selecionada para mostrar SU
+                    toggleSectionField();
+                } else {
+                    // Ocultar campo de organização para outras forças
+                    organizationGroup.style.display = 'none';
+                    organizationSelect.removeAttribute('required');
+                    organizationSelect.value = '';
+                    
+                    // Ocultar campo SU também
+                    if (subunitGroup) {
+                        subunitGroup.style.display = 'none';
+                        const subunitSelect = document.getElementById('subunit');
+                        if (subunitSelect) {
+                            subunitSelect.removeAttribute('required');
+                            subunitSelect.value = '';
+                        }
+                    }
+                }
+            }
+        }
+
         // Alternar visibilidade do campo de subunidade com base na organização selecionada
         function toggleSectionField() {
             const organizationSelect = document.getElementById('organization_id');
@@ -1051,9 +1089,19 @@ function getRankSymbol($rankName) {
         
         // Configurar event listeners
         document.addEventListener('DOMContentLoaded', function() {
+            const armedForceSelect = document.getElementById('armed_force');
             const organizationSelect = document.getElementById('organization_id');
+            
+            if (armedForceSelect) {
+                // Verificar estado inicial da força armada
+                toggleOrganizationField();
+                
+                // Configurar para verificar quando alterado
+                armedForceSelect.addEventListener('change', toggleOrganizationField);
+            }
+            
             if (organizationSelect) {
-                // Verificar estado inicial
+                // Verificar estado inicial da organização
                 toggleSectionField();
                 
                 // Configurar para verificar quando alterado

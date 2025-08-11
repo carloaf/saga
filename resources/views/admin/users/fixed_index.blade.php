@@ -406,8 +406,8 @@
                                 <select id="createGender" name="gender" required
                                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     <option value="">Selecione o gênero</option>
-                                    <option value="male">Masculino</option>
-                                    <option value="female">Feminino</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Feminino</option>
                                 </select>
                             </div>
 
@@ -516,8 +516,8 @@
                         <label for="editGender" class="block text-sm font-medium text-gray-700">Gênero</label>
                         <select id="editGender" name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="">Selecione o gênero</option>
-                            <option value="male">Masculino</option>
-                            <option value="female">Feminino</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
                         </select>
                     </div>
                     <div>

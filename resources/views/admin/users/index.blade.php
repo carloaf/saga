@@ -256,7 +256,7 @@
                             <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
                                 @if($user->subunit)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800">
-                                        {{ $user->subunit }}
+                                        {{ $user->subunit }}ª Cia
                                     </span>
                                 @else
                                     <span class="text-gray-400 text-xs">N/A</span>
@@ -444,11 +444,26 @@
                                 </div>
 
                                 <div>
+                                    <label for="createArmedForce" class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Força Armada
+                                    </label>
+                                    <select id="createArmedForce" name="armed_force"
+                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all"
+                                            onchange="toggleOrganizationFieldsCreate()">
+                                        <option value="">Selecione...</option>
+                                        <option value="FAB">🛩️ FAB - Força Aérea Brasileira</option>
+                                        <option value="MB">⚓ MB - Marinha do Brasil</option>
+                                        <option value="EB">🪖 EB - Exército Brasileiro</option>
+                                    </select>
+                                </div>
+
+                                <div id="createOrganizationGroup">
                                     <label for="createOrganization" class="block text-sm font-semibold text-gray-900 mb-2">
                                         Organização <span class="text-red-500">*</span>
                                     </label>
                                     <select id="createOrganization" name="organization_id" required
-                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
+                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all"
+                                            onchange="toggleSubunitFieldCreate()">
                                         <option value="">Selecione...</option>
                                         @foreach($organizations as $org)
                                             <option value="{{ $org->id }}">{{ $org->name }}</option>
@@ -456,25 +471,16 @@
                                     </select>
                                 </div>
 
-                                <div>
+                                <div id="createSubunitGroup">
                                     <label for="createSubunit" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Subunidade (SU)
+                                        Subunidade (Cia)
                                     </label>
-                                    <input type="text" id="createSubunit" name="subunit" 
-                                           placeholder="Ex: 1ª SU, 2ª SU, etc."
-                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                </div>
-
-                                <div>
-                                    <label for="createArmedForce" class="block text-sm font-semibold text-gray-900 mb-2">
-                                        Força Armada
-                                    </label>
-                                    <select id="createArmedForce" name="armed_force"
+                                    <select id="createSubunit" name="subunit"
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                        <option value="">Selecione...</option>
-                                        <option value="FAB">🛩️ FAB - Força Aérea Brasileira</option>
-                                        <option value="MB">⚓ MB - Marinha do Brasil</option>
-                                        <option value="EB">🪖 EB - Exército Brasileiro</option>
+                                        <option value="">Selecione a subunidade</option>
+                                        <option value="1">1ª Cia</option>
+                                        <option value="2">2ª Cia</option>
+                                        <option value="3">3ª Cia</option>
                                     </select>
                                 </div>
 
@@ -485,8 +491,8 @@
                                     <select id="createGender" name="gender" required
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
                                         <option value="">Selecione o gênero</option>
-                                        <option value="male">Masculino</option>
-                                        <option value="female">Feminino</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
                                     </select>
                                 </div>
 
@@ -597,35 +603,41 @@
                             </select>
                         </div>
                         <div>
-                            <label for="editOrganization" class="block text-sm font-semibold text-gray-900 mb-2">Organização</label>
-                            <select id="editOrganization" name="organization_id" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                                <option value="">Selecione...</option>
-                                @foreach($organizations as $org)
-                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label for="editSubunit" class="block text-sm font-semibold text-gray-900 mb-2">Subunidade (SU)</label>
-                            <input type="text" id="editSubunit" name="subunit" 
-                                   placeholder="Ex: 1ª SU, 2ª SU, etc."
-                                   class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                        </div>
-                        <div>
                             <label for="editArmedForce" class="block text-sm font-semibold text-gray-900 mb-2">Força Armada</label>
-                            <select id="editArmedForce" name="armed_force" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                            <select id="editArmedForce" name="armed_force" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all"
+                                    onchange="toggleOrganizationFieldsEdit()">
                                 <option value="">Selecione...</option>
                                 <option value="FAB">🛩️ FAB - Força Aérea Brasileira</option>
                                 <option value="MB">⚓ MB - Marinha do Brasil</option>
                                 <option value="EB">🪖 EB - Exército Brasileiro</option>
                             </select>
                         </div>
+                        <div id="editOrganizationGroup">
+                            <label for="editOrganization" class="block text-sm font-semibold text-gray-900 mb-2">Organização</label>
+                            <select id="editOrganization" name="organization_id" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all"
+                                    onchange="toggleSubunitFieldEdit()">
+                                <option value="">Selecione...</option>
+                                @foreach($organizations as $org)
+                                    <option value="{{ $org->id }}">{{ $org->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div id="editSubunitGroup">
+                            <label for="editSubunit" class="block text-sm font-semibold text-gray-900 mb-2">Subunidade (Cia)</label>
+                            <select id="editSubunit" name="subunit"
+                                    class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                                <option value="">Selecione a subunidade</option>
+                                <option value="1">1ª Cia</option>
+                                <option value="2">2ª Cia</option>
+                                <option value="3">3ª Cia</option>
+                            </select>
+                        </div>
                         <div>
                             <label for="editGender" class="block text-sm font-semibold text-gray-900 mb-2">Gênero</label>
                             <select id="editGender" name="gender" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="">Selecione o gênero</option>
-                                <option value="male">Masculino</option>
-                                <option value="female">Feminino</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
                             </select>
                         </div>
                         <div>
@@ -673,9 +685,94 @@
 
 @section('scripts')
 <script>
+    // Função para controlar visibilidade dos campos de organização na criação
+    function toggleOrganizationFieldsCreate() {
+        const armedForce = document.getElementById('createArmedForce').value;
+        const orgGroup = document.getElementById('createOrganizationGroup');
+        const subunitGroup = document.getElementById('createSubunitGroup');
+        const orgField = document.getElementById('createOrganization');
+        
+        if (armedForce === 'EB') {
+            orgGroup.style.display = 'block';
+            orgField.required = true;
+            // Verifica se deve mostrar subunidade baseado na organização atual
+            toggleSubunitFieldCreate();
+        } else {
+            orgGroup.style.display = 'none';
+            subunitGroup.style.display = 'none';
+            orgField.required = false;
+            orgField.value = '';
+            document.getElementById('createSubunit').value = '';
+        }
+    }
+
+    // Função para controlar visibilidade da subunidade na criação
+    function toggleSubunitFieldCreate() {
+        const orgValue = document.getElementById('createOrganization').value;
+        const subunitGroup = document.getElementById('createSubunitGroup');
+        const subunitField = document.getElementById('createSubunit');
+        
+        // ID 14 corresponde ao "11º Depósito de Suprimento"
+        if (orgValue === '14') {
+            subunitGroup.style.display = 'block';
+            console.log('Mostrando subunidade para 11º Depósito de Suprimento');
+        } else {
+            subunitGroup.style.display = 'none';
+            subunitField.value = '';
+            console.log('Ocultando subunidade - organização não é 11º Depósito');
+        }
+    }
+
+    // Função para controlar visibilidade dos campos de organização na edição
+    function toggleOrganizationFieldsEdit() {
+        const armedForce = document.getElementById('editArmedForce').value;
+        const orgGroup = document.getElementById('editOrganizationGroup');
+        const subunitGroup = document.getElementById('editSubunitGroup');
+        const orgField = document.getElementById('editOrganization');
+        
+        if (armedForce === 'EB') {
+            orgGroup.style.display = 'block';
+            orgField.required = true;
+            // Verifica se deve mostrar subunidade baseado na organização atual
+            toggleSubunitFieldEdit();
+        } else {
+            orgGroup.style.display = 'none';
+            subunitGroup.style.display = 'none';
+            orgField.required = false;
+            orgField.value = '';
+            document.getElementById('editSubunit').value = '';
+        }
+    }
+
+    // Função para controlar visibilidade da subunidade na edição
+    function toggleSubunitFieldEdit() {
+        const orgValue = document.getElementById('editOrganization').value;
+        const subunitGroup = document.getElementById('editSubunitGroup');
+        const subunitField = document.getElementById('editSubunit');
+        
+        console.log('toggleSubunitFieldEdit - Organização selecionada:', orgValue);
+        console.log('Elemento subunitGroup encontrado:', subunitGroup);
+        
+        // ID 14 corresponde ao "11º Depósito de Suprimento"
+        if (orgValue === '14') {
+            subunitGroup.style.display = 'block';
+            console.log('✅ Mostrando subunidade para 11º Depósito de Suprimento (ID: 14)');
+        } else {
+            subunitGroup.style.display = 'none';
+            subunitField.value = '';
+            console.log('❌ Ocultando subunidade - organização ID:', orgValue, '(não é 14)');
+        }
+    }
+
     function openCreateModal() {
         // Limpa o formulário
         document.getElementById('createUserForm').reset();
+        
+        // Inicializa os campos de organização como ocultos
+        toggleOrganizationFieldsCreate();
+        
+        // Garante que subunidade comece oculta
+        document.getElementById('createSubunitGroup').style.display = 'none';
         
         // Mostra o modal
         const modal = document.getElementById('createModal');
@@ -730,6 +827,8 @@
                 email: formData.get('email'),
                 rank_id: formData.get('rank_id') || null,
                 organization_id: formData.get('organization_id') || null,
+                subunit: formData.get('subunit') || null,
+                armed_force: formData.get('armed_force') || null,
                 gender: formData.get('gender'),
                 ready_at_om_date: formData.get('ready_at_om_date'),
                 is_active: formData.get('is_active') === '1',
@@ -787,6 +886,12 @@
         document.getElementById('editStatus').value = isActive;
         document.getElementById('editRole').value = role || 'user';
         
+        // Inicializa a visibilidade dos campos condicionais após um pequeno delay
+        setTimeout(() => {
+            toggleOrganizationFieldsEdit();
+            console.log('Valores atuais - Força Armada:', armedForce, 'Organização ID:', organizationId);
+        }, 100);
+        
         // Mostra o modal
         const modal = document.getElementById('editModal');
         modal.classList.remove('hidden');
@@ -818,6 +923,8 @@
                 email: formData.get('email'),
                 rank_id: formData.get('rank_id') || null,
                 organization_id: formData.get('organization_id') || null,
+                subunit: formData.get('subunit') || null,
+                armed_force: formData.get('armed_force') || null,
                 gender: formData.get('gender'),
                 ready_at_om_date: formData.get('ready_at_om_date'),
                 is_active: formData.get('is_active') === '1',
@@ -1196,6 +1303,14 @@
     .text-blue-600.bg-blue-50:hover {
         background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
         transform: scale(1.05);
+    }
+    
+    /* Inicializar campos condicionais como ocultos */
+    #createSubunitGroup,
+    #editSubunitGroup,
+    #createOrganizationGroup,
+    #editOrganizationGroup {
+        display: none;
     }
 </style>
 @endsection
