@@ -1,15 +1,30 @@
 
+# =============================================================================
+# Docker Compose - Development Environment
+# Para produção: usar deploy/production/docker-compose.prod.yml
+# Para staging: usar deploy/staging/docker-compose.staging.yml  
+# =============================================================================
+version: '3.8'
+
 services:
     app:
+        # Para forçar uma arquitetura específica durante desenvolvimento
+        # descomente a linha abaixo (ex: linux/amd64 em hosts Apple Silicon)
+        # platform: ${APP_PLATFORM}
         build:
             context: .
             dockerfile: Dockerfile
-        image: saga/app
-        container_name: saga_app
+            target: runtime
+            # Args expostos para buildx (opcional – buildx injeta automaticamente)
+            args:
+                BUILDPLATFORM: ${BUILDPLATFORM}
+                TARGETPLATFORM: ${TARGETPLATFORM}
+        image: saga/app:dev
+        container_name: saga_app_dev
         restart: unless-stopped
         working_dir: /var/www/html
         volumes:
-            - ./:/var/www/html
+            - ./:/var/www/html  # Development: mount source for live editing
         networks:
             - saga_network
         depends_on:
@@ -17,6 +32,8 @@ services:
         ports:
             - "8000:80"
         environment:
+            - APP_ENV=local
+            - APP_DEBUG=true
             - PHP_EXTENSIONS=pdo_pgsql,pgsql,gd,zip,bcmath,exif,intl
 
     database:

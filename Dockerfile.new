@@ -10,23 +10,21 @@ ARG TARGETPLATFORM
 # -----------------------------------------------------------------------------
 # Stage 1: Frontend Build (Node.js)
 # -----------------------------------------------------------------------------
-FROM node:20.14.0-alpine AS frontend
+FROM --platform=$BUILDPLATFORM node:20.14.0-alpine AS frontend
 LABEL stage="frontend-build"
 LABEL description="Build frontend assets with Vite"
 
 WORKDIR /app
 
 # Show build info for debugging
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "Building frontend for TARGETPLATFORM=${TARGETPLATFORM:-current} (build host: ${BUILDPLATFORM:-current})"
+RUN echo "Building frontend for TARGETPLATFORM=${TARGETPLATFORM} (build host: ${BUILDPLATFORM})"
 
 # Copy package files first for better caching
 COPY package.json package-lock.json ./
 
 # Install dependencies with cache mount for faster rebuilds
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --silent
+    npm ci --only=production --silent
 
 # Copy source files and build
 COPY resources/ ./resources/
@@ -52,10 +50,9 @@ RUN --mount=type=cache,target=/tmp/cache \
     composer install \
         --no-dev \
         --no-scripts \
+        --no-autoloader \
         --optimize-autoloader \
-        --prefer-dist \
-        --ignore-platform-req=ext-gd \
-        --ignore-platform-req=php
+        --prefer-dist
 
 # -----------------------------------------------------------------------------
 # Stage 3: Final Runtime Image
@@ -67,7 +64,7 @@ LABEL version="1.0"
 
 # Build info
 ARG TARGETPLATFORM
-RUN echo "Runtime image for ${TARGETPLATFORM:-current}"
+RUN echo "Runtime image for ${TARGETPLATFORM}"
 
 # Install system dependencies in single layer
 RUN apt-get update && apt-get install -y \
