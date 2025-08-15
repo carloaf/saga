@@ -33,13 +33,17 @@ sudo chmod +x /usr/local/bin/docker-compose
 git clone https://github.com/carloaf/saga.git
 cd saga
 
-# Verificar branch
-git branch -a
-git checkout dev  # Se não estiver em dev
+# IMPORTANTE: Mudar para branch dev (onde estão as mudanças)
+git checkout dev
+
+# Verificar branch atual
+git branch -v
+# Deve mostrar: * dev
 
 # Verificar commits recentes
-git log --oneline -3
-# Deve mostrar nossos 3 commits:
+git log --oneline -4
+# Deve mostrar nossos 4 commits:
+# - docs(testing): add multi-architecture validation guide for x64 Linux
 # - docs: create comprehensive multi-architecture development documentation
 # - feat(deploy): implement professional multi-architecture deployment structure  
 # - chore: cleanup project structure and remove temporary files
