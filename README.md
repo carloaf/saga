@@ -82,6 +82,44 @@ docker-compose exec app php artisan migrate
 docker-compose exec app php artisan db:seed
 ```
 
+### 3.1 Build Multi-Arquitetura (Profissional)
+
+O SAGA inclui scripts profissionais para build e deployment multi-arquitetura:
+
+#### Build Rápido com Script
+```bash
+# Build multi-arch e push para registry
+./scripts/deployment/build-multiarch.sh --push --tag v1.0.0 --registry your-registry.com
+
+# Build apenas local (arquitetura atual)
+./scripts/deployment/build-multiarch.sh --load --tag dev
+
+# Build com cache (GitHub Actions)
+./scripts/deployment/build-multiarch.sh --cache --push --tag latest
+```
+
+#### Build Manual (Método Tradicional)
+```bash
+# Criar e usar builder (uma vez)
+docker buildx create --name saga-builder --use
+
+# Verificar suporte
+docker buildx inspect --bootstrap
+
+# Build e push multi-arch
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t seuusuario/saga:latest \
+  --push .
+```
+
+#### Forçar Arquitetura em Desenvolvimento
+```bash
+export APP_PLATFORM=linux/amd64
+# Descomentar linha 'platform:' no docker-compose.yml
+docker-compose up -d
+```
+
 ### 4. Compilar Assets
 ```bash
 # Para desenvolvimento
@@ -149,18 +187,75 @@ docker-compose exec app npm run build
 
 ## 🚀 Deploy
 
-### Ambiente de Produção
-```bash
-# Build da aplicação
-docker-compose -f docker-compose.prod.yml build
+### Estrutura de Deploy Profissional
 
-# Deploy
+```
+deploy/
+├── production/
+│   ├── docker-compose.prod.yml    # Configuração produção
+│   └── .env.production            # Variáveis ambiente prod
+└── staging/
+    ├── docker-compose.staging.yml # Configuração staging  
+    └── .env.staging               # Variáveis ambiente staging
+
+scripts/
+└── deployment/
+    ├── build-multiarch.sh         # Build multi-arquitetura
+    ├── deploy-production.sh       # Deploy automatizado
+    └── cleanup-project.sh         # Limpeza do projeto
+```
+
+### Deploy Automatizado
+
+#### Produção
+```bash
+# Deploy completo (build + deploy)
+./scripts/deployment/deploy-production.sh deploy
+
+# Build multi-arch e deploy
+MULTI_ARCH=true ./scripts/deployment/deploy-production.sh deploy
+
+# Rollback para versão anterior
+./scripts/deployment/deploy-production.sh rollback
+
+# Monitoramento
+./scripts/deployment/deploy-production.sh status
+./scripts/deployment/deploy-production.sh logs
+```
+
+#### Staging
+```bash
+cd deploy/staging
+docker-compose -f docker-compose.staging.yml up -d
+```
+
+### Deploy Manual - Produção
+```bash
+cd deploy/production
+
+# Configurar environment
+cp .env.production.example .env.production
+# Editar .env.production com valores reais
+
+# Build e deploy
 docker-compose -f docker-compose.prod.yml up -d
 
-# Otimizações
-docker-compose exec app php artisan config:cache
-docker-compose exec app php artisan route:cache
-docker-compose exec app php artisan view:cache
+# Setup inicial
+docker-compose -f docker-compose.prod.yml exec app php artisan key:generate --force
+docker-compose -f docker-compose.prod.yml exec app php artisan migrate --force
+docker-compose -f docker-compose.prod.yml exec app php artisan config:cache
+```
+
+### Limpeza do Projeto
+```bash
+# Dry run (visualizar o que seria removido)
+./scripts/deployment/cleanup-project.sh
+
+# Executar limpeza
+./scripts/deployment/cleanup-project.sh --force
+
+# Limpeza completa (inclui node_modules e vendor)
+CLEAN_DEPS=true ./scripts/deployment/cleanup-project.sh --force
 ```
 
 ## 🤝 Contribuição
@@ -173,13 +268,34 @@ docker-compose exec app php artisan view:cache
 
 ## 📄 Licença
 
+## 📚 Documentação
+
+### Guias de Desenvolvimento
+- 📖 **[Workflow de Desenvolvimento](docs/DESENVOLVIMENTO_WORKFLOW.md)** - Guia completo para desenvolvimento com multi-arquitetura
+- ⚡ **[Quick Reference](docs/QUICK_REFERENCE.md)** - Comandos e referência rápida para desenvolvedores
+- 🏗️ **[Histórico de Implementação](docs/IMPLEMENTACAO_MULTI_ARCH_HISTORY.md)** - Detalhes da implementação multi-arquitetura
+
+### Ambientes Disponíveis
+```bash
+DESENVOLVIMENTO: http://localhost:8000  # Hot reload ativo
+STAGING:        http://localhost:8080   # Ambiente de QA/testes  
+PRODUÇÃO:       porta 80               # Ambiente otimizado
+```
+
+### Estrutura de Branches
+```
+main (produção) ←── dev (staging) ←── feature/nova-funcionalidade
+```
+
+## 📝 Licença
+
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
 ## 📞 Suporte
 
 Para dúvidas e suporte:
 - 📧 Email: [seu-email@exemplo.com]
-- 📖 Documentação: [link-documentacao]
+- 📖 Documentação: [docs/](docs/)
 - 🐛 Issues: [link-issues]
 
 ---
