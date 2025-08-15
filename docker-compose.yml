@@ -4,7 +4,6 @@
 # Para produção: usar deploy/production/docker-compose.prod.yml
 # Para staging: usar deploy/staging/docker-compose.staging.yml  
 # =============================================================================
-version: '3.8'
 
 services:
     app:

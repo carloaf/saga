@@ -120,7 +120,71 @@ export APP_PLATFORM=linux/amd64
 docker-compose up -d
 ```
 
-### 4. Compilar Assets
+### 4. Configuração Pós-Instalação
+
+#### 4.1 Instalação de Dependências
+```bash
+# Instalar dependências PHP (obrigatório)
+docker run --rm -v "$(pwd)":/app composer:latest install --ignore-platform-req=ext-gd --ignore-platform-req=php
+
+# Ou usando o container do projeto
+docker exec saga_app_dev composer install
+```
+
+#### 4.2 Criação de Diretórios Laravel
+```bash
+# Criar estrutura de storage (obrigatório)
+mkdir -p storage/app/public
+mkdir -p storage/framework/cache
+mkdir -p storage/framework/sessions
+mkdir -p storage/framework/views
+mkdir -p storage/logs
+mkdir -p bootstrap/cache
+```
+
+#### 4.3 Configuração de Permissões
+```bash
+# Configurar permissões nos containers (obrigatório após subir containers)
+docker exec saga_app_dev chown -R www-data:www-data /var/www/html/storage
+docker exec saga_app_dev chmod -R 755 /var/www/html/storage
+docker exec saga_app_dev chown -R www-data:www-data /var/www/html/bootstrap/cache
+docker exec saga_app_dev chmod -R 755 /var/www/html/bootstrap/cache
+
+# Para ambiente de staging
+docker exec saga_app_staging chown -R www-data:www-data /var/www/html/storage
+docker exec saga_app_staging chmod -R 755 /var/www/html/storage
+docker exec saga_app_staging chown -R www-data:www-data /var/www/html/bootstrap/cache
+docker exec saga_app_staging chmod -R 755 /var/www/html/bootstrap/cache
+```
+
+#### 4.4 Configuração do Laravel
+```bash
+# Gerar chaves da aplicação
+docker exec saga_app_dev php artisan key:generate
+docker exec saga_app_staging php artisan key:generate
+
+# Executar migrações
+docker exec saga_app_dev php artisan migrate
+docker exec saga_app_staging php artisan migrate
+
+# Limpar caches
+docker exec saga_app_dev php artisan view:clear
+docker exec saga_app_dev php artisan config:cache
+docker exec saga_app_staging php artisan view:clear
+docker exec saga_app_staging php artisan config:cache
+```
+
+#### 4.5 Verificação de Funcionamento
+```bash
+# Testar ambientes
+curl http://localhost:8000  # Development (deve retornar 200)
+curl http://localhost:8080  # Staging (deve retornar 200)
+
+# Verificar status dos containers
+docker ps  # Todos devem estar "healthy"
+```
+
+### 5. Compilar Assets
 ```bash
 # Para desenvolvimento
 docker-compose exec app npm run dev
