@@ -29,24 +29,24 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ### 2. **Clone do Repositório**
 ```bash
-# Clone do projeto
+# Clone do projeto (agora main está atualizada!)
 git clone https://github.com/carloaf/saga.git
 cd saga
 
-# IMPORTANTE: Mudar para branch dev (onde estão as mudanças)
-git checkout dev
+# Verificar branch atual (deve ser main)
+git branch
+# Deve mostrar: * main
 
-# Verificar branch atual
-git branch -v
-# Deve mostrar: * dev
+# Verificar se tem toda estrutura nova
+ls docs/ deploy/ scripts/
+# Deve mostrar todas as pastas da estrutura multi-arch
 
-# Verificar commits recentes
-git log --oneline -4
-# Deve mostrar nossos 4 commits:
+# Verificar commits recentes  
+git log --oneline -3
+# Deve mostrar:
+# - feat: merge multi-architecture implementation from dev to main
+# - fix(docs): correct clone instructions to use dev branch
 # - docs(testing): add multi-architecture validation guide for x64 Linux
-# - docs: create comprehensive multi-architecture development documentation
-# - feat(deploy): implement professional multi-architecture deployment structure  
-# - chore: cleanup project structure and remove temporary files
 ```
 
 ### 3. **Build e Teste do Ambiente de Desenvolvimento**
