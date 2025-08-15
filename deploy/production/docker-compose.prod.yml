@@ -1,0 +1,52 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: runtime
+    image: saga/app:latest
+    container_name: saga_app_prod
+    restart: unless-stopped
+    working_dir: /var/www/html
+    networks:
+      - saga_network
+    depends_on:
+      - database
+      - redis
+    ports:
+      - "80:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+
+  database:
+    image: postgres:16-alpine
+    container_name: saga_db_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saga
+      POSTGRES_USER: saga_user
+      POSTGRES_PASSWORD: saga_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - saga_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: saga_redis_prod
+    restart: unless-stopped
+    networks:
+      - saga_network
+    volumes:
+      - redis_data:/data
+
+networks:
+  saga_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

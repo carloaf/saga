@@ -1,0 +1,67 @@
+# =============================================================================
+# Docker Compose - Staging Environment  
+# =============================================================================
+
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: runtime
+    image: saga/app:staging
+    container_name: saga_app_staging
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ../../:/var/www/html  # Mount for easier debugging
+      - ../../.env.staging:/var/www/html/.env  # Use staging-specific .env
+    networks:
+      - saga_network
+    depends_on:
+      - database
+      - redis
+    ports:
+      - "${STAGING_PORT:-8080}:80"
+    environment:
+      - APP_ENV=staging
+      - APP_DEBUG=true
+      - LOG_LEVEL=debug
+      - PHP_EXTENSIONS=pdo_pgsql,pgsql,gd,zip,bcmath,exif,intl
+
+  database:
+    image: postgres:16-alpine
+    container_name: saga_db_staging
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-saga_staging}
+      POSTGRES_USER: ${DB_USERNAME:-saga_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-saga_password_staging}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+    networks:
+      - saga_network
+    ports:
+      - "${DB_PORT:-5433}:5432"  # Different port for staging
+
+  redis:
+    image: redis:7-alpine
+    container_name: saga_redis_staging
+    restart: unless-stopped
+    networks:
+      - saga_network
+    ports:
+      - "${REDIS_PORT:-6380}:6379"  # Different port for staging
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_staging_data:/data
+
+networks:
+  saga_network:
+    driver: bridge
+
+volumes:
+  postgres_staging_data:
+    driver: local
+  redis_staging_data:
+    driver: local
