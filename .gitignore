@@ -24,6 +24,11 @@ yarn-error.log
 test-*.html
 public/test-*.html
 
+# Backups de banco de dados
+/backups/
+*.sql
+*.sql.gz
+
 # Scripts de desenvolvimento temporários (manter apenas os principais)
 clean-labels.sh
 fix-icons.sh
@@ -51,6 +56,11 @@ Thumbs.db
 
 # Logs
 /storage/logs/*.log
+
+# Backups
+/backups/
+*.sql
+*.sql.gz
 
 # Compiled assets
 /public/css/
