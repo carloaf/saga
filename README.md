@@ -184,7 +184,46 @@ curl http://localhost:8080  # Staging (deve retornar 200)
 docker ps  # Todos devem estar "healthy"
 ```
 
-### 5. Compilar Assets
+### 5. Backup e Restore do Banco de Dados
+
+#### 5.1 Inicialização com Dados Base
+```bash
+# Executar seeders (dados base: organizações, ranks)
+./scripts/database/setup.sh dev     # Desenvolvimento
+./scripts/database/setup.sh staging # Staging
+
+# Verificar dados inseridos
+docker exec saga_db psql -U saga_user -d saga -c "
+SELECT 'organizations' as tabela, COUNT(*) as registros FROM organizations
+UNION ALL SELECT 'ranks' as tabela, COUNT(*) as registros FROM ranks;"
+```
+
+#### 5.2 Backup Automático
+```bash
+# Backup completo de todos os ambientes
+./scripts/database/backup.sh
+
+# Arquivos gerados em backups/:
+# - saga_dev_complete_YYYYMMDD_HHMMSS.sql.gz
+# - saga_dev_data_YYYYMMDD_HHMMSS.sql.gz
+# - saga_staging_complete_YYYYMMDD_HHMMSS.sql.gz
+```
+
+#### 5.3 Restore de Dados
+```bash
+# Restore completo (estrutura + dados)
+./scripts/database/restore.sh dev backups/saga_dev_complete_20250815_210917.sql.gz
+
+# Restore apenas dados
+./scripts/database/restore.sh dev backups/saga_dev_data_20250815_210917.sql.gz data
+
+# Restore específico (usuários ou reservas)
+./scripts/database/restore.sh dev backups/saga_dev_users_20250815_210917.sql.gz users
+```
+
+**📖 Documentação Completa**: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md)
+
+### 6. Compilar Assets
 ```bash
 # Para desenvolvimento
 docker-compose exec app npm run dev
