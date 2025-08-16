@@ -209,7 +209,17 @@ UNION ALL SELECT 'ranks' as tabela, COUNT(*) as registros FROM ranks;"
 # - saga_staging_complete_YYYYMMDD_HHMMSS.sql.gz
 ```
 
-#### 5.3 Restore de Dados
+#### 5.3 Backup de Máquina Remota (SSH)
+```bash
+# Importar dados de produção via SSH
+./scripts/database/remote-backup.sh usuario@servidor.com dev
+
+# Exemplo real executado:
+./scripts/database/remote-backup.sh sonnote@192.168.0.57 dev
+# ✅ Importou 424 reservas + 31 usuários + 14 organizações
+```
+
+#### 5.4 Restore de Dados
 ```bash
 # Restore completo (estrutura + dados)
 ./scripts/database/restore.sh dev backups/saga_dev_complete_20250815_210917.sql.gz
@@ -219,6 +229,24 @@ UNION ALL SELECT 'ranks' as tabela, COUNT(*) as registros FROM ranks;"
 
 # Restore específico (usuários ou reservas)
 ./scripts/database/restore.sh dev backups/saga_dev_users_20250815_210917.sql.gz users
+```
+
+#### 5.5 Status Atual dos Dados
+
+**📊 Desenvolvimento (com dados reais de produção)**:
+```bash
+✅ Reservas: 424 registros (dados reais)
+✅ Usuários: 31 registros (produção)  
+✅ Organizações: 14 registros (militares)
+✅ Cardápios: 3 registros (semanais)
+🏢 Principal: 11º Depósito de Suprimento (15 usuários)
+```
+
+**📊 Staging (ambiente limpo para testes)**:
+```bash
+✅ Estrutura: Completa e funcional
+⭕ Dados: Vazio (pronto para testes)
+🌐 URL: http://localhost:8080
 ```
 
 **📖 Documentação Completa**: [docs/BACKUP_RESTORE.md](docs/BACKUP_RESTORE.md)
