@@ -13,6 +13,8 @@ class Booking extends Model
         'user_id',
         'booking_date',
         'meal_type',
+        'status',
+        'created_by_furriel',
     ];
 
     protected $casts = [
@@ -27,6 +29,11 @@ class Booking extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function createdByFurriel()
+    {
+        return $this->belongsTo(User::class, 'created_by_furriel');
     }
 
     public function getMealTypeLabel()

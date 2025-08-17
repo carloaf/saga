@@ -43,6 +43,7 @@
                         <option value="">Todos os tipos</option>
                         <option value="user">Usuários</option>
                         <option value="manager">Gerentes</option>
+                        <option value="furriel">Furriéis</option>
                         <option value="superuser">Superusuários</option>
                     </select>
                     <!-- New User Button -->
@@ -294,6 +295,8 @@
                                 <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
                                     @if($user->role === 'manager')
                                         bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300
+                                    @elseif($user->role === 'furriel')
+                                        bg-gradient-to-r from-red-100 to-orange-200 text-red-800 border border-red-300
                                     @elseif($user->role === 'superuser')
                                         bg-gradient-to-r from-yellow-100 to-amber-200 text-amber-800 border border-amber-300
                                     @else
@@ -301,6 +304,8 @@
                                     @endif">
                                     @if($user->role === 'manager')
                                         🛡️ Gerente
+                                    @elseif($user->role === 'furriel')
+                                        ⚔️ Furriel
                                     @elseif($user->role === 'superuser')
                                         ⭐ Superusuário
                                     @else
@@ -512,6 +517,7 @@
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
                                         <option value="user" selected>👤 Usuário Normal</option>
                                         <option value="manager">🛡️ Gerente</option>
+                                        <option value="furriel">⚔️ Furriel</option>
                                         <option value="superuser">⭐ Superusuário</option>
                                     </select>
                                 </div>
@@ -656,6 +662,7 @@
                             <select id="editRole" name="role" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="user">👤 Usuário Normal</option>
                                 <option value="manager">🛡️ Gerente</option>
+                                <option value="furriel">⚔️ Furriel</option>
                                 <option value="superuser">⭐ Superusuário</option>
                             </select>
                         </div>
@@ -780,21 +787,21 @@
         
         // Adiciona animação de entrada
         setTimeout(() => {
-            const backdrop = modal.querySelector('.bg-gray-500');
+            const backdrop = modal.querySelector('.bg-gray-900');
             const panel = modal.querySelector('.transform');
-            backdrop.classList.add('opacity-100');
-            panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            if (backdrop) backdrop.classList.add('opacity-100');
+            if (panel) panel.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
         }, 10);
     }
 
     function closeCreateModal() {
         const modal = document.getElementById('createModal');
-        const backdrop = modal.querySelector('.bg-gray-500');
+        const backdrop = modal.querySelector('.bg-gray-900');
         const panel = modal.querySelector('.transform');
         
         // Animação de saída
-        backdrop.classList.remove('opacity-100');
-        panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+        if (backdrop) backdrop.classList.remove('opacity-100');
+        if (panel) panel.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
         
         setTimeout(() => {
             modal.classList.add('hidden');

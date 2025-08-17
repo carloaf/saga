@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->role === 'manager';
     }
 
+    public function isFurriel()
+    {
+        return $this->role === 'furriel';
+    }
+
     public function hasRole($role)
     {
         return $this->role === $role;

@@ -105,7 +105,7 @@ class AdminController extends Controller
                 'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
                 'is_active' => 'required|boolean',
-                'role' => 'required|in:user,manager,superuser'
+                'role' => 'required|in:user,manager,superuser,furriel'
             ]);
 
             $user->update($validatedData);
@@ -137,7 +137,7 @@ class AdminController extends Controller
                 'armed_force' => 'nullable|in:FAB,MB,EB',
                 'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
-                'role' => 'required|in:user,manager,superuser',
+                'role' => 'required|in:user,manager,superuser,furriel',
                 'is_active' => 'required|boolean'
             ]);
 

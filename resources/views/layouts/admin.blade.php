@@ -28,14 +28,42 @@
         }
     </script>
     
-    <!-- Enhanced Forms CSS -->
-    <link href="{{ asset('css/enhanced-forms.css') }}" rel="stylesheet">
-    
     <!-- Custom Styles -->
     <style>
-        /* Custom styles if needed */
+        /* Custom checkbox styles */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Form enhancements */
+        input[type="checkbox"]:checked + div {
+            background-color: rgb(252 211 77 / 0.5);
+        }
+        
+        input[type="checkbox"]:checked + div svg {
+            display: block !important;
+        }
+        
+        /* Smooth transitions */
+        .transition-colors {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        /* Admin specific styles */
+        .header-controls {
+            backdrop-filter: blur(10px);
+        }
     </style>
-    <link href="{{ asset('css/vendor/tailwind-forms.css') }}" rel="stylesheet">
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <div class="min-h-screen">

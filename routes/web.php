@@ -59,6 +59,28 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/cardapio', [App\Http\Controllers\CardapioController::class, 'update'])->name('cardapio.update');
     Route::get('/cardapio/week/{week_start}', [App\Http\Controllers\CardapioController::class, 'getWeekMenu'])->name('cardapio.week');
     
+    // Furriel routes
+    Route::middleware(['auth'])->prefix('furriel')->name('furriel.')->group(function () {
+        Route::get('/debug', function() {
+            return view('furriel.debug');
+        })->name('debug');
+        
+        Route::get('/arranchamento-cia', [App\Http\Controllers\FurrielController::class, 'index'])->name('arranchamento.index');
+        Route::post('/arranchamento-cia', [App\Http\Controllers\FurrielController::class, 'store'])->name('arranchamento.store');
+        Route::get('/stats', [App\Http\Controllers\FurrielController::class, 'getStats'])->name('stats');
+        
+        // Rota de teste para AJAX
+        Route::get('/test-ajax', function(Request $request) {
+            return response()->json([
+                'message' => 'AJAX funcionando',
+                'date' => $request->get('date'),
+                'is_ajax' => $request->ajax(),
+                'wants_json' => $request->wantsJson(),
+                'xhr_header' => $request->header('X-Requested-With')
+            ]);
+        })->name('test.ajax');
+    });
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Admin routes
@@ -78,23 +100,35 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dev-admin-login', function () {
     // Create a quick admin user for testing
     $admin = \App\Models\User::firstOrCreate(
-        ['email' => 'admin@saga.test'],
+        ['email' => 'admin@saga.mil.br'],
         [
-            'full_name' => 'Administrador Sistema',
+            'google_id' => 'admin_dev_' . time(),
+            'full_name' => 'Admin Development',
             'war_name' => 'ADMIN',
-            'google_id' => 'dev-admin-123',
-            'email_verified_at' => now(),
-            'role' => 'manager',
-            'is_active' => true,
             'rank_id' => 1,
             'organization_id' => 1,
-            'gender' => 'male',
-            'ready_at_om_date' => now()->format('Y-m-d'),
+            'armed_force' => 'EB',
+            'gender' => 'M',
+            'ready_at_om_date' => now(),
+            'is_active' => true,
+            'role' => 'manager'
         ]
     );
     
     Auth::login($admin);
-    return redirect('/admin/users');
+    return redirect('/dashboard');
+});
+
+// DevTools for furriel testing
+Route::get('/dev-furriel-login', function () {
+    $furriel = \App\Models\User::where('role', 'furriel')->first();
+    
+    if ($furriel) {
+        Auth::login($furriel);
+        return redirect('/furriel/arranchamento-cia');
+    } else {
+        return 'Nenhum furriel encontrado no sistema';
+    }
 });
 
 Route::get('/setup-admin', function () {

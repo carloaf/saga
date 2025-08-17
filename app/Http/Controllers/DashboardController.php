@@ -177,11 +177,11 @@ class DashboardController extends Controller
                     $dateRange['end']->format('Y-m-d')
                 ])
                 ->join('users', 'bookings.user_id', '=', 'users.id')
-                ->join('organizations', 'users.organization_id', '=', 'organizations.id')
+                ->leftJoin('organizations', 'users.organization_id', '=', 'organizations.id')
                 ->select(
                     DB::raw('CASE 
                         WHEN organizations.name = \'11º Depósito de Suprimento\' THEN \'Própria OM\'
-                        WHEN users.armed_force = \'EB\' AND organizations.name != \'11º Depósito de Suprimento\' THEN \'Outras OM\'
+                        WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º Depósito de Suprimento\' OR organizations.name IS NULL) THEN \'Outras OM\'
                         WHEN users.armed_force IN (\'MB\', \'FAB\') THEN \'Outras Forças\'
                         ELSE \'Outras OM\'
                     END as origin'),
@@ -189,7 +189,7 @@ class DashboardController extends Controller
                 )
                 ->groupBy(DB::raw('CASE 
                     WHEN organizations.name = \'11º Depósito de Suprimento\' THEN \'Própria OM\'
-                    WHEN users.armed_force = \'EB\' AND organizations.name != \'11º Depósito de Suprimento\' THEN \'Outras OM\'
+                    WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º Depósito de Suprimento\' OR organizations.name IS NULL) THEN \'Outras OM\'
                     WHEN users.armed_force IN (\'MB\', \'FAB\') THEN \'Outras Forças\'
                     ELSE \'Outras OM\'
                 END'))

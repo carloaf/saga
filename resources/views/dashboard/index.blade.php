@@ -312,6 +312,26 @@
                                 <p class="text-sm text-green-700">Atualize suas informações pessoais e militares</p>
                             </a>
 
+                            @if(auth()->user()->role === 'furriel')
+                            <!-- Arranchamento da Cia - Apenas para Furriéis -->
+                            <a href="{{ route('furriel.arranchamento.index') }}" class="group bg-gradient-to-br from-red-50 to-orange-100 hover:from-red-100 hover:to-orange-200 rounded-2xl p-6 border border-red-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="w-6 h-6 bg-red-200 rounded-full flex items-center justify-center group-hover:bg-red-300 transition-colors">
+                                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h4 class="text-lg font-bold text-red-900 mb-2">Arranchamento da Cia</h4>
+                                <p class="text-sm text-red-700">Gerencie as refeições dos Soldados EV da sua companhia</p>
+                            </a>
+                            @endif
+
                             @if(auth()->user()->role === 'manager')
                             <!-- Gestão de Usuários - Apenas para Managers -->
                             <a href="{{ route('admin.users.index') }}" class="group bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-2xl p-6 border border-purple-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
@@ -410,20 +430,6 @@
                                         <p class="text-sm text-gray-600 font-medium">Distribuição diária das refeições</p>
                                     </div>
                                 </div>
-                                
-                                <!-- Action buttons -->
-                                <div class="flex items-center space-x-2">
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-green-200 hover:border-green-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-green-600 group-hover:text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-green-200 hover:border-green-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-green-600 group-hover:text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         
@@ -485,20 +491,6 @@
                                         </h3>
                                         <p class="text-sm text-gray-600 font-medium">Distribuição por organizações</p>
                                     </div>
-                                </div>
-                                
-                                <!-- Action buttons -->
-                                <div class="flex items-center space-x-2">
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-blue-200 hover:border-blue-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-blue-600 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-blue-200 hover:border-blue-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-blue-600 group-hover:text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -577,20 +569,6 @@
                                         <p class="text-sm text-gray-600 font-medium">Análise por tipo de refeição</p>
                                     </div>
                                 </div>
-                                
-                                <!-- Action buttons -->
-                                <div class="flex items-center space-x-2">
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-orange-200 hover:border-orange-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-orange-600 group-hover:text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-orange-200 hover:border-orange-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-orange-600 group-hover:text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                    </button>
-                                </div>
                             </div>
                         </div>
                         
@@ -653,20 +631,6 @@
                                         </h3>
                                         <p class="text-sm text-gray-600 font-medium">Segunda a Quinta-feira</p>
                                     </div>
-                                </div>
-                                
-                                <!-- Action buttons -->
-                                <div class="flex items-center space-x-2">
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-green-200 hover:border-green-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-green-600 group-hover:text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                        </svg>
-                                    </button>
-                                    <button class="p-2 bg-white bg-opacity-50 hover:bg-opacity-80 rounded-lg border border-green-200 hover:border-green-300 transition-all duration-200 group">
-                                        <svg class="w-4 h-4 text-green-600 group-hover:text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -1289,32 +1253,52 @@
     </script>
 
     <!-- Modal para Cardápio do Dia -->
-    <div id="dayMenuModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-4 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-2">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-lg font-bold text-gray-900" id="modalTitle">Cardápio do Dia</h3>
-                    <button onclick="closeDayMenuModal()" class="text-gray-400 hover:text-gray-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+    <div id="dayMenuModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center p-4">
+        <div class="relative mx-auto max-w-md w-full">
+            <!-- Modal container with enhanced styling -->
+            <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+                <!-- Header with gradient -->
+                <div class="bg-gradient-to-r from-green-500 via-emerald-600 to-teal-700 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-white" id="modalTitle">Cardápio do Dia</h3>
+                        <button onclick="closeDayMenuModal()" class="text-white hover:text-gray-200 transition-colors p-1 rounded-full hover:bg-white hover:bg-opacity-20">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="space-y-3">
-                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-                        <h4 class="font-bold text-gray-800 mb-1 flex items-center">
-                            ☕ Café da Manhã
+                <!-- Content with better spacing -->
+                <div class="p-6 space-y-4">
+                    <!-- Café da Manhã Section -->
+                    <div class="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-200 shadow-sm">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center text-lg">
+                            <span class="text-2xl mr-3">☕</span>
+                            <span>Café da Manhã</span>
                         </h4>
-                        <p class="text-sm text-gray-600" id="modalCafe">-</p>
+                        <div class="bg-white bg-opacity-60 p-3 rounded-lg border border-amber-100">
+                            <p class="text-gray-700 leading-relaxed" id="modalCafe">-</p>
+                        </div>
                     </div>
                     
-                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200" id="modalAlmocoDiv">
-                        <h4 class="font-bold text-gray-800 mb-1 flex items-center">
-                            🍽️ Almoço
+                    <!-- Almoço Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200 shadow-sm" id="modalAlmocoDiv">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center text-lg">
+                            <span class="text-2xl mr-3">🍽️</span>
+                            <span>Almoço</span>
                         </h4>
-                        <p class="text-sm text-gray-600" id="modalAlmoco">-</p>
+                        <div class="bg-white bg-opacity-60 p-3 rounded-lg border border-blue-100">
+                            <p class="text-gray-700 leading-relaxed" id="modalAlmoco">-</p>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- Footer with close button -->
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100">
+                    <button onclick="closeDayMenuModal()" class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all duration-200 shadow-md hover:shadow-lg">
+                        Fechar
+                    </button>
                 </div>
             </div>
         </div>

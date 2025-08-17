@@ -245,17 +245,16 @@
                                     name="armed_force" 
                                     required 
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                    onchange="toggleOrganizationField()"
-                                >
+                                    onchange="toggleOrganizationField()">
                                     <option value="">Selecione sua força armada</option>
-                                    <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>Exército Brasileiro (EB)</option>
-                                    <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>Marinha do Brasil (MB)</option>
-                                    <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>Força Aérea Brasileira (FAB)</option>
+                                    <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>🪖 Exército Brasileiro (EB)</option>
+                                    <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
+                                    <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
                                 </select>
                             </div>
 
                             <!-- Organização Militar (condicional) -->
-                            <div id="organization-field" class="md:col-span-2" style="display: none;">
+                            <div id="organization-field" style="display: none;">
                                 <label for="organization_id" class="block text-sm font-medium text-gray-700 mb-2">Organização Militar *</label>
                                 <select 
                                     id="organization_id" 
@@ -274,38 +273,34 @@
                                 </select>
                             </div>
 
-                            <!-- Campo Cia (condicional) -->
-                            <div id="section-field" class="md:col-span-2" style="display: none;">
-                                <label for="section" class="block text-sm font-medium text-gray-700 mb-2">Selecionar sua Cia</label>
-                                <div class="flex space-x-4">
-                                    <label class="flex items-center">
-                                        <input type="radio" name="section" value="1" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '1' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">1ª Cia</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="section" value="2" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '2' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">2ª Cia</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="section" value="3" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('section') == '3' ? 'checked' : '' }}>
-                                        <span class="ml-2 text-sm text-gray-700">3ª Cia</span>
-                                    </label>
-                                </div>
+                            <!-- Campo Cia (condicional - apenas para 11º Depósito) -->
+                            <div id="section-field" style="display: none;">
+                                <label for="subunit" class="block text-sm font-medium text-gray-700 mb-2">Selecionar sua Cia</label>
+                                <select 
+                                    id="subunit" 
+                                    name="subunit" 
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
+                                >
+                                    <option value="">Selecione sua companhia</option>
+                                    <option value="1ª Cia" {{ old('subunit') == '1ª Cia' ? 'selected' : '' }}>1ª Cia</option>
+                                    <option value="2ª Cia" {{ old('subunit') == '2ª Cia' ? 'selected' : '' }}>2ª Cia</option>
+                                    <option value="3ª Cia" {{ old('subunit') == '3ª Cia' ? 'selected' : '' }}>3ª Cia</option>
+                                </select>
                             </div>
 
                             <!-- Gênero -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Gênero *</label>
-                                <div class="flex space-x-6">
-                                    <label class="flex items-center">
-                                        <input type="radio" name="gender" value="M" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('gender') == 'M' ? 'checked' : '' }} required>
-                                        <span class="ml-2 text-sm text-gray-700">Masculino</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="gender" value="F" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300" {{ old('gender') == 'F' ? 'checked' : '' }} required>
-                                        <span class="ml-2 text-sm text-gray-700">Feminino</span>
-                                    </label>
-                                </div>
+                                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gênero *</label>
+                                <select 
+                                    id="gender" 
+                                    name="gender" 
+                                    required 
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
+                                >
+                                    <option value="">Selecione seu gênero</option>
+                                    <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Masculino</option>
+                                    <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>Feminino</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -408,16 +403,20 @@ function toggleOrganizationField() {
 function toggleSectionField() {
     const organizationSelect = document.getElementById('organization_id');
     const sectionField = document.getElementById('section-field');
+    const subunitSelect = document.getElementById('subunit');
     
-            // Show section field for specific organizations that have Cia divisions
-    if (organizationSelect.value) {
-        // You can add specific organization IDs here that require SU selection
+    // Buscar o texto da opção selecionada
+    const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
+    const organizationName = selectedOption ? selectedOption.text : '';
+    
+    // Só mostrar o campo Cia se for "11º Depósito de Suprimento"
+    if (organizationName.includes('11º Depósito de Suprimento')) {
         sectionField.style.display = 'block';
+        subunitSelect.required = true;
     } else {
         sectionField.style.display = 'none';
-        // Clear section selection
-        const sectionInputs = document.querySelectorAll('input[name="section"]');
-        sectionInputs.forEach(input => input.checked = false);
+        subunitSelect.required = false;
+        subunitSelect.value = '';
     }
 }
 
