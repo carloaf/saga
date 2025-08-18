@@ -127,6 +127,16 @@ class FurrielController extends Controller
             return back()->withErrors(['booking_date' => 'Não é possível fazer reservas para fins de semana.']);
         }
 
+        // Nova regra: Não permitir arranchamento para o mesmo dia útil
+        if ($carbonDate->isToday()) {
+            return back()->withErrors(['booking_date' => 'Não é permitido arranchar para o mesmo dia útil.']);
+        }
+
+        // Verificar deadline de 13h para o dia seguinte
+        if ($carbonDate->isTomorrow() && Carbon::now()->hour >= 13) {
+            return back()->withErrors(['booking_date' => 'Não é possível fazer reservas para amanhã após às 13h de hoje.']);
+        }
+
         // Verificar se é sexta-feira e tentando agendar almoço
         if ($carbonDate->isFriday()) {
             foreach ($request->bookings as $booking) {

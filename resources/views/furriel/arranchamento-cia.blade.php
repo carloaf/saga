@@ -39,6 +39,7 @@
                 <h4 class="font-semibold text-blue-800 mb-2">📋 Regras de Arranchamento</h4>
                 <ul class="text-blue-700 text-sm space-y-1">
                     <li>• <strong>Prazo:</strong> Arranchamento deve ser feito até às 13h do dia anterior</li>
+                    <li>• <strong>Restrição:</strong> Não é permitido arranchar para o mesmo dia útil</li>
                     <li>• <strong>Finais de semana:</strong> Não há refeições disponíveis</li>
                     <li>• <strong>Sextas-feiras:</strong> Apenas café da manhã disponível</li>
                     <li>• <strong>Horário atual:</strong> {{ now()->format('H:i') }}h de {{ now()->translatedFormat('l, d/m/Y') }}</li>
@@ -87,7 +88,8 @@
                         $isToday = $selectedCarbon->isToday();
                         $isTomorrow = $selectedCarbon->isTomorrow();
                         $currentHour = now()->hour;
-                        $cutoffPassed = $isTomorrow && $currentHour >= 13;
+                        // Nova regra: não permitir arranchar para o mesmo dia útil E nem para o dia seguinte após 13h
+                        $cutoffPassed = ($isToday || ($isTomorrow && $currentHour >= 13));
                     @endphp
                     
                     @if($isWeekend)
@@ -108,7 +110,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                                 <span class="text-orange-700 text-sm font-medium">
-                                    ⏰ Prazo encerrado - Arranchamento deve ser feito até às 13h do dia anterior
+                                    @if($isToday)
+                                        ⏰ Não é permitido arranchar para o mesmo dia útil
+                                    @else
+                                        ⏰ Prazo encerrado - Arranchamento deve ser feito até às 13h do dia anterior
+                                    @endif
                                 </span>
                             </div>
                         </div>
@@ -154,8 +160,10 @@
         $selectedCarbon = isset($selectedDate) ? \Carbon\Carbon::parse($selectedDate) : \Carbon\Carbon::now();
         $isWeekend = $selectedCarbon->isWeekend();
         $isTomorrow = $selectedCarbon->isTomorrow();
+        $isToday = $selectedCarbon->isToday();
         $currentHour = now()->hour;
-        $cutoffPassed = $isTomorrow && $currentHour >= 13;
+        // Nova regra: não permitir arranchar para o mesmo dia útil E nem para o dia seguinte após 13h
+        $cutoffPassed = ($isToday || ($isTomorrow && $currentHour >= 13));
         $canEditBookings = !$isWeekend && !$cutoffPassed;
     @endphp
     
@@ -194,6 +202,8 @@
                         <div class="text-sm text-gray-500">
                             @if($isWeekend)
                                 📅 Visualização - Final de semana
+                            @elseif($isToday)
+                                ⏰ Visualização - Mesmo dia útil (não permitido)
                             @elseif($cutoffPassed)
                                 ⏰ Visualização - Prazo encerrado
                             @endif
@@ -295,6 +305,8 @@
                                 <span class="ml-2 text-orange-600 font-medium">
                                     @if($isWeekend)
                                         • Final de semana
+                                    @elseif($isToday)
+                                        • Mesmo dia útil (não permitido)
                                     @elseif($cutoffPassed)
                                         • Prazo encerrado (após 13h)
                                     @endif
