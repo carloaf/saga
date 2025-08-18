@@ -48,7 +48,7 @@ class CardapioController extends Controller
     /**
      * Show the form for editing the weekly menu
      */
-    public function edit()
+    public function edit(Request $request)
     {
         // Verificação de acesso - apenas superusers podem acessar
         $user = Auth::user();
@@ -56,17 +56,30 @@ class CardapioController extends Controller
             abort(403, 'Acesso negado. Apenas superusuários podem editar o cardápio da semana.');
         }
 
-        $currentWeekMenu = WeeklyMenu::getCurrentWeekMenu();
+        // Se uma semana específica foi selecionada, usar essa; senão usar lógica padrão
+        $selectedWeekStart = $request->get('week_start');
+        
+        if ($selectedWeekStart) {
+            $weekStart = Carbon::parse($selectedWeekStart)->startOfWeek(Carbon::MONDAY);
+        } else {
+            // Lógica padrão: semana atual ou próxima
+            $now = Carbon::now();
+            $weekStart = $now->copy()->startOfWeek(Carbon::MONDAY);
+            
+            // Se for sexta-feira, sábado ou domingo, edita a próxima semana
+            if ($now->dayOfWeek >= Carbon::FRIDAY) {
+                $weekStart->addWeek();
+            }
+        }
+
+        // Buscar cardápio da semana selecionada
+        $currentWeekMenu = WeeklyMenu::getWeekMenu($weekStart->toDateString());
         $cardapio = $currentWeekMenu ? $currentWeekMenu->menu_data : WeeklyMenu::getDefaultMenuStructure();
         
-        // Calcular a semana que está sendo editada
-        $now = Carbon::now();
-        $weekStart = $now->copy()->startOfWeek(Carbon::MONDAY);
-        
-        // Se for sexta-feira, sábado ou domingo, edita a próxima semana
-        if ($now->dayOfWeek >= Carbon::FRIDAY) {
-            $weekStart->addWeek();
-        }
+        // Buscar cardápio da semana anterior como sugestão
+        $previousWeekStart = $weekStart->copy()->subWeek();
+        $previousWeekMenu = WeeklyMenu::getWeekMenu($previousWeekStart->toDateString());
+        $cardapioAnterior = $previousWeekMenu ? $previousWeekMenu->menu_data : null;
 
         // Calcular as datas específicas de cada dia da semana
         $weekDates = [
@@ -77,7 +90,26 @@ class CardapioController extends Controller
             'sexta' => $weekStart->copy()->addDays(4)
         ];
 
-        return view('cardapio.edit', compact('cardapio', 'weekStart', 'currentWeekMenu', 'weekDates'));
+        // Gerar lista de semanas disponíveis para seleção (4 semanas para trás, 8 para frente)
+        $availableWeeks = [];
+        for ($i = -4; $i <= 8; $i++) {
+            $week = Carbon::now()->startOfWeek(Carbon::MONDAY)->addWeeks($i);
+            $availableWeeks[] = [
+                'value' => $week->toDateString(),
+                'label' => $week->format('d/m/Y') . ' - ' . $week->copy()->endOfWeek(Carbon::FRIDAY)->format('d/m/Y'),
+                'is_current' => $week->toDateString() === $weekStart->toDateString()
+            ];
+        }
+
+        return view('cardapio.edit', compact(
+            'cardapio', 
+            'cardapioAnterior',
+            'weekStart', 
+            'currentWeekMenu', 
+            'weekDates',
+            'availableWeeks',
+            'previousWeekStart'
+        ));
     }
 
     /**
@@ -137,6 +169,30 @@ class CardapioController extends Controller
             'cardapio' => $cardapio,
             'week_start' => $weekStart->toDateString(),
             'week_display' => $weekStart->format('d/m/Y') . ' - ' . $weekStart->copy()->endOfWeek(Carbon::FRIDAY)->format('d/m/Y')
+        ]);
+    }
+
+    /**
+     * Get previous week menu suggestions (AJAX)
+     */
+    public function getPreviousWeekSuggestions(Request $request)
+    {
+        // Verificação de acesso - apenas superusers podem acessar
+        $user = Auth::user();
+        if (!$user || $user->role !== 'superuser') {
+            return response()->json(['error' => 'Acesso negado'], 403);
+        }
+
+        $weekStart = Carbon::parse($request->week_start)->startOfWeek(Carbon::MONDAY);
+        $previousWeekStart = $weekStart->copy()->subWeek();
+        $previousWeekMenu = WeeklyMenu::getWeekMenu($previousWeekStart->toDateString());
+        
+        $cardapioAnterior = $previousWeekMenu ? $previousWeekMenu->menu_data : null;
+
+        return response()->json([
+            'cardapio_anterior' => $cardapioAnterior,
+            'previous_week_start' => $previousWeekStart->toDateString(),
+            'previous_week_display' => $previousWeekStart->format('d/m/Y') . ' - ' . $previousWeekStart->copy()->endOfWeek(Carbon::FRIDAY)->format('d/m/Y')
         ]);
     }
 }
