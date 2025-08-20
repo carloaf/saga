@@ -81,6 +81,13 @@ Route::middleware(['auth'])->group(function () {
             ]);
         })->name('test.ajax');
     });
+
+    // Sgtte routes
+    Route::middleware(['auth'])->prefix('sgtte')->name('sgtte.')->group(function () {
+        Route::get('/servico', [App\Http\Controllers\SgtteController::class, 'index'])->name('servico');
+        Route::post('/servico', [App\Http\Controllers\SgtteController::class, 'store'])->name('store');
+    Route::get('/servico/bookings', [App\Http\Controllers\SgtteController::class, 'getBookings'])->name('servico.bookings');
+    });
     
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
@@ -130,6 +137,16 @@ Route::get('/dev-furriel-login', function () {
     } else {
         return 'Nenhum furriel encontrado no sistema';
     }
+});
+
+// DevTools for sgtte testing
+Route::get('/dev-sgtte-login', function () {
+    $sgtte = \App\Models\User::where('role', 'sgtte')->first();
+    if ($sgtte) {
+        Auth::login($sgtte);
+        return redirect('/sgtte/servico');
+    }
+    return 'Nenhum sgtte encontrado. Execute SgtteSeeder.';
 });
 
 Route::get('/setup-admin', function () {
