@@ -63,6 +63,7 @@ class UserActivitySheet implements FromCollection, WithHeadings, WithMapping, Wi
             'Organização',
             'Café da Manhã',
             'Almoço',
+            'Jantar',
             'Total Agendamentos'
         ];
     }
@@ -80,6 +81,7 @@ class UserActivitySheet implements FromCollection, WithHeadings, WithMapping, Wi
             $user->organization_name ?? 'N/A',
             $user->breakfast_count,
             $user->lunch_count,
+            $user->dinner_count ?? 0,
             $user->total_bookings
         ];
     }

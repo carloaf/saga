@@ -60,9 +60,11 @@ class SummaryOverviewSheet implements FromArray, WithHeadings, WithTitle, WithSt
             ['Total de Agendamentos', $this->data['total_bookings']],
             ['Café da Manhã', $this->data['breakfast_count']],
             ['Almoço', $this->data['lunch_count']],
+            ['Jantar', $this->data['dinner_count'] ?? 0],
             ['Média Diária', round($this->data['total_bookings'] / $this->data['period_days'], 1)],
             ['% Café da Manhã', $this->data['total_bookings'] > 0 ? round(($this->data['breakfast_count'] / $this->data['total_bookings']) * 100, 1) . '%' : '0%'],
             ['% Almoço', $this->data['total_bookings'] > 0 ? round(($this->data['lunch_count'] / $this->data['total_bookings']) * 100, 1) . '%' : '0%'],
+            ['% Jantar', $this->data['total_bookings'] > 0 ? round((($this->data['dinner_count'] ?? 0) / $this->data['total_bookings']) * 100, 1) . '%' : '0%'],
         ];
     }
 
@@ -113,6 +115,7 @@ class SummaryDailySheet implements FromArray, WithHeadings, WithTitle, WithStyle
                 $date->translatedFormat('l'),
                 $stat->breakfast,
                 $stat->lunch,
+                property_exists($stat, 'dinner') ? $stat->dinner : ($stat->dinner ?? 0),
                 $stat->total
             ];
         }
@@ -127,6 +130,7 @@ class SummaryDailySheet implements FromArray, WithHeadings, WithTitle, WithStyle
             'Dia da Semana',
             'Café da Manhã',
             'Almoço',
+            'Jantar',
             'Total'
         ];
     }

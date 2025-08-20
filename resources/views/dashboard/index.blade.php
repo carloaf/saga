@@ -332,6 +332,27 @@
                             </a>
                             @endif
 
+                            @if(auth()->user()->role === 'sgtte')
+                            <!-- Serviço do Sgtte - Apenas para Sgtte -->
+                            <a href="{{ route('sgtte.servico') }}" class="group bg-gradient-to-br from-teal-50 to-emerald-100 hover:from-teal-100 hover:to-emerald-200 rounded-2xl p-6 border border-emerald-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v7h6v-7c0-1.657-1.343-3-3-3z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20h14M12 3v5" />
+                                        </svg>
+                                    </div>
+                                    <div class="w-6 h-6 bg-emerald-200 rounded-full flex items-center justify-center group-hover:bg-emerald-300 transition-colors">
+                                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h4 class="text-lg font-bold text-emerald-900 mb-2">Serviço (Sgtte)</h4>
+                                <p class="text-sm text-emerald-700">Arranche militares da subunidade (café, almoço e jantar)</p>
+                            </a>
+                            @endif
+
                             @if(auth()->user()->role === 'manager')
                             <!-- Gestão de Usuários - Apenas para Managers -->
                             <a href="{{ route('admin.users.index') }}" class="group bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-2xl p-6 border border-purple-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">

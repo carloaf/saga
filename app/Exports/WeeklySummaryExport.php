@@ -38,6 +38,7 @@ class WeeklySummaryExport implements FromCollection, WithHeadings, WithMapping, 
             'Período',
             'Café da Manhã',
             'Almoço',
+            'Jantar',
             'Total Semanal',
             'Total Usuários',
             'Percentual Utilização'
@@ -50,7 +51,7 @@ class WeeklySummaryExport implements FromCollection, WithHeadings, WithMapping, 
         $endOfWeek = Carbon::parse($week->week_start)->addDays(6)->format('d/m/Y');
         $weekNumber = Carbon::parse($week->week_start)->weekOfYear;
         
-        $totalPossibleMeals = ($week->unique_users * 7 * 2); // 7 dias, 2 refeições por dia
+        $totalPossibleMeals = ($week->unique_users * 7 * 3); // 7 dias, 3 refeições por dia (inclui jantar)
         $utilizationPercentage = $totalPossibleMeals > 0 ? 
             ($week->total_bookings / $totalPossibleMeals) * 100 : 0;
         
@@ -59,6 +60,7 @@ class WeeklySummaryExport implements FromCollection, WithHeadings, WithMapping, 
             $startOfWeek . ' - ' . $endOfWeek,
             $week->breakfast_count,
             $week->lunch_count,
+            $week->dinner_count ?? 0,
             $week->total_bookings,
             $week->unique_users,
             number_format($utilizationPercentage, 1) . '%'

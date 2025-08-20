@@ -15,6 +15,7 @@ class Booking extends Model
         'meal_type',
         'status',
         'created_by_furriel',
+    'created_by_operator',
     ];
 
     protected $casts = [
@@ -23,7 +24,8 @@ class Booking extends Model
 
     public const MEAL_TYPES = [
         'breakfast' => 'Café da Manhã',
-        'lunch' => 'Almoço',
+    'lunch' => 'Almoço',
+    'dinner' => 'Jantar',
     ];
 
     public function user()

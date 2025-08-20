@@ -38,6 +38,7 @@ class OrganizationBreakdownExport implements FromCollection, WithHeadings, WithM
             'Usuários Únicos',
             'Café da Manhã',
             'Almoço',
+            'Jantar',
             'Total Agendamentos',
             'Percentual',
             'Agendamentos por Usuário'
@@ -59,6 +60,7 @@ class OrganizationBreakdownExport implements FromCollection, WithHeadings, WithM
             $organization->unique_users,
             $organization->breakfast_count,
             $organization->lunch_count,
+            $organization->dinner_count ?? 0,
             $organization->total_bookings,
             number_format($percentage, 1) . '%',
             number_format($avgPerUser, 1)

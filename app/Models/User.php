@@ -24,7 +24,7 @@ class User extends Authenticatable
         'gender',
         'ready_at_om_date',
         'is_active',
-        'role', // Sistema simples de roles
+    'role', // Sistema simples de roles: user, manager, superuser, furriel, sgtte
     ];
 
     protected $hidden = [
@@ -66,6 +66,11 @@ class User extends Authenticatable
     public function isFurriel()
     {
         return $this->role === 'furriel';
+    }
+
+    public function isSgtte()
+    {
+        return $this->role === 'sgtte';
     }
 
     public function hasRole($role)

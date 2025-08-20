@@ -180,6 +180,10 @@
                             <span>Almoço:</span>
                             <span class="font-medium">{{ $todayLunch }}</span>
                         </div>
+                        <div class="flex justify-between col-span-2">
+                            <span>Jantar:</span>
+                            <span class="font-medium">{{ $todayDinner ?? 0 }}</span>
+                        </div>
                     </div>
                     
                     <div class="mt-4">

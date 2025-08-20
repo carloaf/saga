@@ -105,7 +105,7 @@ class AdminController extends Controller
                 'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
                 'is_active' => 'required|boolean',
-                'role' => 'required|in:user,manager,superuser,furriel'
+                'role' => 'required|in:user,manager,superuser,furriel,sgtte'
             ]);
 
             $user->update($validatedData);
@@ -137,7 +137,7 @@ class AdminController extends Controller
                 'armed_force' => 'nullable|in:FAB,MB,EB',
                 'gender' => 'required|in:M,F',
                 'ready_at_om_date' => 'required|date',
-                'role' => 'required|in:user,manager,superuser,furriel',
+                'role' => 'required|in:user,manager,superuser,furriel,sgtte',
                 'is_active' => 'required|boolean'
             ]);
 
@@ -197,6 +197,8 @@ class AdminController extends Controller
             ->where('meal_type', 'breakfast')->count();
         $todayLunch = Booking::whereDate('booking_date', $today)
             ->where('meal_type', 'lunch')->count();
+        $todayDinner = Booking::whereDate('booking_date', $today)
+            ->where('meal_type', 'dinner')->count();
 
         // Estatísticas da semana
         $weekStart = Carbon::today()->startOfWeek();
@@ -222,6 +224,7 @@ class AdminController extends Controller
             'todayBookings',
             'todayBreakfast', 
             'todayLunch',
+            'todayDinner',
             'weekBookings',
             'avgDaily',
             'monthlyBookings',
@@ -312,13 +315,16 @@ class AdminController extends Controller
             ->where('meal_type', 'breakfast')->count();
         $lunchCount = Booking::whereBetween('booking_date', [$startDate, $endDate])
             ->where('meal_type', 'lunch')->count();
+        $dinnerCount = Booking::whereBetween('booking_date', [$startDate, $endDate])
+            ->where('meal_type', 'dinner')->count();
 
         $dailyStats = Booking::whereBetween('booking_date', [$startDate, $endDate])
             ->select(
                 DB::raw('DATE(booking_date) as date'),
                 DB::raw('COUNT(*) as total'),
                 DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast'),
-                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch')
+                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch'),
+                DB::raw('SUM(CASE WHEN meal_type = \'dinner\' THEN 1 ELSE 0 END) as dinner')
             )
             ->groupBy('date')
             ->orderBy('date')
@@ -328,6 +334,7 @@ class AdminController extends Controller
             'total_bookings' => $totalBookings,
             'breakfast_count' => $breakfastCount,
             'lunch_count' => $lunchCount,
+            'dinner_count' => $dinnerCount,
             'daily_stats' => $dailyStats,
             'period_days' => $startDate->diffInDays($endDate) + 1
         ];
@@ -346,6 +353,7 @@ class AdminController extends Controller
                 DB::raw('COUNT(*) as total_bookings'),
                 DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast_count'),
                 DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch_count'),
+                DB::raw('SUM(CASE WHEN meal_type = \'dinner\' THEN 1 ELSE 0 END) as dinner_count'),
                 DB::raw('COUNT(DISTINCT users.id) as unique_users')
             )
             ->groupBy('organizations.id', 'organizations.name')
@@ -369,7 +377,8 @@ class AdminController extends Controller
                 'organizations.name as organization_name',
                 DB::raw('COUNT(*) as total_bookings'),
                 DB::raw('SUM(CASE WHEN meal_type = \'breakfast\' THEN 1 ELSE 0 END) as breakfast_count'),
-                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch_count')
+                DB::raw('SUM(CASE WHEN meal_type = \'lunch\' THEN 1 ELSE 0 END) as lunch_count'),
+                DB::raw('SUM(CASE WHEN meal_type = \'dinner\' THEN 1 ELSE 0 END) as dinner_count')
             )
             ->groupBy('users.id', 'users.full_name', 'users.war_name', 'ranks.name', 'organizations.name')
             ->orderBy('total_bookings', 'desc')

@@ -45,6 +45,7 @@
                         <option value="manager">Gerentes</option>
                         <option value="furriel">Furriéis</option>
                         <option value="superuser">Superusuários</option>
+                        <option value="sgtte">Sgtte</option>
                     </select>
                     <!-- New User Button -->
                     <button type="button" onclick="openCreateModal()" 
@@ -308,6 +309,8 @@
                                         ⚔️ Furriel
                                     @elseif($user->role === 'superuser')
                                         ⭐ Superusuário
+                                    @elseif($user->role === 'sgtte')
+                                        🛠️ Sgtte
                                     @else
                                         👤 Usuário
                                     @endif
@@ -519,6 +522,7 @@
                                         <option value="manager">🛡️ Gerente</option>
                                         <option value="furriel">⚔️ Furriel</option>
                                         <option value="superuser">⭐ Superusuário</option>
+                                        <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                                     </select>
                                 </div>
                                 
@@ -664,6 +668,7 @@
                                 <option value="manager">🛡️ Gerente</option>
                                 <option value="furriel">⚔️ Furriel</option>
                                 <option value="superuser">⭐ Superusuário</option>
+                                <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                             </select>
                         </div>
                     </div>

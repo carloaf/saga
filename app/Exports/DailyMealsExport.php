@@ -57,11 +57,17 @@ class DailyMealsExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function map($booking): array
     {
         $date = Carbon::parse($booking->booking_date);
-        
+        $mealLabel = match($booking->meal_type) {
+            'breakfast' => 'Café da Manhã',
+            'lunch' => 'Almoço',
+            'dinner' => 'Jantar',
+            default => ucfirst($booking->meal_type)
+        };
+
         return [
             $date->format('d/m/Y'),
             $date->translatedFormat('l'),
-            $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço',
+            $mealLabel,
             $booking->user->full_name,
             $booking->user->war_name,
             $booking->user->rank ? $booking->user->rank->name : 'N/A',

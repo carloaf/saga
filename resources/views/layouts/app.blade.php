@@ -82,7 +82,20 @@
                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Agendamentos
                             </a>
-                            @if(auth()->user()->isSuperuser())
+                            @php($u = auth()->user())
+                            @if($u->isFurriel())
+                            <a href="{{ route('furriel.arranchamento.index') }}" 
+                               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Arranchamento Cia
+                            </a>
+                            @endif
+                            @if(method_exists($u,'isSgtte') && $u->isSgtte())
+                            <a href="{{ route('sgtte.servico') }}" 
+                               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Serviço
+                            </a>
+                            @endif
+                            @if($u->isManager())
                             <a href="{{ route('admin.users.index') }}" 
                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Usuários
@@ -90,6 +103,12 @@
                             <a href="{{ route('admin.reports.index') }}" 
                                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Relatórios
+                            </a>
+                            @endif
+                            @if($u->isSuperuser())
+                            <a href="{{ route('cardapio.index') }}" 
+                               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                Cardápio
                             </a>
                             @endif
                         </div>
