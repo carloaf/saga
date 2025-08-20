@@ -30,6 +30,11 @@ Este documento consolida as regras de negócio já implementadas (ou em implemen
 ## 2. Perfis e Acesso
 Perfis atuais (campo `users.role`, constraint CHECK): `user`, `manager`, `superuser`, `furriel`, `sgtte`.
 
+Status Especial (campo `users.status`): atualmente suportado valor `Laranjeira`.
+| Status | Objetivo | Efeito em Regras |
+|--------|----------|------------------|
+| Laranjeira | Identificar militar com direito ampliado de arranchamento | Pode auto‑reservar jantar e realizar reservas (café, almoço, jantar) também em fins de semana (exceção às demais restrições); demais usuários continuam limitados a dias úteis e sem jantar próprio |
+
 | Role | Objetivo | Principais Permissões | Restrições |
 |------|----------|-----------------------|-----------|
 | user | Militar padrão | Criar/visualizar/cancelar (futuro) suas reservas; ver perfil; estatísticas pessoais | Não acessa administração, relatórios, cardápio |
@@ -56,39 +61,43 @@ Indicadores de Evolução Futuras (Gaps):
 Origem: `Booking` model + migrations `create_bookings_table`, `add_status_to_bookings_table`, `add_created_by_furriel_to_bookings_table`.
 
 Regras Funcionais (conforme modelos + commits):
-1. Estrutura: `user_id`, `booking_date` DATE, `meal_type` enum (breakfast|lunch|dinner), `status` enum (confirmed|cancelled|pending), `created_by_furriel` (nullable), timestamps. (Jantar introduzido para fluxo de serviço/sgtte.)
+1. Estrutura: `user_id`, `booking_date` DATE, `meal_type` enum (breakfast|lunch|dinner), `status` enum (confirmed|cancelled|pending), `created_by_furriel` (nullable), `created_by_operator` (nullable – ações do sgtte), timestamps. Jantar integrado ao fluxo geral (não mais exclusivo do serviço) condicionado ao status/permissões.
 2. Restrição única `(user_id, booking_date, meal_type)` impede duplicidade por refeição/dia.
-3. Tipos ativos: breakfast (Café da Manhã), lunch (Almoço) e dinner (Jantar – cadastrado via perfil `sgtte`).
-4. Sexta-feira: somente breakfast (almoço indisponível) — coerente com `WeeklyMenu::getDefaultMenuStructure`; jantar (quando aplicável ao serviço) requer definição operacional se servido às sextas (REGRA A VALIDAR).
-5. Dias permitidos: somente dias úteis (commit 59762a2 / sistema furriel) — finais de semana bloqueados.
-6. Deadline diário (commit c824a4c): após 13h não é possível reservar para o dia SEGUINTE.
-7. Bloqueio de mesmo dia útil (commit a44a25b): não é permitido criar reserva para o próprio dia (mesmo dentro do horário) — exceções operacionais devem ser avaliadas para futuro (possível override furriel?).
-8. Janela futura alvo: até 30 dias corridos (regra de negócio declarada; validar enforcement atual e ajustar se necessário em Livewire/backend).
+3. Tipos ativos: breakfast (Café), lunch (Almoço) e dinner (Jantar). Usuários padrão só podem criar breakfast/lunch em dias úteis; jantar e fins de semana apenas via exceções (status Laranjeira ou lançamento por sgtte/furriel conforme política operacional).
+4. Sexta-feira: somente breakfast (almoço indisponível) — coerente com `WeeklyMenu::getDefaultMenuStructure`. Jantar segue política normal (permitido para Laranjeira/serviço; almoço continua indisponível universalmente na sexta).
+5. Dias permitidos:
+  - Usuário com status Laranjeira: pode reservar café, almoço e jantar também em sábados e domingos.
+  - Demais usuários: apenas dias úteis; fins de semana bloqueados (exceto se reserva inserida por papel operacional autorizado no futuro — gap a definir).
+6. Deadline diário (commit c824a4c): após 13h não é possível reservar para o dia SEGUINTE (aplica-se a todos os tipos de refeição elegíveis do usuário).
+7. Bloqueio de same-day (commit a44a25b): não é permitido criar reserva para o próprio dia (mesmo antes das 13h) — exceções operacionais futuras podem liberar para sgtte/furriel (gap).
+8. Janela futura: até 30 dias corridos (confirmar enforcement programático completo; frontend já limita; adicionar validação backend se ausente).
 9. Estados de workflow:
   - confirmed (padrão)
-  - cancelled (mantém histórico; requer endpoint/ação consistente de cancelamento) 
-  - pending (placeholder para possível aprovação futura; hoje não utilizado — considerar remoção ou implementação)
-10. Campo `created_by_furriel`: identifica reservas criadas por role `furriel` (ou superior) em nome do titular — base para auditoria e métricas operacionais.
-11. Relatórios consolidados em AdminController (exportações PDF/Excel) — agora contemplam café, almoço e jantar.
+  - cancelled (mantém histórico; requer endpoint/ação consistente de cancelamento)
+  - pending (placeholder não usado)
+10. Campo `created_by_furriel`: identifica reservas criadas por furriel / superior; `created_by_operator`: ações via interface de serviço (sgtte).
+11. Relatórios (AdminController) abrangem café, almoço e jantar (incluindo novas métricas incorporadas ao dashboard para jantar).
 
 Validações Implementadas / Esperadas:
-- Datas passadas: bloqueio (frontend/backend — confirmar cobertura de testes).
-- Fins de semana: bloqueio (commit 59762a2 menciona).
-- Almoço nas sextas: bloqueio funcional (estrutura + validação UI; acrescentar backend se ausente).
-- Mesma data (same-day): bloqueio (commit a44a25b).
-- Deadline 13h para o dia seguinte: após 13:00 (timezone servidor) reservas para (D+1) são rejeitadas (commit c824a4c) — definir timezone padrão (ex: America/Sao_Paulo) para consistência.
-- Janela máxima (30 dias): verificar enforcement; adicionar teste + constraint lógica se faltar.
+- Datas passadas: bloqueio.
+- Fins de semana: bloqueio padrão exceto usuários status Laranjeira.
+- Almoço nas sextas: bloqueio universal (todas as roles/status) – jantar permanece permitido para elegíveis.
+- Mesma data (same-day): bloqueio universal.
+- Deadline 13h D+1: após 13:00 reservas para o próximo dia (útil ou fim de semana se Laranjeira) são rejeitadas.
+- Janela máxima (30 dias): conferir enforcement backend.
+- Jantar: auto-reserva somente se (a) status Laranjeira ou (b) lançado por sgtte/furriel (política atual: sgtte pode para subunidade; furriel foco café/almoço – confirmar se furriel também insere jantar; se não, documentar como restrição futura).
 
 Relatórios e Métricas:
 - Estatísticas diárias/semanais/mensais (AdminController: métodos `getSummaryData`, `getOrganizationBreakdownData`, etc.).
 - Exportações suportam formatos PDF e Excel (tipos: daily_meals, weekly_summary, monthly_summary, organization_breakdown, user_activity).
 
 Riscos / Gaps:
-- Índice composto sugerido: (`booking_date`, `meal_type`) para relatórios (atual ausência pode gerar scans completos).
-- Política de cancelamento não definida (cutoff antes da refeição) — especificar (ex: até 18h do dia anterior).
-- Estado `pending` ocioso — decidir remover ou implementar fluxo de aprovação.
-- Necessário log/auditoria para ações do furriel (`created_by_furriel`).
-- Timezone explícito para cálculo de 13h; considerar armazenar deadlines calculados.
+- Índice composto sugerido: (`booking_date`, `meal_type`).
+- Política de cancelamento (cutoff) não definida.
+- Estado `pending` ocioso.
+- Auditoria ampliar: registrar também ações jantar via sgtte (`created_by_operator`).
+- Timezone explícito para cálculo de 13h (America/Sao_Paulo) garantir consistência inclusive em horário de verão.
+- Clarificar se furriel pode lançar jantar; hoje interface principal cobre café/almoço (gap de alinhamento operacional).
 
 ## 4. Cardápio Semanal (WeeklyMenu)
 Origem: Model `WeeklyMenu` e `CardapioController`.
@@ -166,11 +175,12 @@ Resultado: marcação "validado" antes de criar release.
 Deadlines de agendamento (resumo operacional):
 | Regra | Descrição | Fonte (Commit) | Observações |
 |-------|-----------|----------------|-------------|
-| Same-day bloqueado | Não permitir reserva para hoje | a44a25b | Exceção futura via override operacional? |
-| Almoço sexta indisponível | Sexta só breakfast | Estrutura + 59762a2 | Refletir em UI e backend |
-| Fim de semana bloqueado | Sáb/Dom não permitidos | 59762a2 | Validar timezone |
-| Deadline 13h D+1 | Após 13:00 não agenda próximo dia útil | c824a4c | Ajustar mensagens se fuso variar |
-| Janela futura 30 dias | Limitar horizonte de reservas | Regra declarada | Confirmar enforcement |
+| Same-day bloqueado | Não permitir reserva para hoje | a44a25b | Possível override futuro para sgtte/furriel |
+| Almoço sexta indisponível | Sexta só breakfast (almoço bloqueado) | Estrutura + 59762a2 | Jantar permitido se usuário elegível |
+| Fim de semana bloqueado (padrão) | Sáb/Dom não permitidos para usuários padrão | 59762a2 | Exceção: status Laranjeira pode reservar |
+| Deadline 13h D+1 | Após 13:00 não agenda próximo dia (útil ou fim de semana permitido) | c824a4c | Uniformizar timezone America/Sao_Paulo |
+| Janela futura 30 dias | Limitar horizonte de reservas | Regra declarada | Validar backend enforcement |
+| Jantar restrito | Auto-reserva somente Laranjeira; outros via serviço | Introdução status | Garantir mensagens claras na UI |
 
 Validação de release: seguir `DEADLINE_VALIDACAO.md` para macro-janelas.
 
@@ -240,10 +250,12 @@ Antes de promover para produção:
 | Checklist PR formal | Template .github | Alta |
 | Indexação bookings | Criar índice (booking_date, meal_type) | Média |
 | Cancelamento com cutoff | Definir regra + implementar | Alta |
-| Auditoria Furriel | Registrar logs de criação third-party | Alta |
+| Auditoria Furriel/Sgtte | Registrar logs (created_by_furriel/operator) centralizados | Alta |
 | Estado pending | Decidir remover ou implementar fluxo aprovação | Média |
 | Timezone unificado | Configurar e testar America/Sao_Paulo | Alta |
 | Histórico cardápio | Versionamento e auditoria | Baixa |
+| Clarificar escopo furriel x jantar | Decidir política e ajustar documentação/UI | Média |
+| Testes jantar + fim de semana Laranjeira | Criar casos de teste (unit + feature) | Alta |
 
 ## 15. Histórico de Evolução (Commits‑chave)
 | Hash | Tema | Regra / Impacto Principal |
