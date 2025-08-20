@@ -105,7 +105,7 @@
                 $dayTotal = $dayBookings->count();
             @endphp
 
-            @foreach(['breakfast' => 'Café da Manhã', 'lunch' => 'Almoço'] as $mealType => $mealLabel)
+            @foreach(['breakfast' => 'Café da Manhã', 'lunch' => 'Almoço', 'dinner' => 'Jantar'] as $mealType => $mealLabel)
                 @if(isset($mealTypes[$mealType]))
                     <div class="meal-section">
                         <div class="meal-header">
@@ -140,6 +140,7 @@
                 <strong>Resumo do Dia:</strong>
                 Café da Manhã: {{ $mealTypes->get('breakfast', collect())->count() }} | 
                 Almoço: {{ $mealTypes->get('lunch', collect())->count() }} | 
+                Jantar: {{ $mealTypes->get('dinner', collect())->count() }} | 
                 <strong>Total: {{ $dayTotal }}</strong>
             </div>
         </div>

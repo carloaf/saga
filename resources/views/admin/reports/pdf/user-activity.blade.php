@@ -124,8 +124,9 @@
                     <th style="width: 25%">Nome Completo</th>
                     <th style="width: 15%">Posto/Graduação</th>
                     <th style="width: 15%">Organização</th>
-                    <th style="text-align: center; width: 6%">Café</th>
-                    <th style="text-align: center; width: 6%">Almoço</th>
+                    <th style="text-align: center; width: 5%">Café</th>
+                    <th style="text-align: center; width: 5%">Almoço</th>
+                    <th style="text-align: center; width: 5%">Jantar</th>
                     <th style="text-align: center; width: 5%">Total</th>
                 </tr>
             </thead>
@@ -153,13 +154,14 @@
                         <td>{{ Str::limit($user->organization_name ?? 'N/A', 20) }}</td>
                         <td style="text-align: center">{{ number_format($user->breakfast_count) }}</td>
                         <td style="text-align: center">{{ number_format($user->lunch_count) }}</td>
+                        <td style="text-align: center">{{ number_format($user->dinner_count ?? 0) }}</td>
                         <td style="text-align: center"><strong>{{ number_format($user->total_bookings) }}</strong></td>
                     </tr>
                 @endforeach
                 
                 @if($data->count() > 50)
                     <tr class="highlight">
-                        <td colspan="8" style="text-align: center; font-style: italic;">
+                        <td colspan="9" style="text-align: center; font-style: italic;">
                             ... e mais {{ number_format($data->count() - 50) }} usuários (mostrando apenas os 50 primeiros)
                         </td>
                     </tr>
@@ -285,10 +287,12 @@
                 @php
                     $breakfastUsers = $data->where('breakfast_count', '>', 0)->count();
                     $lunchUsers = $data->where('lunch_count', '>', 0)->count();
+                    $dinnerUsers = $data->where('dinner_count', '>', 0)->count();
                 @endphp
                 
                 <li><strong>Preferência por café da manhã:</strong> {{ number_format($breakfastUsers) }} usuários ({{ number_format(($breakfastUsers / $totalUsers) * 100, 1) }}%)</li>
                 <li><strong>Preferência por almoço:</strong> {{ number_format($lunchUsers) }} usuários ({{ number_format(($lunchUsers / $totalUsers) * 100, 1) }}%)</li>
+                <li><strong>Preferência por jantar:</strong> {{ number_format($dinnerUsers) }} usuários ({{ number_format(($dinnerUsers / $totalUsers) * 100, 1) }}%)</li>
                 
                 @if($noActivity > 0)
                     <li><strong>⚠️ Usuários sem atividade:</strong> {{ number_format($noActivity) }} usuários ({{ number_format(($noActivity / $totalUsers) * 100, 1) }}%) não fizeram agendamentos no período</li>

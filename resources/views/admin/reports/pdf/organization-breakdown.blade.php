@@ -106,10 +106,11 @@
                     <th style="text-align: center; width: 8%">Pos.</th>
                     <th style="width: 35%">Organização</th>
                     <th style="text-align: center; width: 12%">Usuários Únicos</th>
-                    <th style="text-align: center; width: 12%">Café da Manhã</th>
-                    <th style="text-align: center; width: 12%">Almoço</th>
-                    <th style="text-align: center; width: 12%">Total</th>
-                    <th style="text-align: center; width: 9%">%</th>
+                    <th style="text-align: center; width: 10%">Café da Manhã</th>
+                    <th style="text-align: center; width: 10%">Almoço</th>
+                    <th style="text-align: center; width: 10%">Jantar</th>
+                    <th style="text-align: center; width: 10%">Total</th>
+                    <th style="text-align: center; width: 8%">%</th>
                 </tr>
             </thead>
             <tbody>
@@ -138,6 +139,7 @@
                         <td style="text-align: center">{{ number_format($org->unique_users) }}</td>
                         <td style="text-align: center">{{ number_format($org->breakfast_count) }}</td>
                         <td style="text-align: center">{{ number_format($org->lunch_count) }}</td>
+                        <td style="text-align: center">{{ number_format($org->dinner_count ?? 0) }}</td>
                         <td style="text-align: center"><strong>{{ number_format($org->total_bookings) }}</strong></td>
                         <td style="text-align: center">{{ number_format($percentage, 1) }}%</td>
                     </tr>
@@ -148,6 +150,7 @@
                     <td style="text-align: center"><strong>{{ number_format($data->sum('unique_users')) }}</strong></td>
                     <td style="text-align: center"><strong>{{ number_format($data->sum('breakfast_count')) }}</strong></td>
                     <td style="text-align: center"><strong>{{ number_format($data->sum('lunch_count')) }}</strong></td>
+                    <td style="text-align: center"><strong>{{ number_format($data->sum('dinner_count')) }}</strong></td>
                     <td style="text-align: center"><strong>{{ number_format($data->sum('total_bookings')) }}</strong></td>
                     <td style="text-align: center"><strong>100.0%</strong></td>
                 </tr>
@@ -163,8 +166,9 @@
                     <th>Organização</th>
                     <th style="text-align: center">Usuários</th>
                     <th style="text-align: center">Agendamentos por Usuário</th>
-                    <th style="text-align: center">Preferência Café (%)</th>
-                    <th style="text-align: center">Preferência Almoço (%)</th>
+                    <th style="text-align: center">Pref. Café (%)</th>
+                    <th style="text-align: center">Pref. Almoço (%)</th>
+                    <th style="text-align: center">Pref. Jantar (%)</th>
                 </tr>
             </thead>
             <tbody>
@@ -173,6 +177,7 @@
                         $avgPerUser = $org->unique_users > 0 ? $org->total_bookings / $org->unique_users : 0;
                         $breakfastPct = $org->total_bookings > 0 ? ($org->breakfast_count / $org->total_bookings) * 100 : 0;
                         $lunchPct = $org->total_bookings > 0 ? ($org->lunch_count / $org->total_bookings) * 100 : 0;
+                        $dinnerPct = $org->total_bookings > 0 ? (($org->dinner_count ?? 0) / $org->total_bookings) * 100 : 0;
                     @endphp
                     <tr>
                         <td><strong>{{ $org->organization_name }}</strong></td>
@@ -180,6 +185,7 @@
                         <td style="text-align: center">{{ number_format($avgPerUser, 1) }}</td>
                         <td style="text-align: center">{{ number_format($breakfastPct, 1) }}%</td>
                         <td style="text-align: center">{{ number_format($lunchPct, 1) }}%</td>
+                        <td style="text-align: center">{{ number_format($dinnerPct, 1) }}%</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -203,16 +209,26 @@
                 <li><strong>Média de usuários por organização:</strong> {{ number_format($avgUsersPerOrg, 1) }} usuários</li>
                 
                 @php
-                    $breakfastDominant = $data->where('breakfast_count', '>', DB::raw('lunch_count'))->count();
-                    $lunchDominant = $data->where('lunch_count', '>', DB::raw('breakfast_count'))->count();
+                    $breakfastDominant = 0;
+                    $lunchDominant = 0;
+                    $dinnerDominant = 0;
+                    
+                    foreach($data as $org) {
+                        $maxMeal = max($org->breakfast_count, $org->lunch_count, $org->dinner_count ?? 0);
+                        if ($maxMeal == $org->breakfast_count) $breakfastDominant++;
+                        elseif ($maxMeal == $org->lunch_count) $lunchDominant++;
+                        elseif ($maxMeal == ($org->dinner_count ?? 0)) $dinnerDominant++;
+                    }
                 @endphp
                 
-                @if($breakfastDominant > $lunchDominant)
+                @if($breakfastDominant > $lunchDominant && $breakfastDominant > $dinnerDominant)
                     <li><strong>Tendência geral:</strong> Maioria das organizações prefere café da manhã ({{ $breakfastDominant }} de {{ $totalOrgs }} organizações)</li>
-                @elseif($lunchDominant > $breakfastDominant)
+                @elseif($lunchDominant > $breakfastDominant && $lunchDominant > $dinnerDominant)
                     <li><strong>Tendência geral:</strong> Maioria das organizações prefere almoço ({{ $lunchDominant }} de {{ $totalOrgs }} organizações)</li>
+                @elseif($dinnerDominant > $breakfastDominant && $dinnerDominant > $lunchDominant)
+                    <li><strong>Tendência geral:</strong> Maioria das organizações prefere jantar ({{ $dinnerDominant }} de {{ $totalOrgs }} organizações)</li>
                 @else
-                    <li><strong>Tendência geral:</strong> Preferências equilibradas entre café da manhã e almoço</li>
+                    <li><strong>Tendência geral:</strong> Preferências equilibradas entre as refeições</li>
                 @endif
             </ul>
         </div>

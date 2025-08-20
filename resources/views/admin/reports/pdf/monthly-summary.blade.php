@@ -28,7 +28,7 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -110,6 +110,10 @@
             <div class="stat-value">{{ number_format($data['lunch_count']) }}</div>
             <div class="stat-label">Almoços</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ number_format($data['dinner_count'] ?? 0) }}</div>
+            <div class="stat-label">Jantares</div>
+        </div>
     </div>
 
     <!-- Distribuição por Tipo de Refeição -->
@@ -137,6 +141,12 @@
                 <td style="text-align: center">{{ $data['total_bookings'] > 0 ? number_format(($data['lunch_count'] / $data['total_bookings']) * 100, 1) : 0 }}%</td>
                 <td style="text-align: center">{{ number_format($data['lunch_count'] / $data['period_days'], 1) }}</td>
             </tr>
+            <tr>
+                <td>Jantar</td>
+                <td style="text-align: center">{{ number_format($data['dinner_count'] ?? 0) }}</td>
+                <td style="text-align: center">{{ $data['total_bookings'] > 0 ? number_format((($data['dinner_count'] ?? 0) / $data['total_bookings']) * 100, 1) : 0 }}%</td>
+                <td style="text-align: center">{{ number_format(($data['dinner_count'] ?? 0) / $data['period_days'], 1) }}</td>
+            </tr>
             <tr class="highlight">
                 <td><strong>Total</strong></td>
                 <td style="text-align: center"><strong>{{ number_format($data['total_bookings']) }}</strong></td>
@@ -157,6 +167,7 @@
                     <th>Dia da Semana</th>
                     <th style="text-align: center">Café da Manhã</th>
                     <th style="text-align: center">Almoço</th>
+                    <th style="text-align: center">Jantar</th>
                     <th style="text-align: center">Total</th>
                 </tr>
             </thead>
@@ -172,10 +183,11 @@
                         $weekNumber = $date->weekOfYear;
                         
                         if (!isset($weekTotals[$weekNumber])) {
-                            $weekTotals[$weekNumber] = ['breakfast' => 0, 'lunch' => 0, 'total' => 0];
+                            $weekTotals[$weekNumber] = ['breakfast' => 0, 'lunch' => 0, 'dinner' => 0, 'total' => 0];
                         }
                         $weekTotals[$weekNumber]['breakfast'] += $stat->breakfast;
                         $weekTotals[$weekNumber]['lunch'] += $stat->lunch;
+                        $weekTotals[$weekNumber]['dinner'] += ($stat->dinner ?? 0);
                         $weekTotals[$weekNumber]['total'] += $stat->total;
                     @endphp
                     <tr class="{{ $isWeekend ? 'highlight' : '' }}">
@@ -183,6 +195,7 @@
                         <td>{{ $date->translatedFormat('l') }}</td>
                         <td style="text-align: center">{{ $stat->breakfast }}</td>
                         <td style="text-align: center">{{ $stat->lunch }}</td>
+                        <td style="text-align: center">{{ $stat->dinner ?? 0 }}</td>
                         <td style="text-align: center"><strong>{{ $stat->total }}</strong></td>
                     </tr>
                 @endforeach
@@ -190,6 +203,7 @@
                     <td colspan="2"><strong>TOTAL DO MÊS</strong></td>
                     <td style="text-align: center"><strong>{{ $data['breakfast_count'] }}</strong></td>
                     <td style="text-align: center"><strong>{{ $data['lunch_count'] }}</strong></td>
+                    <td style="text-align: center"><strong>{{ $data['dinner_count'] ?? 0 }}</strong></td>
                     <td style="text-align: center"><strong>{{ $data['total_bookings'] }}</strong></td>
                 </tr>
             </tbody>

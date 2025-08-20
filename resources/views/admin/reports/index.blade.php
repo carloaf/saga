@@ -90,14 +90,14 @@
                 
                 <form method="GET" action="{{ route('admin.reports.generate') }}" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="field-group">
-                            <label for="report_type" class="label-enhanced">
-                                <svg class="icon h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="form-field">
+                            <label for="report_type" class="form-label">
+                                <svg class="form-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                <span>Tipo de Relatório</span>
+                                <span class="form-label-text">Tipo de Relatório</span>
                             </label>
-                            <select id="report_type" name="report_type" required class="select-enhanced">
+                            <select id="report_type" name="report_type" required class="form-select">
                                 <option value="">Selecione o tipo de relatório</option>
                                 <option value="daily_meals">📋 Mapa do Rancho Diário</option>
                                 <option value="weekly_summary">📊 Resumo Semanal</option>
@@ -107,28 +107,76 @@
                             </select>
                         </div>
                         
-                        <div class="field-group">
-                            <label for="start_date" class="label-enhanced">
-                                <svg class="icon h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="form-field">
+                            <label for="start_date" class="form-label">
+                                <svg class="form-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <span>Data Inicial</span>
+                                <span class="form-label-text">Data Inicial</span>
                             </label>
-                            <input type="date" id="start_date" name="start_date" required
-                                   value="{{ request('start_date', today()->format('Y-m-d')) }}"
-                                   class="input-enhanced">
+                            <div class="relative">
+                                <input type="text" 
+                                       id="start_date_display"
+                                       value="{{ request('start_date') ? \Carbon\Carbon::parse(request('start_date'))->format('d/m/Y') : today()->format('d/m/Y') }}"
+                                       class="form-input pr-12" 
+                                       placeholder="dd/mm/yyyy"
+                                       readonly
+                                       onclick="openDatePicker('start_date')"
+                                       style="cursor: pointer;">
+                                <input type="date" 
+                                       name="start_date" 
+                                       id="start_date" 
+                                       required
+                                       value="{{ request('start_date', today()->format('Y-m-d')) }}"
+                                       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer;"
+                                       onchange="updateDisplayDate('start_date')">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer z-20"
+                                     onclick="document.getElementById('start_date').showPicker() || document.getElementById('start_date').focus()"
+                                     title="Clique para abrir o calendário">
+                                    <svg class="w-5 h-5 text-gray-400 hover:text-green-500 transition-all duration-200 hover:scale-110" 
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <small class="form-help">Clique para selecionar a data (dd/mm/yyyy)</small>
                         </div>
                         
-                        <div class="field-group">
-                            <label for="end_date" class="label-enhanced">
-                                <svg class="icon h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="form-field">
+                            <label for="end_date" class="form-label">
+                                <svg class="form-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
-                                <span>Data Final</span>
+                                <span class="form-label-text">Data Final</span>
                             </label>
-                            <input type="date" id="end_date" name="end_date" required
-                                   value="{{ request('end_date', today()->format('Y-m-d')) }}"
-                                   class="input-enhanced">
+                            <div class="relative">
+                                <input type="text" 
+                                       id="end_date_display"
+                                       value="{{ request('end_date') ? \Carbon\Carbon::parse(request('end_date'))->format('d/m/Y') : today()->format('d/m/Y') }}"
+                                       class="form-input pr-12"
+                                       placeholder="dd/mm/yyyy"
+                                       readonly
+                                       onclick="openDatePicker('end_date')"
+                                       style="cursor: pointer;">
+                                <input type="date" 
+                                       name="end_date" 
+                                       id="end_date" 
+                                       required
+                                       value="{{ request('end_date', today()->format('Y-m-d')) }}"
+                                       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer;"
+                                       onchange="updateDisplayDate('end_date')">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer z-20"
+                                     onclick="document.getElementById('end_date').showPicker() || document.getElementById('end_date').focus()"
+                                     title="Clique para abrir o calendário">
+                                    <svg class="w-5 h-5 text-gray-400 hover:text-green-500 transition-all duration-200 hover:scale-110" 
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <small class="form-help">Clique para selecionar a data (dd/mm/yyyy)</small>
                         </div>
                     </div>
                     
@@ -482,11 +530,69 @@
         return `/admin/reports/generate?report_type=${type}&start_date=${startDate}&end_date=${endDate}&format=pdf`;
     }
 
-    // Validação do formulário
+    // Validação do formulário e funções de data
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.querySelector('form');
         const startDate = document.getElementById('start_date');
         const endDate = document.getElementById('end_date');
+        
+        // Funções para manipulação de data no formato brasileiro
+        function openDatePicker(fieldId) {
+            try {
+                const dateInput = document.getElementById(fieldId);
+                if (dateInput && dateInput.showPicker) {
+                    dateInput.showPicker();
+                } else {
+                    // Fallback para navegadores que não suportam showPicker()
+                    dateInput.focus();
+                    dateInput.click();
+                }
+                
+                // Adicionar efeito visual no ícone
+                const calendarIcon = dateInput.parentElement.querySelector('.absolute svg');
+                if (calendarIcon) {
+                    calendarIcon.style.transform = 'scale(1.2)';
+                    calendarIcon.style.color = '#059669';
+                    setTimeout(() => {
+                        calendarIcon.style.transform = 'scale(1.05)';
+                    }, 150);
+                }
+            } catch (error) {
+                console.log('Abrindo calendário com método alternativo');
+                const dateInput = document.getElementById(fieldId);
+                dateInput.focus();
+            }
+        }
+
+        function updateDisplayDate(fieldId) {
+            const dateInput = document.getElementById(fieldId);
+            const displayInput = document.getElementById(fieldId + '_display');
+            
+            if (dateInput.value) {
+                const date = new Date(dateInput.value + 'T00:00:00');
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                displayInput.value = `${day}/${month}/${year}`;
+                
+                // Adicionar feedback visual quando data é selecionada
+                displayInput.style.backgroundColor = '#f0fdf4';
+                displayInput.style.borderColor = '#10b981';
+                setTimeout(() => {
+                    displayInput.style.backgroundColor = '#ffffff';
+                    displayInput.style.borderColor = '#e5e7eb';
+                }, 1000);
+            } else {
+                displayInput.value = '';
+            }
+            
+            // Validar datas após atualização
+            validateDates();
+        }
+
+        // Tornar as funções globais para uso no HTML
+        window.openDatePicker = openDatePicker;
+        window.updateDisplayDate = updateDisplayDate;
         
         function validateDates() {
             if (startDate.value && endDate.value) {
@@ -501,8 +607,13 @@
             }
         }
         
-        startDate.addEventListener('change', validateDates);
-        endDate.addEventListener('change', validateDates);
+        startDate.addEventListener('change', function() {
+            updateDisplayDate('start_date');
+        });
+        
+        endDate.addEventListener('change', function() {
+            updateDisplayDate('end_date');
+        });
         
         // Configuração automática de datas baseada no tipo de relatório
         const reportType = document.getElementById('report_type');
@@ -529,7 +640,17 @@
             
             startDate.value = start.toISOString().split('T')[0];
             endDate.value = end.toISOString().split('T')[0];
+            
+            // Atualizar campos de exibição
+            updateDisplayDate('start_date');
+            updateDisplayDate('end_date');
+            validateDates();
         });
+        
+        // Inicializar exibição das datas ao carregar a página
+        updateDisplayDate('start_date');
+        updateDisplayDate('end_date');
+        validateDates();
     });
 </script>
 
@@ -562,6 +683,82 @@
         transform: translateY(-2px);
     }
     
+    /* Form field styling */
+    .form-field {
+        position: relative;
+    }
+    
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        letter-spacing: 0.025em;
+    }
+    
+    .form-icon {
+        color: #10b981;
+        flex-shrink: 0;
+    }
+    
+    .form-label-text {
+        color: #1f2937;
+    }
+    
+    .form-select, .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        background-color: #ffffff;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-select:focus, .form-input:focus {
+        outline: none;
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        background-color: #f9fafb;
+    }
+    
+    .form-select:hover, .form-input:hover {
+        border-color: #9ca3af;
+    }
+    
+    /* Date field specific styling */
+    .form-field .relative:hover .absolute svg {
+        color: #10b981;
+        transform: scale(1.1);
+    }
+    
+    .form-field .relative:hover .form-input {
+        border-color: #10b981;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    /* Calendar icon animation */
+    .form-field .absolute svg {
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .form-field:hover .absolute svg {
+        color: #059669;
+        transform: scale(1.05);
+    }
+    
+    .form-help {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-style: italic;
+    }
+    
     /* Report cards styling */
     .report-card {
         background: linear-gradient(145deg, #ffffff, #f8fafc);
@@ -592,6 +789,11 @@
         .header-controls button {
             width: 100%;
             justify-content: center;
+        }
+        
+        .form-select, .form-input {
+            padding: 1rem;
+            font-size: 1rem;
         }
     }
 </style>
