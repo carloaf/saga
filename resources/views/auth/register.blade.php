@@ -329,12 +329,16 @@
                                        name="ready_at_om_date" 
                                        id="ready_at_om_date" 
                                        value="{{ old('ready_at_om_date') }}"
-                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer;"
                                        max="{{ date('Y-m-d') }}"
                                        onchange="updateDisplayDate(this)">
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer z-10"
+                                     onclick="openDatePicker()"
+                                     title="Clique para abrir o calendário">
+                                    <svg class="w-5 h-5 text-gray-400 hover:text-green-500 transition-colors duration-200" 
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
                             </div>
@@ -421,13 +425,26 @@ function toggleSectionField() {
 }
 
 function openDatePicker() {
-    document.getElementById('ready_at_om_date').showPicker();
+    try {
+        const dateInput = document.getElementById('ready_at_om_date');
+        if (dateInput && dateInput.showPicker) {
+            dateInput.showPicker();
+        } else {
+            // Fallback para navegadores que não suportam showPicker()
+            dateInput.focus();
+            dateInput.click();
+        }
+    } catch (error) {
+        console.log('Abrindo calendário com método alternativo');
+        const dateInput = document.getElementById('ready_at_om_date');
+        dateInput.focus();
+    }
 }
 
 function updateDisplayDate(input) {
     const displayInput = document.getElementById('ready_at_om_date_display');
     if (input.value) {
-        const date = new Date(input.value);
+        const date = new Date(input.value + 'T00:00:00');
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
