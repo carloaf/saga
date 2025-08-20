@@ -699,6 +699,27 @@ function getRankSymbol($rankName) {
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Status Especial (Laranjeira) -->
+                                <div class="form-group lg:col-span-2">
+                                    <label for="status" class="flex items-center text-sm font-semibold text-gray-700 mb-3">
+                                        <svg class="w-4 h-4 mr-2 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Status de Arranchamento
+                                    </label>
+                                    <div class="gradient-border">
+                                        <select name="status" id="status" class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
+                                            <option value="" {{ !auth()->user()->status ? 'selected' : '' }}>Padrão (sem jantar)</option>
+                                            <option value="Laranjeira" {{ auth()->user()->status === 'Laranjeira' ? 'selected' : '' }}>Laranjeira (inclui Jantar)</option>
+                                        </select>
+                                    </div>
+                                    <p class="mt-2 text-xs text-gray-500 flex items-center">
+                                        <svg class="w-4 h-4 mr-1 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Se marcado como Laranjeira você poderá reservar o jantar (quando disponível pelas regras do sistema).
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         

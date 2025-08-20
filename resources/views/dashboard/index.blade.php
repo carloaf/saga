@@ -178,6 +178,7 @@
                                 <div class="flex space-x-2">
                                     <span class="text-green-200 text-xs bg-green-400 bg-opacity-20 px-1.5 py-0.5 rounded">☕ {{ $todayStats['breakfast'] ?? 0 }}</span>
                                     <span class="text-green-200 text-xs bg-green-400 bg-opacity-20 px-1.5 py-0.5 rounded">🍽️ {{ $todayStats['lunch'] ?? 0 }}</span>
+                                    <span class="text-green-200 text-xs bg-green-400 bg-opacity-20 px-1.5 py-0.5 rounded">🌙 {{ $todayStats['dinner'] ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -198,6 +199,7 @@
                                 <div class="flex space-x-2">
                                     <span class="text-blue-200 text-xs px-1.5 py-0.5 rounded">☕ {{ $weekStats['breakfast'] ?? 0 }}</span>
                                     <span class="text-blue-200 text-xs px-1.5 py-0.5 rounded">🍽️ {{ $weekStats['lunch'] ?? 0 }}</span>
+                                    <span class="text-blue-200 text-xs px-1.5 py-0.5 rounded">🌙 {{ $weekStats['dinner'] ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -218,6 +220,7 @@
                                 <div class="flex space-x-2">
                                     <span class="text-purple-200 text-xs px-1.5 py-0.5 rounded">☕ {{ $monthStats['breakfast'] ?? 0 }}</span>
                                     <span class="text-purple-200 text-xs px-1.5 py-0.5 rounded">🍽️ {{ $monthStats['lunch'] ?? 0 }}</span>
+                                    <span class="text-purple-200 text-xs px-1.5 py-0.5 rounded">🌙 {{ $monthStats['dinner'] ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -238,6 +241,7 @@
                                 <div class="flex space-x-2">
                                     <span class="text-orange-200 text-xs bg-orange-400 bg-opacity-20 px-1.5 py-0.5 rounded">☕ {{ $upcomingMeals['breakfast'] ?? 0 }}</span>
                                     <span class="text-orange-200 text-xs bg-orange-400 bg-opacity-20 px-1.5 py-0.5 rounded">🍽️ {{ $upcomingMeals['lunch'] ?? 0 }}</span>
+                                    <span class="text-orange-200 text-xs bg-orange-400 bg-opacity-20 px-1.5 py-0.5 rounded">🌙 {{ $upcomingMeals['dinner'] ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -291,7 +295,7 @@
                                     </div>
                                 </div>
                                 <h4 class="text-lg font-bold text-blue-900 mb-2">Reservas de Arranchamento</h4>
-                                <p class="text-sm text-blue-700">Gerencie suas reservas de café da manhã e almoço</p>
+                                <p class="text-sm text-blue-700">Gerencie suas reservas de café da manhã, almoço e jantar</p>
                             </a>
 
                             <!-- Perfil -->

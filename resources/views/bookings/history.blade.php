@@ -74,6 +74,12 @@
                                         <span class="text-blue-600">🍽️ Almoços:</span>
                                         <span class="font-medium">{{ $stat['lunch'] }}</span>
                                     </div>
+                                    @if(auth()->user()->isLaranjeira())
+                                    <div class="flex justify-between">
+                                        <span class="text-purple-600">🌙 Jantares:</span>
+                                        <span class="font-medium">{{ $stat['dinner'] ?? 0 }}</span>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
@@ -127,7 +133,15 @@
                                             <div class="flex flex-col">
                                                 <div class="flex items-center space-x-2">
                                                     <span class="text-sm font-medium">{{ $bookingDate->format('d/m/Y') }}</span>
-                                                    <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                                    @php
+                                                        $mealLabel = match($booking->meal_type) {
+                                                            'breakfast' => 'Café da Manhã',
+                                                            'lunch' => 'Almoço',
+                                                            'dinner' => 'Jantar',
+                                                            default => ucfirst($booking->meal_type)
+                                                        };
+                                                    @endphp
+                                                    <span class="text-sm text-gray-600">{{ $mealLabel }}</span>
                                                 </div>
                                                 <div class="flex items-center space-x-2 mt-1">
                                                     <span class="text-xs px-2 py-1 rounded-full 
@@ -196,7 +210,15 @@
                                                 <div class="flex flex-col">
                                                     <div class="flex items-center space-x-2">
                                                         <span class="text-sm font-medium">{{ $bookingDate->format('d/m/Y') }}</span>
-                                                        <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                                        @php
+                                                            $mealLabel = match($booking->meal_type) {
+                                                                'breakfast' => 'Café da Manhã',
+                                                                'lunch' => 'Almoço',
+                                                                'dinner' => 'Jantar',
+                                                                default => ucfirst($booking->meal_type)
+                                                            };
+                                                        @endphp
+                                                        <span class="text-sm text-gray-600">{{ $mealLabel }}</span>
                                                     </div>
                                                     <div class="flex items-center space-x-2 mt-1">
                                                         <span class="text-xs px-2 py-1 rounded-full 
@@ -274,6 +296,12 @@
                         <span class="bg-blue-200 text-blue-800 px-2 py-1 rounded mr-2">🍽️</span>
                         <span>Almoço</span>
                     </div>
+                    @if(auth()->user()->isLaranjeira())
+                    <div class="flex items-center">
+                        <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded mr-2">🌙</span>
+                        <span>Jantar</span>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

@@ -74,7 +74,9 @@ class BookingController extends Controller
         
         $totalMeals = $monthlyStats->count();
         $breakfastCount = $monthlyStats->where('meal_type', 'breakfast')->count();
-        $lunchCount = $monthlyStats->where('meal_type', 'lunch')->count();
+    $lunchCount = $monthlyStats->where('meal_type', 'lunch')->count();
+    $dinnerCount = $monthlyStats->where('meal_type', 'dinner')->count();
+    $dinnerCount = $monthlyStats->where('meal_type', 'dinner')->count();
         
         // Calendar data
         $calendarMonth = request('month', Carbon::now()->format('Y-m'));
@@ -100,6 +102,7 @@ class BookingController extends Controller
             'totalMeals', 
             'breakfastCount', 
             'lunchCount',
+            'dinnerCount',
             'calendarDate',
             'monthBookings'
         ));
@@ -132,6 +135,7 @@ class BookingController extends Controller
                 'total' => $monthBookings->count(),
                 'breakfast' => $monthBookings->where('meal_type', 'breakfast')->count(),
                 'lunch' => $monthBookings->where('meal_type', 'lunch')->count(),
+                'dinner' => $monthBookings->where('meal_type', 'dinner')->count(),
             ];
         }
         
@@ -329,21 +333,28 @@ class BookingController extends Controller
     public function reserveSingle(Request $request)
     {
         try {
+            $user = Auth::user();
+
+            $allowedMeals = ['breakfast','lunch'];
+            if ($user && method_exists($user,'isLaranjeira') && $user->isLaranjeira()) {
+                $allowedMeals[] = 'dinner';
+            }
+
             $request->validate([
                 'date' => 'required|date|after_or_equal:today',
-                'meal_type' => 'required|in:breakfast,lunch'
+                'meal_type' => 'required|in:'.implode(',', $allowedMeals)
             ]);
-
-            $user = Auth::user();
             $date = Carbon::parse($request->date);
             $now = Carbon::now();
             
-            // Check if it's a weekday
+            // Weekend handling: only allow dinner for Laranjeira on weekends
             if ($date->isWeekend()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Reservas só podem ser feitas para dias úteis (segunda a sexta-feira).'
-                ], 400);
+                if (!$user || !method_exists($user,'isLaranjeira') || !$user->isLaranjeira()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Reservas em fins de semana são exclusivas para usuários Laranjeira.'
+                    ], 400);
+                }
             }
             
             // Check if booking deadline has passed
@@ -354,12 +365,24 @@ class BookingController extends Controller
                 ], 400);
             }
             
-            // Check if it's Friday and trying to book lunch
+            // Check if it's Friday and trying to book lunch (still forbidden) or dinner (rule? allow only if not Friday? keep dinner allowed all weekdays except maybe Friday per existing logic) - manter almoço proibido sexta
             if ($date->isFriday() && $request->meal_type === 'lunch') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Almoço não está disponível nas sextas-feiras.'
                 ], 400);
+            }
+
+            // Dinner availability: permitir somente para usuários Laranjeira e dias úteis (segunda a quinta inicialmente)
+            if ($request->meal_type === 'dinner') {
+                if (!$user->isLaranjeira()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Jantar disponível apenas para usuários com status Laranjeira.'
+                    ], 400);
+                }
+                // Dinner allowed on weekend only for Laranjeira (already filtered above)
+                // (Opcional) Bloquear sexta se regra exigir. Ajustar se necessário.
             }
             
             // Check if booking already exists
@@ -383,7 +406,12 @@ class BookingController extends Controller
                 'status' => 'confirmed'
             ]);
             
-            $mealTypeName = $request->meal_type === 'breakfast' ? 'café da manhã' : 'almoço';
+            $mealTypeName = match($request->meal_type) {
+                'breakfast' => 'café da manhã',
+                'lunch' => 'almoço',
+                'dinner' => 'jantar',
+                default => $request->meal_type
+            };
             
             return response()->json([
                 'success' => true,

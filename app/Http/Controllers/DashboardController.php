@@ -20,10 +20,10 @@ class DashboardController extends Controller
         $dateRange = $this->getDateRange($period);
         
         // Get quick stats for header cards
-        $todayStats = $this->getTodayStats();
-        $weekStats = $this->getWeekStats();
-        $monthStats = $this->getMonthStats();
-        $upcomingMeals = $this->getUpcomingMealsCount();
+    $todayStats = $this->getTodayStats();
+    $weekStats = $this->getWeekStats();
+    $monthStats = $this->getMonthStats();
+    $upcomingMeals = $this->getUpcomingMealsCount();
         
         // Get chart stats for dashboard
         $chartStats = $this->getChartStats();
@@ -297,14 +297,18 @@ class DashboardController extends Controller
             $lunch = Booking::whereDate('booking_date', $today)
                 ->where('meal_type', 'lunch')
                 ->count();
+            $dinner = Booking::whereDate('booking_date', $today)
+                ->where('meal_type', 'dinner')
+                ->count();
             
             return [
                 'total' => $total,
                 'breakfast' => $breakfast,
-                'lunch' => $lunch
+                'lunch' => $lunch,
+                'dinner' => $dinner
             ];
         } catch (\Exception $e) {
-            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0];
+            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0, 'dinner' => 0];
         }
     }
     
@@ -321,24 +325,30 @@ class DashboardController extends Controller
                 $startOfWeek->format('Y-m-d'),
                 $endOfWeek->format('Y-m-d')
             ])->count();
-            
+
             $breakfast = Booking::whereBetween('booking_date', [
                 $startOfWeek->format('Y-m-d'),
                 $endOfWeek->format('Y-m-d')
             ])->where('meal_type', 'breakfast')->count();
-            
+
             $lunch = Booking::whereBetween('booking_date', [
                 $startOfWeek->format('Y-m-d'),
                 $endOfWeek->format('Y-m-d')
             ])->where('meal_type', 'lunch')->count();
+
+            $dinner = Booking::whereBetween('booking_date', [
+                $startOfWeek->format('Y-m-d'),
+                $endOfWeek->format('Y-m-d')
+            ])->where('meal_type', 'dinner')->count();
             
             return [
                 'total' => $total,
                 'breakfast' => $breakfast,
-                'lunch' => $lunch
+                'lunch' => $lunch,
+                'dinner' => $dinner
             ];
         } catch (\Exception $e) {
-            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0];
+            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0, 'dinner' => 0];
         }
     }
     
@@ -355,24 +365,30 @@ class DashboardController extends Controller
                 $startOfMonth->format('Y-m-d'),
                 $endOfMonth->format('Y-m-d')
             ])->count();
-            
+
             $breakfast = Booking::whereBetween('booking_date', [
                 $startOfMonth->format('Y-m-d'),
                 $endOfMonth->format('Y-m-d')
             ])->where('meal_type', 'breakfast')->count();
-            
+
             $lunch = Booking::whereBetween('booking_date', [
                 $startOfMonth->format('Y-m-d'),
                 $endOfMonth->format('Y-m-d')
             ])->where('meal_type', 'lunch')->count();
+
+            $dinner = Booking::whereBetween('booking_date', [
+                $startOfMonth->format('Y-m-d'),
+                $endOfMonth->format('Y-m-d')
+            ])->where('meal_type', 'dinner')->count();
             
             return [
                 'total' => $total,
                 'breakfast' => $breakfast,
-                'lunch' => $lunch
+                'lunch' => $lunch,
+                'dinner' => $dinner
             ];
         } catch (\Exception $e) {
-            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0];
+            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0, 'dinner' => 0];
         }
     }
     
@@ -391,14 +407,18 @@ class DashboardController extends Controller
             $lunchCount = Booking::whereDate('booking_date', $tomorrow)
                 ->where('meal_type', 'lunch')
                 ->count();
+            $dinnerCount = Booking::whereDate('booking_date', $tomorrow)
+                ->where('meal_type', 'dinner')
+                ->count();
             
             return [
                 'total' => $totalCount,
                 'breakfast' => $breakfastCount,
-                'lunch' => $lunchCount
+                'lunch' => $lunchCount,
+                'dinner' => $dinnerCount
             ];
         } catch (\Exception $e) {
-            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0];
+            return ['total' => 0, 'breakfast' => 0, 'lunch' => 0, 'dinner' => 0];
         }
     }
     

@@ -25,6 +25,7 @@ class User extends Authenticatable
         'ready_at_om_date',
         'is_active',
     'role', // Sistema simples de roles: user, manager, superuser, furriel, sgtte
+    'status', // null ou 'Laranjeira'
     ];
 
     protected $hidden = [
@@ -76,6 +77,11 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         return $this->role === $role;
+    }
+
+    public function isLaranjeira(): bool
+    {
+        return $this->status === 'Laranjeira';
     }
 
     public function getBookingsForDate($date)

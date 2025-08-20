@@ -16,7 +16,7 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100" data-laranjeira="{{ auth()->user()->isLaranjeira() ? '1' : '0' }}">
     <!-- Header -->
     <header class="bg-white shadow">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -45,6 +45,11 @@
             <!-- Info Box -->
             <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
                 <strong>📋 Sistema de Reservas</strong> - Aqui você pode agendar suas refeições (café da manhã e almoço) para os dias úteis.
+                @if(auth()->user()->status === 'Laranjeira')
+                    <div class="mt-2 p-2 bg-purple-50 border border-purple-300 rounded text-sm text-purple-700">
+                        ✅ Status <strong>Laranjeira</strong> ativo: jantar (JN) ficará visível quando reservado futuramente.
+                    </div>
+                @endif
                 <ul class="list-disc list-inside mt-2 space-y-1">
                     <li>Marque as refeições desejadas clicando nas caixas de seleção do calendário</li>
                     <li>Agendamentos podem ser feitos apenas para dias úteis (segunda a sexta)</li>
@@ -113,12 +118,18 @@
                                     $deadlinePassed = true;
                                 }
                                 
-                                $isBookable = $isCurrentMonth && !$isPast && !$isWeekend && !$isTooFar && !$deadlinePassed;
+                                // Base bookable rule (weekdays)
+                                $isBookable = $isCurrentMonth && !$isPast && !$isTooFar && !$deadlinePassed;
+                                $userIsLaranjeira = auth()->user()->status === 'Laranjeira';
+                                if (!$userIsLaranjeira) {
+                                    $isBookable = $isBookable && !$isWeekend; // non Laranjeira still blocked weekends
+                                }
                                 $isFriday = $date->isFriday();
                                 
                                 $dayBookings = $monthBookings->get($date->format('Y-m-d'), collect());
                                 $hasBreakfast = $dayBookings->where('meal_type', 'breakfast')->isNotEmpty();
                                 $hasLunch = $dayBookings->where('meal_type', 'lunch')->isNotEmpty();
+                                $hasDinner = $dayBookings->where('meal_type', 'dinner')->isNotEmpty();
                             @endphp
                             
                             <div class="p-2 text-center relative min-h-[70px] flex flex-col justify-between
@@ -143,6 +154,9 @@
                                             @if($hasLunch)
                                                 <span class="bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold border border-blue-600 shadow-sm">AL</span>
                                             @endif
+                                            @if($hasDinner)
+                                                <span class="bg-purple-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold border border-purple-600 shadow-sm">JN</span>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
@@ -164,10 +178,23 @@
                             <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold border border-blue-600 shadow-sm mr-2">AL</span>
                             <span class="text-gray-700">Almoço</span>
                         </div>
+                        @if(auth()->user()->status === 'Laranjeira')
+                        <div class="flex items-center">
+                            <span class="bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold border border-purple-600 shadow-sm mr-2">JN</span>
+                            <span class="text-gray-700">Jantar (Laranjeira)</span>
+                        </div>
+                        @endif
+                        @if(!auth()->user()->isLaranjeira())
                         <div class="flex items-center">
                             <span class="bg-gray-300 text-gray-600 px-2 py-1 rounded mr-2">🚫</span>
-                            <span class="text-gray-600">Fins de semana (indisponível)</span>
+                            <span class="text-gray-600">Fins de semana indisponíveis</span>
                         </div>
+                        @else
+                        <div class="flex items-center">
+                            <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded mr-2">🌙</span>
+                            <span class="text-gray-600">Fins de semana liberados (Laranjeira)</span>
+                        </div>
+                        @endif
                         <div class="flex items-center">
                             <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 font-bold">●</span>
                             <span class="text-gray-600">Dia atual</span>
@@ -220,7 +247,15 @@
                                         <div class="flex items-center space-x-3">
                                             <div class="w-3 h-3 rounded-full {{ $booking->meal_type === 'breakfast' ? 'bg-green-500' : 'bg-blue-500' }}"></div>
                                             <span class="text-sm font-medium">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }}</span>
-                                            <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                            @php
+                                                $mealLabel = match($booking->meal_type) {
+                                                    'breakfast' => 'Café da Manhã',
+                                                    'lunch' => 'Almoço',
+                                                    'dinner' => 'Jantar',
+                                                    default => ucfirst($booking->meal_type)
+                                                };
+                                            @endphp
+                                            <span class="text-sm text-gray-600">{{ $mealLabel }}</span>
                                             <span class="text-xs px-2 py-1 rounded-full {{ $bookingStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                                 {{ ucfirst($bookingStatus) }}
                                             </span>
@@ -263,7 +298,15 @@
                                             <div class="flex items-center space-x-3">
                                                 <div class="w-3 h-3 rounded-full {{ $booking->meal_type === 'breakfast' ? 'bg-green-500' : 'bg-blue-500' }}"></div>
                                                 <span class="text-sm font-medium">{{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }}</span>
-                                                <span class="text-sm text-gray-600">{{ $booking->meal_type === 'breakfast' ? 'Café da Manhã' : 'Almoço' }}</span>
+                                                @php
+                                                    $mealLabel = match($booking->meal_type) {
+                                                        'breakfast' => 'Café da Manhã',
+                                                        'lunch' => 'Almoço',
+                                                        'dinner' => 'Jantar',
+                                                        default => ucfirst($booking->meal_type)
+                                                    };
+                                                @endphp
+                                                <span class="text-sm text-gray-600">{{ $mealLabel }}</span>
                                                 <span class="text-xs px-2 py-1 rounded-full {{ $bookingStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                                     {{ ucfirst($bookingStatus) }}
                                                 </span>
@@ -335,6 +378,12 @@
                                 <span class="text-gray-600">Almoços:</span>
                                 <span class="font-semibold">{{ $lunchCount }}</span>
                             </div>
+                            @if(auth()->user()->status === 'Laranjeira')
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Jantares:</span>
+                                <span class="font-semibold">{{ $dinnerCount ?? 0 }}</span>
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -349,6 +398,9 @@
                     <li>Prazo máximo: 30 dias de antecedência</li>
                     <li>Cancelamentos devem ser feitos até às 13h do dia anterior</li>
                     <li>Reservas do dia atual não podem ser canceladas</li>
+                    @if(auth()->user()->status === 'Laranjeira')
+                    <li>Status Laranjeira: (em desenvolvimento) habilitará reserva de jantar conforme regras.</li>
+                    @endif
                 </ul>
             </div>
         </div>
@@ -398,6 +450,11 @@
                         <button id="btn-book-lunch" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
                             🍽️ Reservar Almoço
                         </button>
+                        @if(auth()->user()->status === 'Laranjeira')
+                        <button id="btn-book-dinner" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                            🌙 Reservar Jantar
+                        </button>
+                        @endif
                     </div>
                 </div>
                 <div class="flex justify-center mt-4">
@@ -567,7 +624,7 @@
         let selectedDate = '';
         let isFridaySelected = false;
 
-        function showBookingModal(date, isFridayStr) {
+    function showBookingModal(date, isFridayStr) {
             selectedDate = date;
             isFridaySelected = isFridayStr === 'true';
             
@@ -591,6 +648,7 @@
             const dayBookings = monthBookings[date] || [];
             const hasBreakfast = dayBookings.some(booking => booking.meal_type === 'breakfast');
             const hasLunch = dayBookings.some(booking => booking.meal_type === 'lunch');
+            const hasDinner = dayBookings.some(booking => booking.meal_type === 'dinner');
             
             // Reset buttons to default state
             breakfastButton.disabled = false;
@@ -625,7 +683,45 @@
             } else {
                 lunchButton.innerHTML = '🍽️ Reservar Almoço';
             }
+
+            // Weekend handling: restrict only if user not Laranjeira
+            const dateObjTmp = new Date(date + 'T00:00:00');
+            const isWeekend = dateObjTmp.getDay() === 0 || dateObjTmp.getDay() === 6;
+            let dinnerButton = document.getElementById('btn-book-dinner');
+            const userIsLaranjeira = document.body.dataset.laranjeira === '1';
+            if (isWeekend && !userIsLaranjeira) {
+                breakfastButton.disabled = true;
+                breakfastButton.classList.add('opacity-50', 'cursor-not-allowed');
+                breakfastButton.title = 'Indisponível em fins de semana';
+                breakfastButton.innerHTML = '☕ Indisponível';
+                lunchButton.disabled = true;
+                lunchButton.classList.add('opacity-50', 'cursor-not-allowed');
+                lunchButton.title = 'Indisponível em fins de semana';
+                lunchButton.innerHTML = '🍽️ Indisponível';
+                if (dinnerButton) {
+                    dinnerButton.disabled = true;
+                    dinnerButton.classList.add('opacity-50','cursor-not-allowed');
+                    dinnerButton.title = 'Indisponível em fins de semana';
+                    dinnerButton.innerHTML = '🌙 Indisponível';
+                }
+            }
             
+            // Dinner button handling (re-use existing variable)
+            dinnerButton = document.getElementById('btn-book-dinner');
+            if (dinnerButton) {
+                dinnerButton.disabled = false;
+                dinnerButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                dinnerButton.title = '';
+                if (hasDinner) {
+                    dinnerButton.disabled = true;
+                    dinnerButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    dinnerButton.title = 'Você já possui uma reserva de jantar para este dia';
+                    dinnerButton.innerHTML = '🌙 Jantar já Reservado';
+                } else {
+                    dinnerButton.innerHTML = '🌙 Reservar Jantar';
+                }
+            }
+
             modal.classList.remove('hidden');
         }
 
@@ -637,9 +733,10 @@
         function bookMeal(mealType) {
             if (!selectedDate) return;
             
-            const button = mealType === 'breakfast' ? 
-                document.getElementById('btn-book-breakfast') : 
-                document.getElementById('btn-book-lunch');
+            let button;
+            if (mealType === 'breakfast') button = document.getElementById('btn-book-breakfast');
+            else if (mealType === 'lunch') button = document.getElementById('btn-book-lunch');
+            else button = document.getElementById('btn-book-dinner');
             
             // Check if button is disabled
             if (button.disabled) {
@@ -678,13 +775,20 @@
             })
             .finally(() => {
                 button.disabled = false;
-                button.innerHTML = mealType === 'breakfast' ? '☕ Reservar Café da Manhã' : '🍽️ Reservar Almoço';
+                if (mealType === 'breakfast') button.innerHTML = '☕ Reservar Café da Manhã';
+                else if (mealType === 'lunch') button.innerHTML = '🍽️ Reservar Almoço';
+                else button.innerHTML = '🌙 Reservar Jantar';
             });
         }
 
-        // Add event listeners for booking buttons
-        document.getElementById('btn-book-breakfast').addEventListener('click', () => bookMeal('breakfast'));
-        document.getElementById('btn-book-lunch').addEventListener('click', () => bookMeal('lunch'));
+    // Expose modal function globally for inline onclick
+    window.showBookingModal = showBookingModal;
+
+    // Add event listeners for booking buttons
+    document.getElementById('btn-book-breakfast').addEventListener('click', () => bookMeal('breakfast'));
+    document.getElementById('btn-book-lunch').addEventListener('click', () => bookMeal('lunch'));
+    const dinnerBtn = document.getElementById('btn-book-dinner');
+    if (dinnerBtn) dinnerBtn.addEventListener('click', () => bookMeal('dinner'));
 
         // Close modal when clicking outside
         document.getElementById('booking-modal').addEventListener('click', function(e) {

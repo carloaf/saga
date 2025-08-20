@@ -89,6 +89,7 @@ class ProfileController extends Controller
             'armed_force' => 'required|in:EB,MB,FAB',
             'gender' => 'nullable|string|in:M,F',
             'ready_at_om_date' => 'nullable|date|before_or_equal:today',
+            'status' => 'nullable|in:Laranjeira',
         ]);
 
         // Validação condicional: organization_id é obrigatório apenas para EB
@@ -114,6 +115,7 @@ class ProfileController extends Controller
             'armed_force' => $request->armed_force,
             'gender' => $request->gender,
             'ready_at_om_date' => $request->ready_at_om_date ? Carbon::parse($request->ready_at_om_date) : null,
+            'status' => $request->status ?: null,
         ]);
 
         return redirect()->route('profile.edit')->with('success', 'Perfil atualizado com sucesso!');
