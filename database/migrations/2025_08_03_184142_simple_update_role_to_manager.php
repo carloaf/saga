@@ -12,14 +12,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Remover a constraint de check existente
-        DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+        if (DB::getDriverName() !== 'sqlite') {
+            // Remover a constraint de check existente (não suportado no sqlite in-memory de testes)
+            DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+        }
         
         // Atualizar todos os registros de 'superuser' para 'manager'
         DB::table('users')->where('role', 'superuser')->update(['role' => 'manager']);
         
-        // Adicionar nova constraint que aceita 'user' e 'manager'
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Adicionar nova constraint que aceita 'user' e 'manager'
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager'))");
+        }
     }
 
     /**
@@ -27,13 +31,17 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Remover a constraint atual
-        DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+        if (DB::getDriverName() !== 'sqlite') {
+            // Remover a constraint atual
+            DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+        }
         
         // Reverter: alterar 'manager' de volta para 'superuser'
         DB::table('users')->where('role', 'manager')->update(['role' => 'superuser']);
         
-        // Restaurar constraint original
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'superuser'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Restaurar constraint original
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'superuser'))");
+        }
     }
 };

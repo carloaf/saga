@@ -172,6 +172,7 @@ class AuthController extends Controller
             'full_name' => 'required|string|max:255',
             'war_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'idt' => 'required|string|max:30|unique:users,idt',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'rank_id' => 'required|exists:ranks,id',
             'organization_id' => 'nullable|exists:organizations,id',
@@ -192,6 +193,7 @@ class AuthController extends Controller
             'full_name' => $request->full_name,
             'war_name' => $request->war_name,
             'email' => $request->email,
+            'idt' => $request->idt,
             'password' => $request->password, // Será hasheada automaticamente pelo cast
             'rank_id' => $request->rank_id,
             'organization_id' => $request->organization_id,

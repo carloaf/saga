@@ -175,6 +175,20 @@ docker exec saga_app_staging php artisan config:cache
 ```
 
 #### 4.5 Verificação de Funcionamento
+#### 4.6 Usuário Admin Padrão
+Para garantir a existência de um usuário administrador (login tradicional):
+```bash
+docker exec saga_app_dev php artisan saga:ensure-admin
+# Credenciais padrão: admin@saga.mil.br / admin123 (altere após primeiro login)
+```
+
+Para alterar email ou senha:
+```bash
+docker exec saga_app_dev php artisan saga:ensure-admin --email=outro@saga.mil.br --password=NovaSenhaSegura123
+```
+
+Recomenda-se trocar a senha padrão imediatamente em produção.
+
 ```bash
 # Testar ambientes
 curl http://localhost:8000  # Development (deve retornar 200)

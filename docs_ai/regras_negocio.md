@@ -2,7 +2,7 @@
 
 Este documento consolida as regras de negócio já implementadas (ou em implementação avançada) no SAGA, servindo como referência única para produto, desenvolvimento, QA e operações.
 
-> STATUS: Documento inicial (versão 0.1). Atualize a cada nova regra implementada ou alteração relevante.
+> STATUS: Versão 0.2 (atualizado após inclusão jantar em relatórios, status Laranjeira e melhorias serviço sgtte). Atualize a cada nova regra implementada ou alteração relevante.
 
 ## Sumário
 1. Identidade / Autenticação
@@ -26,6 +26,13 @@ Este documento consolida as regras de negócio já implementadas (ou em implemen
 - Autenticação centralizada via Laravel (guards padrão). 
 - Sessão expira conforme configuração padrão de `config/session.php` (manter alinhado a requisitos de segurança).
 - Acesso a rotas protegidas exige autenticação (middleware `auth`).
+ - Campo de Identidade (IDT) obrigatório no cadastro de novos usuários (máx 30 chars) e único (enforcement fase 2). Validado em `AdminController@storeUser` (`required|unique:users,idt`).
+ - IDT é imutável após criação: tentativas de alteração via edição administrativa são ignoradas (hard lock em `updateUser`); interface de Perfil exibe o valor em modo somente leitura.
+ - IDT aceita somente números: validação frontend (pattern="[0-9]*", inputmode="numeric") e JavaScript remove caracteres não numéricos automaticamente.
+ - Estratégia de migração em duas fases:
+   1. Fase 1: adiciona coluna nullable (sem unique) para permitir backfill (`2025_08_21_120000_add_idt_to_users_table`).
+   2. Fase 2: normaliza/backfill, torna NOT NULL + UNIQUE (`2025_08_21_130000_make_idt_unique_not_nullable_on_users_table`).
+ - Backfill padrão: `UPDATE users SET idt = CONCAT('PENDENTE_', id)` para registros sem valor antes da fase 2; ajustar manualmente depois.
 
 ## 2. Perfis e Acesso
 Perfis atuais (campo `users.role`, constraint CHECK): `user`, `manager`, `superuser`, `furriel`, `sgtte`.
@@ -76,7 +83,7 @@ Regras Funcionais (conforme modelos + commits):
   - cancelled (mantém histórico; requer endpoint/ação consistente de cancelamento)
   - pending (placeholder não usado)
 10. Campo `created_by_furriel`: identifica reservas criadas por furriel / superior; `created_by_operator`: ações via interface de serviço (sgtte).
-11. Relatórios (AdminController) abrangem café, almoço e jantar (incluindo novas métricas incorporadas ao dashboard para jantar).
+11. Relatórios (AdminController) abrangem café, almoço e jantar (incluindo novas métricas incorporadas ao dashboard para jantar) — atualização commits 8748979 (exportações) e 407b83f (cards dashboard).
 
 Validações Implementadas / Esperadas:
 - Datas passadas: bloqueio.
@@ -123,7 +130,7 @@ Gaps / Extensões Futuras:
 Entidades Principais:
 | Tabela | Campos Relevantes | Regras / Notas |
 |--------|-------------------|----------------|
-| users | google_id (unique), full_name, war_name, email (unique), rank_id FK, organization_id FK (pode se tornar nullable), gender (M/F no controller; migration antiga male/female – ajustar convergência), ready_at_om_date, role (CHECK), is_active | Constraint dinâmica atualizada para incluir `furriel`; divergência enum gender (corrigir para consistência) |
+| users | google_id (unique), idt (unique, imutável pós-criação, somente números), full_name, war_name, email (unique), rank_id FK, organization_id FK (pode se tornar nullable), gender (M/F no controller; migration antiga male/female – ajustar convergência), ready_at_om_date, role (CHECK), is_active, status | Constraint dinâmica atualizada para incluir `furriel` e `sgtte`; divergência enum gender (corrigir); campo `status` (commit 407b83f); IDT obrigatório novos cadastros e exibido read-only no perfil, aceita apenas números |
 | ranks | name (unique), abbreviation (nullable), order | Usado para ordenar exibição hierárquica |
 | organizations | name (unique), abbreviation (nullable), is_host (bool) | Campo `is_host` identifica OM hospedeira |
 | bookings | user_id FK, booking_date (DATE), meal_type enum, status enum, created_by_furriel (nullable FK), created_by_operator (nullable FK), unique(user_id, booking_date, meal_type) | Estados de workflow simples; sem soft deletes; `created_by_operator` genérico para ações de sgtte |
@@ -256,6 +263,7 @@ Antes de promover para produção:
 | Histórico cardápio | Versionamento e auditoria | Baixa |
 | Clarificar escopo furriel x jantar | Decidir política e ajustar documentação/UI | Média |
 | Testes jantar + fim de semana Laranjeira | Criar casos de teste (unit + feature) | Alta |
+| Atualizar dados legados subunit | Migrar valores '1', '2', '3' para '1ª Cia', '2ª Cia', 'EM' | Média |
 
 ## 15. Histórico de Evolução (Commits‑chave)
 | Hash | Tema | Regra / Impacto Principal |
@@ -272,10 +280,29 @@ Antes de promover para produção:
 | 2eeca08 | Backup/Restore | Sistema completo backup & restore |
 | 0553028 | Deploy | Estrutura profissional multi-arch |
 | d2efe59 | Multi-arch merge | Consolidação final multi-ambiente |
+| 199e86b | Perfil sgtte + Jantar | Introdução role sgtte, refeição jantar e auditoria operador |
+| d578db5 | Serviço sgtte | Carregamento dinâmico por data, bloqueio edição passado e preservação parâmetro dia |
+| 1a09082 | Documentação | Criação inicial deste documento de regras de negócio |
+| 407b83f | Jantar + Status | Status Laranjeira, auto-reserva jantar, atualização cards dashboard |
+| 8748979 | Relatórios jantar | Inclusão jantar nos relatórios exportados e melhorias de layout |
+| 14c3597 | Correção perfil | Ajuste campo Data Pronto OM (exibição de calendário) |
+| 13bb827 | IDT validação + UX + Org | Validação IDT numérica, melhorias UX calendário, padronização organizações e subunidades |
 
 Observação: reflita sempre alterações futuras com novos commits nesta tabela para rastreabilidade de decisões.
 
 ---
 ### Atualização
 Sempre que uma nova regra de negócio for implementada ou alterada, atualizar esta lista mantendo histórico via controle de versão (diffs em PR).
+
+---
+
+## 13. Melhorias Recentes
+
+**13.1. Comando Administrativo**: Criado comando `saga:ensure-admin` para configuração automatizada do usuário administrador em produção com geração dinâmica de IDT.
+
+**13.2. Organizações Padronizadas**: Sistema possui apenas 4 organizações militares válidas: 11º Depósito de Suprimento, AC Defesa, PMB, 7º CTA. Organizações removidas por não serem relevantes para o escopo operacional.
+
+**13.3. Subunidades do 11º Depósito**: Para usuários do 11º Depósito de Suprimento, disponibilizar opções de subunidade: 1ª Cia, 2ª Cia, EM. Padronização aplicada em formulários de cadastro e administração.
+
+**13.4. Aprimoramentos UX**: Melhorada responsividade do calendário Data Pronto OM para abertura ao clicar no ícone. Ajustes CSS de z-index e pointer-events para comportamento mais intuitivo.
 

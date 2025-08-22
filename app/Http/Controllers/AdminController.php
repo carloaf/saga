@@ -92,28 +92,31 @@ class AdminController extends Controller
         if (!Auth::user() || Auth::user()->role !== 'manager') {
             return response()->json(['success' => false, 'message' => 'Acesso negado. Apenas managers podem acessar esta área.'], 403);
         }
-
-        try {
-            $validatedData = $request->validate([
-                'full_name' => 'required|string|max:255',
-                'war_name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-                'rank_id' => 'nullable|exists:ranks,id',
-                'organization_id' => 'nullable|exists:organizations,id',
-                'subunit' => 'nullable|string|max:255',
-                'armed_force' => 'nullable|in:FAB,MB,EB',
-                'gender' => 'required|in:M,F',
-                'ready_at_om_date' => 'required|date',
-                'is_active' => 'required|boolean',
-                'role' => 'required|in:user,manager,superuser,furriel,sgtte'
-            ]);
-
-            $user->update($validatedData);
-
-            return response()->json(['success' => true, 'message' => 'Usuário atualizado com sucesso!']);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
+        // Se o usuário já possui IDT e houve tentativa de alterá-lo, mantém o original
+        if ($user->idt && $request->filled('idt') && $request->input('idt') !== $user->idt) {
+            $request->merge(['idt' => $user->idt]);
         }
+        $validatedData = $request->validate([
+            // unique: tabela, coluna, ignore, idColumn
+            'idt' => 'required|string|max:30|unique:users,idt,' . $user->id . ',id',
+            'full_name' => 'required|string|max:255',
+            'war_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'rank_id' => 'nullable|exists:ranks,id',
+            'organization_id' => 'nullable|exists:organizations,id',
+            'subunit' => 'nullable|string|max:255',
+            'armed_force' => 'nullable|in:FAB,MB,EB',
+            'gender' => 'required|in:M,F',
+            'ready_at_om_date' => 'required|date',
+            'is_active' => 'required|boolean',
+            'role' => 'required|in:user,manager,superuser,furriel,sgtte'
+        ]);
+
+    // IDT permanece imutável (já garantido acima) sem necessidade de remoção pós-validação
+
+        $user->update($validatedData);
+
+        return response()->json(['success' => true, 'message' => 'Usuário atualizado com sucesso!']);
     }
 
     /**
@@ -125,36 +128,32 @@ class AdminController extends Controller
         if (!Auth::user() || Auth::user()->role !== 'manager') {
             return response()->json(['success' => false, 'message' => 'Acesso negado.'], 403);
         }
+        $validatedData = $request->validate([
+            'idt' => 'required|string|max:30|unique:users,idt',
+            'full_name' => 'required|string|max:255',
+            'war_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'rank_id' => 'nullable|exists:ranks,id',
+            'organization_id' => 'nullable|exists:organizations,id',
+            'subunit' => 'nullable|string|max:255',
+            'armed_force' => 'nullable|in:FAB,MB,EB',
+            'gender' => 'required|in:M,F',
+            'ready_at_om_date' => 'required|date',
+            'role' => 'required|in:user,manager,superuser,furriel,sgtte',
+            'is_active' => 'required|boolean'
+        ]);
 
-        try {
-            $validatedData = $request->validate([
-                'full_name' => 'required|string|max:255',
-                'war_name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email',
-                'rank_id' => 'nullable|exists:ranks,id',
-                'organization_id' => 'nullable|exists:organizations,id',
-                'subunit' => 'nullable|string|max:255',
-                'armed_force' => 'nullable|in:FAB,MB,EB',
-                'gender' => 'required|in:M,F',
-                'ready_at_om_date' => 'required|date',
-                'role' => 'required|in:user,manager,superuser,furriel,sgtte',
-                'is_active' => 'required|boolean'
-            ]);
+        // Adicionar campos padrão para usuário criado manualmente
+        $validatedData['google_id'] = 'manual_' . time() . '_' . rand(1000, 9999);
+        $validatedData['email_verified_at'] = now();
 
-            // Adicionar campos padrão para usuário criado manualmente
-            $validatedData['google_id'] = 'manual_' . time() . '_' . rand(1000, 9999);
-            $validatedData['email_verified_at'] = now();
+        $user = User::create($validatedData);
 
-            $user = User::create($validatedData);
-
-            return response()->json([
-                'success' => true, 
-                'message' => 'Usuário criado com sucesso!',
-                'user' => $user->load(['rank', 'organization'])
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Usuário criado com sucesso!',
+            'user' => $user->load(['rank', 'organization'])
+        ]);
     }
 
     /**

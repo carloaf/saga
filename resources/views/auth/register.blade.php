@@ -43,7 +43,8 @@
     }
 
     .floating-label input:focus + label,
-    .floating-label input:not(:placeholder-shown) + label {
+    .floating-label input:not(:placeholder-shown) + label,
+    .floating-label input:valid + label {
         transform: translateY(-26px) scale(0.9);
         color: #16a34a;
         font-weight: 600;
@@ -51,9 +52,9 @@
 
     .floating-label label {
         position: absolute;
-        top: 50%;
+        top: 20px;
         left: 16px;
-        transform: translateY(-50%);
+        transform: translateY(0);
         transition: all 0.3s ease;
         pointer-events: none;
         color: #6b7280;
@@ -144,10 +145,32 @@
                                     name="full_name" 
                                     value="{{ old('full_name') }}"
                                     required 
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none peer"
                                     placeholder=" "
                                 >
                                 <label for="full_name" class="text-sm font-medium">Nome Completo *</label>
+                            </div>
+
+                            <!-- Identidade (IDT) -->
+                            <div class="floating-label">
+                                <input 
+                                    type="text" 
+                                    id="idt" 
+                                    name="idt" 
+                                    value="{{ old('idt') }}"
+                                    required 
+                                    maxlength="30"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none tracking-wide peer"
+                                    placeholder=" "
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                >
+                                <label for="idt" class="text-sm font-medium">Identidade (IDT) *</label>
+                                <p class="mt-1 text-xs text-gray-500">Documento militar único (somente números). Não poderá ser alterado depois.</p>
+                                @error('idt')
+                                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Nome de Guerra -->
@@ -284,7 +307,7 @@
                                     <option value="">Selecione sua companhia</option>
                                     <option value="1ª Cia" {{ old('subunit') == '1ª Cia' ? 'selected' : '' }}>1ª Cia</option>
                                     <option value="2ª Cia" {{ old('subunit') == '2ª Cia' ? 'selected' : '' }}>2ª Cia</option>
-                                    <option value="3ª Cia" {{ old('subunit') == '3ª Cia' ? 'selected' : '' }}>3ª Cia</option>
+                                    <option value="EM" {{ old('subunit') == 'EM' ? 'selected' : '' }}>EM</option>
                                 </select>
                             </div>
 
@@ -315,34 +338,34 @@
                         </h3>
 
                         <div class="max-w-md">
-                            <label for="ready_at_om_date_display" class="block text-sm font-medium text-gray-700 mb-2">Data Pronto OM *</label>
-                            <div class="relative">
-                                <input type="text" 
-                                       id="ready_at_om_date_display"
-                                       value="{{ old('ready_at_om_date') ? date('d/m/Y', strtotime(old('ready_at_om_date'))) : '' }}"
-                                       class="input-modern w-full px-4 py-3 pr-12 rounded-lg border-2 focus:outline-none"
-                                       placeholder="dd/mm/yyyy"
-                                       readonly
-                                       onclick="openDatePicker()"
-                                       style="cursor: pointer;">
-                                <input type="date" 
-                                       name="ready_at_om_date" 
-                                       id="ready_at_om_date" 
-                                       value="{{ old('ready_at_om_date') }}"
-                                       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; z-index: 2; cursor: pointer;"
-                                       max="{{ date('Y-m-d') }}"
-                                       onchange="updateDisplayDate(this)">
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer z-10"
-                                     onclick="openDatePicker()"
-                                     title="Clique para abrir o calendário">
-                                    <svg class="w-5 h-5 text-gray-400 hover:text-green-500 transition-colors duration-200" 
-                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1">Data em que ficou pronto na Organização Militar</p>
+                <label for="ready_at_om_date_display" class="block text-sm font-medium text-gray-700 mb-2">Data Pronto OM *</label>
+                <div class="relative max-w-xs">
+                    <input type="text" 
+                        id="ready_at_om_date_display"
+                        value="{{ old('ready_at_om_date') ? date('d/m/Y', strtotime(old('ready_at_om_date'))) : '' }}"
+                        class="input-modern w-full px-4 py-3 pr-12 rounded-lg border-2 focus:outline-none"
+                        placeholder="dd/mm/yyyy"
+                        readonly
+                        style="cursor: pointer;">
+                    <input type="date" 
+                        name="ready_at_om_date" 
+                        id="ready_at_om_date" 
+                        value="{{ old('ready_at_om_date') }}"
+                        class="absolute top-0 left-0 w-full h-full opacity-0 z-5 cursor-pointer"
+                        max="{{ date('Y-m-d') }}"
+                        onchange="updateDisplayDate(this)">
+                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer z-30"
+                      onclick="openDatePicker()"
+                      title="Clique para abrir o calendário">
+                     <svg class="w-5 h-5 text-gray-400 hover:text-green-500 transition-colors duration-200 pointer-events-none" 
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                            class="pointer-events-none"></path>
+                     </svg>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Data em que ficou pronto na Organização Militar</p>
                         </div>
                     </div>
 
@@ -425,19 +448,10 @@ function toggleSectionField() {
 }
 
 function openDatePicker() {
-    try {
-        const dateInput = document.getElementById('ready_at_om_date');
-        if (dateInput && dateInput.showPicker) {
-            dateInput.showPicker();
-        } else {
-            // Fallback para navegadores que não suportam showPicker()
-            dateInput.focus();
-            dateInput.click();
-        }
-    } catch (error) {
-        console.log('Abrindo calendário com método alternativo');
-        const dateInput = document.getElementById('ready_at_om_date');
-        dateInput.focus();
+    const dateInput = document.getElementById('ready_at_om_date');
+    dateInput.focus();
+    if (dateInput.showPicker) {
+        dateInput.showPicker();
     }
 }
 

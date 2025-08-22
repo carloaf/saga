@@ -12,11 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Primeiro, remover a constraint existente
-        DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
-        
-        // Adicionar nova constraint que inclui o role 'furriel'
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser', 'furriel'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Primeiro, remover a constraint existente
+            DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+            // Adicionar nova constraint que inclui o role 'furriel'
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser', 'furriel'))");
+        }
     }
 
     /**
@@ -24,10 +25,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Remover a constraint atual
-        DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
-        
-        // Restaurar a constraint original sem 'furriel'
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Remover a constraint atual
+            DB::statement('ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check');
+            // Restaurar a constraint original sem 'furriel'
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser'))");
+        }
     }
 };

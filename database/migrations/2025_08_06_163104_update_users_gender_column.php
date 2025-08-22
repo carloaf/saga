@@ -12,8 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Drop the old constraint first
-        DB::statement("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_gender_check");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Drop the old constraint first (não suportado em sqlite)
+            DB::statement("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_gender_check");
+        }
         
         // Change the column type to varchar to allow flexibility
         Schema::table('users', function (Blueprint $table) {
@@ -24,8 +26,10 @@ return new class extends Migration
         DB::statement("UPDATE users SET gender = 'M' WHERE gender = 'male'");
         DB::statement("UPDATE users SET gender = 'F' WHERE gender = 'female'");
         
-        // Add new constraint with new values
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_gender_check CHECK (gender IN ('M', 'F') OR gender IS NULL)");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Add new constraint with new values
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_gender_check CHECK (gender IN ('M', 'F') OR gender IS NULL)");
+        }
     }
 
     /**
@@ -33,13 +37,15 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revert the changes
+    // Revert the changes
         DB::statement("UPDATE users SET gender = 'male' WHERE gender = 'M'");
         DB::statement("UPDATE users SET gender = 'female' WHERE gender = 'F'");
         
-        // Drop the new constraint and restore the old one
-        DB::statement("ALTER TABLE users DROP CONSTRAINT users_gender_check");
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_gender_check CHECK (gender IN ('male', 'female'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Drop the new constraint and restore the old one
+            DB::statement("ALTER TABLE users DROP CONSTRAINT users_gender_check");
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_gender_check CHECK (gender IN ('male', 'female'))");
+        }
         
         Schema::table('users', function (Blueprint $table) {
             $table->enum('gender', ['male', 'female'])->change();

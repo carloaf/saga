@@ -462,6 +462,31 @@ function getRankSymbol($rankName) {
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Identidade (IDT) - somente leitura -->
+                            <div class="form-group lg:col-span-2">
+                                <label for="idt" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
+                                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 .828-.895 1.5-2 1.5s-2-.672-2-1.5.895-1.5 2-1.5 2 .672 2 1.5zM6 11V7a6 6 0 1112 0v4m-6 4v2m0 4h.01" />
+                                    </svg>
+                                    Identidade (IDT)
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="idt" value="{{ auth()->user()->idt ?? 'Não cadastrado' }}" readonly
+                                           class="block w-full px-4 py-4 border border-gray-300 rounded-lg shadow-sm bg-gradient-to-r from-gray-50 to-gray-100 text-gray-600 cursor-not-allowed font-medium">
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500 flex items-center">
+                                    <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Campo de identificação único. Alterações somente via administração.
+                                </p>
+                            </div>
                             
                             <!-- Posto/Graduação -->
                             <div class="form-group">

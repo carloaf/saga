@@ -81,6 +81,8 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
+            // IDT nunca é editável pelo usuário após cadastro inicial
+            // Se futuramente permitir captura inicial aqui, validar required|unique
             'full_name' => 'required|string|max:255',
             'war_name' => 'required|string|max:100',
             'rank_id' => 'required|exists:ranks,id',
@@ -107,6 +109,7 @@ class ProfileController extends Controller
         }
         
         $user->update([
+            // 'idt' não atualizado aqui (imutável via interface de perfil)
             'full_name' => $request->full_name,
             'war_name' => $request->war_name,
             'rank_id' => $request->rank_id,

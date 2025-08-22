@@ -258,7 +258,7 @@
                             <td class="whitespace-nowrap px-6 py-5 text-sm text-gray-600">
                                 @if($user->subunit)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-100 text-purple-800">
-                                        {{ $user->subunit }}ª Cia
+                                        {{ $user->subunit }}
                                     </span>
                                 @else
                                     <span class="text-gray-400 text-xs">N/A</span>
@@ -324,11 +324,12 @@
                                 </span>
                             </td>
                             <td class="relative whitespace-nowrap py-5 pl-3 pr-6 text-right text-sm font-medium">
-                                <button type="button" 
-                                        data-user-id="{{ $user->id }}"
-                                        data-full-name="{{ $user->full_name }}"
-                                        data-war-name="{{ $user->war_name }}"
-                                        data-email="{{ $user->email }}"
+                <button type="button" 
+                    data-user-id="{{ $user->id }}"
+                    data-full-name="{{ $user->full_name }}"
+                    data-war-name="{{ $user->war_name }}"
+                    data-idt="{{ $user->idt }}"
+                    data-email="{{ $user->email }}"
                                         data-rank-id="{{ $user->rank_id ?? '' }}"
                                         data-organization-id="{{ $user->organization_id ?? '' }}"
                                         data-subunit="{{ $user->subunit ?? '' }}"
@@ -429,6 +430,15 @@
                                     <input type="text" id="createWarName" name="war_name" required
                                            class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
                                 </div>
+
+                                <div>
+                                    <label for="createIdt" class="block text-sm font-semibold text-gray-900 mb-2">
+                                        Identidade (IDT) <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" id="createIdt" name="idt" required maxlength="30"
+                                           class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all"
+                                           placeholder="Ex: 123456789" />
+                                </div>
                                 
                                 <div>
                                     <label for="createEmail" class="block text-sm font-semibold text-gray-900 mb-2">
@@ -486,9 +496,9 @@
                                     <select id="createSubunit" name="subunit"
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
                                         <option value="">Selecione a subunidade</option>
-                                        <option value="1">1ª Cia</option>
-                                        <option value="2">2ª Cia</option>
-                                        <option value="3">3ª Cia</option>
+                                        <option value="1ª Cia">1ª Cia</option>
+                                        <option value="2ª Cia">2ª Cia</option>
+                                        <option value="EM">EM</option>
                                     </select>
                                 </div>
 
@@ -599,6 +609,15 @@
                             <label for="editWarName" class="block text-sm font-semibold text-gray-900 mb-2">Nome de Guerra</label>
                             <input type="text" id="editWarName" name="war_name" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                         </div>
+
+                        <div>
+                            <label for="editIdt" class="block text-sm font-semibold text-gray-900 mb-2">
+                                Identidade (IDT)
+                            </label>
+                            <input type="text" id="editIdt" name="idt" readonly
+                                   class="block w-full rounded-xl border-0 py-3 px-4 text-gray-500 shadow-sm ring-1 ring-inset ring-gray-300 bg-gray-100 cursor-not-allowed sm:text-sm"
+                                   title="IDT não pode ser alterado" />
+                        </div>
                         <div>
                             <label for="editEmail" class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
                             <input type="email" id="editEmail" name="email" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
@@ -637,9 +656,9 @@
                             <select id="editSubunit" name="subunit"
                                     class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="">Selecione a subunidade</option>
-                                <option value="1">1ª Cia</option>
-                                <option value="2">2ª Cia</option>
-                                <option value="3">3ª Cia</option>
+                                <option value="1ª Cia">1ª Cia</option>
+                                <option value="2ª Cia">2ª Cia</option>
+                                <option value="EM">EM</option>
                             </select>
                         </div>
                         <div>
@@ -836,6 +855,7 @@
             body: JSON.stringify({
                 full_name: formData.get('full_name'),
                 war_name: formData.get('war_name'),
+                idt: formData.get('idt'),
                 email: formData.get('email'),
                 rank_id: formData.get('rank_id') || null,
                 organization_id: formData.get('organization_id') || null,
@@ -874,6 +894,7 @@
         const userId = button.getAttribute('data-user-id');
         const fullName = button.getAttribute('data-full-name');
         const warName = button.getAttribute('data-war-name');
+        const idt = button.getAttribute('data-idt');
         const email = button.getAttribute('data-email');
         const rankId = button.getAttribute('data-rank-id');
         const organizationId = button.getAttribute('data-organization-id');
@@ -885,10 +906,11 @@
         const role = button.getAttribute('data-role');
         
         // Preenche os campos do formulário
-        document.getElementById('editUserId').value = userId;
-        document.getElementById('editFullName').value = fullName;
-        document.getElementById('editWarName').value = warName;
-        document.getElementById('editEmail').value = email;
+    document.getElementById('editUserId').value = userId;
+    document.getElementById('editFullName').value = fullName;
+    document.getElementById('editWarName').value = warName;
+    document.getElementById('editIdt').value = idt || '';
+    document.getElementById('editEmail').value = email;
         document.getElementById('editRank').value = rankId || '';
         document.getElementById('editOrganization').value = organizationId || '';
         document.getElementById('editSubunit').value = subunit || '';
@@ -932,6 +954,7 @@
             body: JSON.stringify({
                 full_name: formData.get('full_name'),
                 war_name: formData.get('war_name'),
+                idt: formData.get('idt'), // enviado para validação; backend ignora alteração se já setado
                 email: formData.get('email'),
                 rank_id: formData.get('rank_id') || null,
                 organization_id: formData.get('organization_id') || null,

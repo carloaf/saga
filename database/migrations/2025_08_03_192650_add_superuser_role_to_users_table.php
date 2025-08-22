@@ -12,11 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Remover constraint atual
-        DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
-        
-        // Adicionar nova constraint que inclui 'superuser'
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Remover constraint atual
+            DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+            // Adicionar nova constraint que inclui 'superuser'
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager', 'superuser'))");
+        }
     }
 
     /**
@@ -24,10 +25,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Remover constraint atual
-        DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
-        
-        // Restaurar constraint anterior (apenas user e manager)
-        DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager'))");
+        if (DB::getDriverName() !== 'sqlite') {
+            // Remover constraint atual
+            DB::statement('ALTER TABLE users DROP CONSTRAINT users_role_check');
+            // Restaurar constraint anterior (apenas user e manager)
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('user', 'manager'))");
+        }
     }
 };
