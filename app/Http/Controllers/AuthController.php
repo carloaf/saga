@@ -176,7 +176,7 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'rank_id' => 'required|exists:ranks,id',
             'organization_id' => 'nullable|exists:organizations,id',
-            'section' => 'nullable|in:1,2,3',
+            'subunit' => 'nullable|in:1ª Cia,2ª Cia,EM',
             'armed_force' => 'required|in:EB,MB,FAB',
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
@@ -197,7 +197,7 @@ class AuthController extends Controller
             'password' => $request->password, // Será hasheada automaticamente pelo cast
             'rank_id' => $request->rank_id,
             'organization_id' => $request->organization_id,
-            'subunit' => $request->section, // Mapear section para subunit
+            'subunit' => $request->subunit, // Corrigido: usar subunit ao invés de section
             'armed_force' => $request->armed_force,
             'gender' => $request->gender,
             'ready_at_om_date' => $request->ready_at_om_date,
