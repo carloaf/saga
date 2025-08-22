@@ -109,7 +109,7 @@ class AdminController extends Controller
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
             'is_active' => 'required|boolean',
-            'role' => 'required|in:user,manager,superuser,furriel,sgtte'
+            'role' => 'required|in:user,manager,aprov,furriel,sgtte'
         ]);
 
     // IDT permanece imutável (já garantido acima) sem necessidade de remoção pós-validação
@@ -139,7 +139,7 @@ class AdminController extends Controller
             'armed_force' => 'nullable|in:FAB,MB,EB',
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
-            'role' => 'required|in:user,manager,superuser,furriel,sgtte',
+            'role' => 'required|in:user,manager,aprov,furriel,sgtte',
             'is_active' => 'required|boolean'
         ]);
 
@@ -184,9 +184,9 @@ class AdminController extends Controller
      */
     public function reports()
     {
-        // Verificação de acesso - Managers e Superusers podem acessar
-        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'superuser'])) {
-            abort(403, 'Acesso negado. Apenas managers e superusuários podem acessar esta área.');
+        // Verificação de acesso - Managers e Aprov podem acessar
+        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'aprov'])) {
+            abort(403, 'Acesso negado. Apenas managers e usuários Aprov podem acessar esta área.');
         }
 
         // Estatísticas do dia atual
@@ -236,9 +236,9 @@ class AdminController extends Controller
      */
     public function generateReport(Request $request)
     {
-        // Verificação de acesso - Managers e Superusers podem acessar
-        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'superuser'])) {
-            abort(403, 'Acesso negado. Apenas managers e superusuários podem acessar esta área.');
+        // Verificação de acesso - Managers e Aprov podem acessar
+        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'aprov'])) {
+            abort(403, 'Acesso negado. Apenas managers e usuários Aprov podem acessar esta área.');
         }
 
         $request->validate([

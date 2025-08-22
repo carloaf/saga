@@ -314,12 +314,38 @@ function getRankSymbol($rankName) {
                                         </svg>
                                         Gerente
                                     </span>
+                                @elseif(auth()->user()->role === 'aprov')
+                                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
+                                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 2C8.134 2 5 5.134 5 9c0 1.5.5 3 1.5 4.5L8 16h8l1.5-2.5C18.5 12 19 10.5 19 9c0-3.866-3.134-7-7-7zm0 2c2.761 0 5 2.239 5 5 0 1-.3 2-.8 2.8L15.2 14H8.8l-1-2.2C7.3 11 7 10 7 9c0-2.761 2.239-5 5-5z"/>
+                                            <path d="M8 16h8v2c0 1.1-.9 2-2 2h-4c-1.1 0-2-.9-2-2v-2z"/>
+                                            <circle cx="12" cy="8" r="1.5" fill="currentColor"/>
+                                            <circle cx="10" cy="9.5" r="0.8" fill="currentColor"/>
+                                            <circle cx="14" cy="9.5" r="0.8" fill="currentColor"/>
+                                        </svg>
+                                        Aprov
+                                    </span>
+                                @elseif(auth()->user()->role === 'furriel')
+                                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-red-500 to-orange-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                        </svg>
+                                        Furriel
+                                    </span>
+                                @elseif(auth()->user()->role === 'sgtte')
+                                    <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        Sgtte
+                                    </span>
                                 @else
                                     <span class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg transform hover:scale-105 transition-all duration-200">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                         </svg>
-                                        Usuário Padrão
+                                        Usuário
                                     </span>
                                 @endif
                             </div>

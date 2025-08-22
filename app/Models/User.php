@@ -25,7 +25,7 @@ class User extends Authenticatable
         'gender',
         'ready_at_om_date',
         'is_active',
-    'role', // Sistema simples de roles: user, manager, superuser, furriel, sgtte
+    'role', // Sistema simples de roles: user, manager, aprov, furriel, sgtte
     'status', // null ou 'Laranjeira'
     ];
 
@@ -57,7 +57,12 @@ class User extends Authenticatable
 
     public function isSuperuser()
     {
-        return $this->role === 'superuser';
+        return $this->role === 'aprov';
+    }
+
+    public function isAprov()
+    {
+        return $this->role === 'aprov';
     }
 
     public function isManager()

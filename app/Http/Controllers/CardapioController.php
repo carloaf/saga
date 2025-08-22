@@ -15,10 +15,10 @@ class CardapioController extends Controller
      */
     public function index()
     {
-        // Verificação de acesso - apenas superusers podem acessar
+        // Verificação de acesso - apenas usuários Aprov podem acessar
         $user = Auth::user();
-        if (!$user || $user->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem acessar o cardápio da semana.');
+        if (!$user || $user->role !== 'aprov') {
+            abort(403, 'Acesso negado. Apenas usuários Aprov podem acessar o cardápio da semana.');
         }
 
         $currentWeekMenu = WeeklyMenu::getCurrentWeekMenu();
@@ -50,10 +50,10 @@ class CardapioController extends Controller
      */
     public function edit(Request $request)
     {
-        // Verificação de acesso - apenas superusers podem acessar
+        // Verificação de acesso - apenas usuários Aprov podem acessar
         $user = Auth::user();
-        if (!$user || $user->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem editar o cardápio da semana.');
+        if (!$user || $user->role !== 'aprov') {
+            abort(403, 'Acesso negado. Apenas usuários Aprov podem editar o cardápio da semana.');
         }
 
         // Se uma semana específica foi selecionada, usar essa; senão usar lógica padrão

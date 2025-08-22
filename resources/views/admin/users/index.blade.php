@@ -44,7 +44,7 @@
                         <option value="user">Usuários</option>
                         <option value="manager">Gerentes</option>
                         <option value="furriel">Furriéis</option>
-                        <option value="superuser">Superusuários</option>
+                        <option value="aprov">Aprov</option>
                         <option value="sgtte">Sgtte</option>
                     </select>
                     <!-- New User Button -->
@@ -298,7 +298,7 @@
                                         bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300
                                     @elseif($user->role === 'furriel')
                                         bg-gradient-to-r from-red-100 to-orange-200 text-red-800 border border-red-300
-                                    @elseif($user->role === 'superuser')
+                                    @elseif($user->role === 'aprov')
                                         bg-gradient-to-r from-yellow-100 to-amber-200 text-amber-800 border border-amber-300
                                     @else
                                         bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300
@@ -307,8 +307,8 @@
                                         🛡️ Gerente
                                     @elseif($user->role === 'furriel')
                                         ⚔️ Furriel
-                                    @elseif($user->role === 'superuser')
-                                        ⭐ Superusuário
+                                    @elseif($user->role === 'aprov')
+                                        ⭐ Aprov
                                     @elseif($user->role === 'sgtte')
                                         🛠️ Sgtte
                                     @else
@@ -531,7 +531,7 @@
                                         <option value="user" selected>👤 Usuário Normal</option>
                                         <option value="manager">🛡️ Gerente</option>
                                         <option value="furriel">⚔️ Furriel</option>
-                                        <option value="superuser">⭐ Superusuário</option>
+                                        <option value="aprov">⭐ Aprov</option>
                                         <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                                     </select>
                                 </div>
@@ -686,7 +686,7 @@
                                 <option value="user">👤 Usuário Normal</option>
                                 <option value="manager">🛡️ Gerente</option>
                                 <option value="furriel">⚔️ Furriel</option>
-                                <option value="superuser">⭐ Superusuário</option>
+                                <option value="aprov">⭐ Aprov</option>
                                 <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                             </select>
                         </div>

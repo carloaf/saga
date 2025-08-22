@@ -35,7 +35,7 @@ Este documento consolida as regras de negócio já implementadas (ou em implemen
  - Backfill padrão: `UPDATE users SET idt = CONCAT('PENDENTE_', id)` para registros sem valor antes da fase 2; ajustar manualmente depois.
 
 ## 2. Perfis e Acesso
-Perfis atuais (campo `users.role`, constraint CHECK): `user`, `manager`, `superuser`, `furriel`, `sgtte`.
+Perfis atuais (campo `users.role`, constraint CHECK): `user`, `manager`, `aprov`, `furriel`, `sgtte`.
 
 Status Especial (campo `users.status`): atualmente suportado valor `Laranjeira`.
 | Status | Objetivo | Efeito em Regras |
@@ -47,8 +47,8 @@ Status Especial (campo `users.status`): atualmente suportado valor `Laranjeira`.
 | user | Militar padrão | Criar/visualizar/cancelar (futuro) suas reservas; ver perfil; estatísticas pessoais | Não acessa administração, relatórios, cardápio |
 | furriel | Apoio operacional (lançamento para terceiros) | Criar reservas em nome de Soldados EV (campo `created_by_furriel`), gerenciar arranchamento companhia (café/almoço) | Não edita cardápio; não gerencia usuários; sem jantar |
 | sgtte | Sargenteante / Serviço | Arranchar qualquer militar da própria subunidade (café/almoço/jantar) sem restrição de horário; interface Serviço com busca | Não gerencia usuários; não edita cardápio; auditoria via `created_by_operator` |
-| manager | Gestão administrativa | CRUD de usuários (`AdminController@users/storeUser/updateUser/toggleUserStatus`), acesso a relatórios (`reports`, `generateReport`) | Não edita cardápio semanal (restrito a superuser) |
-| superuser | Acesso ampliado / curadoria | Visualizar reservas, estatísticas, relatórios; gerenciar cardápio semanal (`CardapioController`); (NÃO gerencia usuários) | Uso restrito; número limitado de contas |
+| manager | Gestão administrativa | CRUD de usuários (`AdminController@users/storeUser/updateUser/toggleUserStatus`), acesso a relatórios (`reports`, `generateReport`) | Não edita cardápio semanal (restrito a aprov) |
+| aprov | Acesso ampliado / curadoria | Visualizar reservas, estatísticas, relatórios; gerenciar cardápio semanal (`CardapioController`); (NÃO gerencia usuários) | Uso restrito; número limitado de contas |
 
 Regras Gerais:
 - Qualquer rota sensível valida `Auth::user()->role` explicitamente.
@@ -111,7 +111,7 @@ Origem: Model `WeeklyMenu` e `CardapioController`.
 
 Regras (conforme commits 57fb347, 03defef, aea6282, ba372a2):
 1. Visualização: Acesso universal via dashboard para todos os roles (commit ba372a2). 
-2. Edição: Exclusiva de `superuser` (rotas protegidas abort 403 para demais).
+2. Edição: Exclusiva de `aprov` (rotas protegidas abort 403 para demais).
 3. Estrutura base: segunda–quinta `cafe` + `almoco`; sexta apenas `cafe` (sem almoço) — fonte de verdade para bloqueio de almoço em sextas.
 4. Semana alvo: segunda corrente; se hoje for >= sexta, edição direciona para semana seguinte.
 5. Sugestões: seletor de semanas (−4 passadas, +8 futuras) + carregamento de sugestões da semana anterior (commit aea6282) com opção de aplicar por dia ou toda semana.
@@ -173,7 +173,7 @@ Gaps:
 - Verificação manual de regras críticas (deadline 13h, bloqueio sexta almoço, bloqueio same-day, bloqueio fins de semana).
 - Exportações PDF/Excel gerando arquivos válidos (abrir e validar colunas / acentuação).
 - Cardápio: fluxo de edição + sugestões multi-semana.
-- Perfis: conferir restrição de acesso (superuser não gerencia usuários; manager não edita cardápio).
+- Perfis: conferir restrição de acesso (aprov não gerencia usuários; manager não edita cardápio).
 - Scripts de backup/restore executados com sucesso (dry-run + restore em staging). 
 
 Resultado: marcação "validado" antes de criar release.
@@ -248,7 +248,7 @@ Antes de promover para produção:
 - [ ] Auditoria de regras de agendamento (deadline / same-day) manual OK
 - [ ] Aprovação de revisão de código
 
-## 14. Próximos Passos / Gaps
+## 15. Próximos Passos / Gaps
 | Gap | Ação Proposta | Prioridade |
 |-----|---------------|-----------|
 | Definir matriz detalhada de perfis/permissões | Documentar roles e mapear rotas | Alta |
@@ -274,8 +274,8 @@ Antes de promover para produção:
 | aea6282 | Cardápio | Seletor de semanas + sugestões semana anterior |
 | ba372a2 | Cardápio | Acesso universal de visualização no dashboard |
 | 03defef | Cardápio inicial | CRUD cardápio semanal + lógica próxima semana |
-| 57fb347 | Perfil superuser | Introdução role superuser + acesso cardápio e relatórios (sem gestão usuários) |
-| af8baa2 | Renomear role | Ajuste de nomenclatura superuser->manager (evolução posterior reintroduziu superuser) |
+| 57fb347 | Perfil aprov | Introdução role aprov + acesso cardápio e relatórios (sem gestão usuários) |
+| af8baa2 | Renomear role | Ajuste de nomenclatura aprov->manager (evolução posterior reintroduziu aprov) |
 | 1cca710 | Relatórios | Exportações PDF/Excel abrangentes |
 | 2eeca08 | Backup/Restore | Sistema completo backup & restore |
 | 0553028 | Deploy | Estrutura profissional multi-arch |
@@ -287,6 +287,8 @@ Antes de promover para produção:
 | 8748979 | Relatórios jantar | Inclusão jantar nos relatórios exportados e melhorias de layout |
 | 14c3597 | Correção perfil | Ajuste campo Data Pronto OM (exibição de calendário) |
 | 13bb827 | IDT validação + UX + Org | Validação IDT numérica, melhorias UX calendário, padronização organizações e subunidades |
+| 22c4b15 | Renomeação perfil | Alteração role 'superuser' para 'aprov' em todo o sistema |
+| 33d5e26 | Usuários e badges | Separação admin/aprov, badges perfil completos, ícone chef para aprov |
 
 Observação: reflita sempre alterações futuras com novos commits nesta tabela para rastreabilidade de decisões.
 
@@ -305,4 +307,46 @@ Sempre que uma nova regra de negócio for implementada ou alterada, atualizar es
 **13.3. Subunidades do 11º Depósito**: Para usuários do 11º Depósito de Suprimento, disponibilizar opções de subunidade: 1ª Cia, 2ª Cia, EM. Padronização aplicada em formulários de cadastro e administração.
 
 **13.4. Aprimoramentos UX**: Melhorada responsividade do calendário Data Pronto OM para abertura ao clicar no ícone. Ajustes CSS de z-index e pointer-events para comportamento mais intuitivo.
+
+**13.5. Perfis no Profile**: Badges de role no perfil do usuário agora refletem fielmente todos os tipos de perfil (user, manager, aprov, furriel, sgtte) com cores e ícones distintos. Perfil Aprov utiliza ícone de chapéu de mestre cuca.
+
+**13.6. Gestão de Usuários**: Criado sistema de usuários separados - admin@saga.mil.br (role: manager) para gestão administrativa e aprov@saga.mil.br (role: aprov, senha: 12345678) para gestão de cardápio.
+
+**13.7. Permissões de Migration**: IMPORTANTE - Sempre corrigir permissões após criar migrations via Docker, pois são criadas como root. Executar: `sudo chown sonnote:sonnote /path/migration.php && sudo chmod 664 /path/migration.php`.
+
+---
+
+## 14. Boas Práticas de Desenvolvimento
+
+### 14.1. Migrations e Permissões
+- **Problema**: Migrations criadas via `docker exec` são criadas como usuário root
+- **Solução**: Sempre executar após criação de migration:
+  ```bash
+  sudo chown sonnote:sonnote database/migrations/YYYY_MM_DD_*.php
+  sudo chmod 664 database/migrations/YYYY_MM_DD_*.php
+  sudo chown sonnote:sonnote database/migrations/  # diretório também
+  sudo chmod 775 database/migrations/
+  ```
+
+### 14.2. Renomeação de Roles
+- **Processo**: Ao alterar roles (ex: superuser → aprov):
+  1. Criar migration para UPDATE nos registros existentes
+  2. Atualizar constraint CHECK na tabela users
+  3. Atualizar todos os controllers com validações
+  4. Atualizar views com labels e condicionais
+  5. Atualizar models com novos métodos (ex: isAprov())
+  6. Testar em ambientes DEV e STAGING
+
+### 14.3. Backup Antes de Mudanças Críticas
+- Sempre executar backup antes de migrations que alteram dados:
+  ```bash
+  bash scripts/database/backup.sh
+  ```
+- Verificar integridade dos dados após mudanças críticas
+
+### 14.4. Ambientes Separados
+- **DEV**: Dados reais para desenvolvimento e testes
+- **STAGING**: Dados limpos para validação de features
+- Manter migrations sincronizadas entre ambientes
+- Verificar constraints e foreign keys em ambos ambientes
 

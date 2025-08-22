@@ -377,8 +377,8 @@
                             </a>
                             @endif
 
-                            @if(auth()->user()->role === 'superuser')
-                            <!-- Cardápio da Semana - Apenas para Superusers -->
+                            @if(auth()->user()->role === 'aprov')
+                            <!-- Cardápio da Semana - Apenas para usuários Aprov -->
                             <a href="{{ route('cardapio.index') }}" class="group bg-gradient-to-br from-amber-50 to-yellow-100 hover:from-amber-100 hover:to-yellow-200 rounded-2xl p-6 border border-amber-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
@@ -397,8 +397,8 @@
                             </a>
                             @endif
 
-                            @if(auth()->user()->role === 'manager' || auth()->user()->role === 'superuser')
-                            <!-- Relatórios Avançados - Para Managers e Superusers -->
+                            @if(auth()->user()->role === 'manager' || auth()->user()->role === 'aprov')
+                            <!-- Relatórios Avançados - Para Managers e usuários Aprov -->
                             <a href="{{ route('admin.reports.index') }}" class="group bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-2xl p-6 border border-orange-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
