@@ -26,7 +26,7 @@ Route::get('/login', function () {
 Route::get('/login/traditional', [AuthController::class, 'showLogin'])->name('auth.traditional-login');
 Route::post('/login/traditional', [AuthController::class, 'login'])->name('auth.login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register');
-Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+Route::post('/register', [AuthController::class, 'register'])->name('auth.register.post');
 
 // Password Reset routes
 Route::get('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'showRequestForm'])->name('password.request');
