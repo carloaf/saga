@@ -162,7 +162,7 @@
                             placeholder="Digite sua senha"
                         >
                     </div>
-                    <!-- Remember Me & Submit Button -->
+                    <!-- Remember Me & Forgot Password -->
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center">
                             <input 
@@ -174,6 +174,11 @@
                             <label for="remember" class="ml-2 block text-sm text-gray-700">
                                 Lembrar de mim
                             </label>
+                        </div>
+                        <div class="text-sm">
+                            <a href="{{ route('password.request') }}" class="text-green-600 hover:text-green-700 font-medium">
+                                Esqueci minha senha
+                            </a>
                         </div>
                     </div>
 

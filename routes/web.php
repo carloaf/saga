@@ -28,6 +28,12 @@ Route::post('/login/traditional', [AuthController::class, 'login'])->name('auth.
 Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 
+// Password Reset routes
+Route::get('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'showRequestForm'])->name('password.request');
+Route::post('/password/email', [App\Http\Controllers\PasswordResetController::class, 'sendResetLink'])->name('password.email');
+Route::get('/password/reset/{token}', [App\Http\Controllers\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/password/reset', [App\Http\Controllers\PasswordResetController::class, 'reset'])->name('password.update');
+
 // Google OAuth routes
 Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');

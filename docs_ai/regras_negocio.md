@@ -29,6 +29,7 @@ Este documento consolida as regras de negócio já implementadas (ou em implemen
  - Campo de Identidade (IDT) obrigatório no cadastro de novos usuários (máx 30 chars) e único (enforcement fase 2). Validado em `AdminController@storeUser` (`required|unique:users,idt`).
  - IDT é imutável após criação: tentativas de alteração via edição administrativa são ignoradas (hard lock em `updateUser`); interface de Perfil exibe o valor em modo somente leitura.
  - IDT aceita somente números: validação frontend (pattern="[0-9]*", inputmode="numeric") e JavaScript remove caracteres não numéricos automaticamente.
+ - **Recuperação de Senha por IDT + Email**: Funcionalidade implementada para recuperação de senha usando o número da identidade militar e email cadastrado. Processo: usuário informa IDT + email → sistema valida ambos os dados → redirecionamento direto para página de redefinição de senha → nova senha definida. Validação dupla aumenta segurança. Acesso via "Esqueci minha senha" na página de login tradicional.
  - Estratégia de migração em duas fases:
    1. Fase 1: adiciona coluna nullable (sem unique) para permitir backfill (`2025_08_21_120000_add_idt_to_users_table`).
    2. Fase 2: normaliza/backfill, torna NOT NULL + UNIQUE (`2025_08_21_130000_make_idt_unique_not_nullable_on_users_table`).
