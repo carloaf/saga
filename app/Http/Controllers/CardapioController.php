@@ -117,10 +117,10 @@ class CardapioController extends Controller
      */
     public function update(Request $request)
     {
-        // Verificação de acesso - apenas superusers podem acessar
+        // Verificação de acesso - apenas usuários Aprov podem acessar
         $user = Auth::user();
-        if (!$user || $user->role !== 'superuser') {
-            abort(403, 'Acesso negado. Apenas superusuários podem editar o cardápio da semana.');
+        if (!$user || $user->role !== 'aprov') {
+            abort(403, 'Acesso negado. Apenas usuários Aprov podem editar o cardápio da semana.');
         }
 
         $request->validate([
@@ -154,9 +154,9 @@ class CardapioController extends Controller
      */
     public function getWeekMenu(Request $request)
     {
-        // Verificação de acesso - apenas superusers podem acessar
+        // Verificação de acesso - apenas usuários Aprov podem acessar
         $user = Auth::user();
-        if (!$user || $user->role !== 'superuser') {
+        if (!$user || $user->role !== 'aprov') {
             return response()->json(['error' => 'Acesso negado'], 403);
         }
 
@@ -177,9 +177,9 @@ class CardapioController extends Controller
      */
     public function getPreviousWeekSuggestions(Request $request)
     {
-        // Verificação de acesso - apenas superusers podem acessar
+        // Verificação de acesso - apenas usuários Aprov podem acessar
         $user = Auth::user();
-        if (!$user || $user->role !== 'superuser') {
+        if (!$user || $user->role !== 'aprov') {
             return response()->json(['error' => 'Acesso negado'], 403);
         }
 

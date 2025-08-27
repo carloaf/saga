@@ -55,11 +55,6 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class);
     }
 
-    public function isSuperuser()
-    {
-        return $this->role === 'aprov';
-    }
-
     public function isAprov()
     {
         return $this->role === 'aprov';
