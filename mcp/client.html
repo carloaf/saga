@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA MCP Client v2</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+        }
+        .panel { 
+            background: white;
+            border: 1px solid #ddd; 
+            padding: 20px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; text-align: center; }
+        h2, h3 { color: #444; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        button { 
+            background: #007cba; 
+            color: white; 
+            padding: 12px 16px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 8px 5px;
+            font-size: 14px;
+            min-width: 140px;
+        }
+        button:hover { background: #005a87; }
+        input { 
+            padding: 10px; 
+            margin: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px;
+            width: 200px;
+        }
+        pre { 
+            background: #f8f8f8; 
+            padding: 15px; 
+            border-radius: 5px; 
+            overflow-x: auto;
+            border-left: 4px solid #007cba;
+        }
+        .error { color: #d32f2f; font-weight: bold; }
+        .success { color: #388e3c; font-weight: bold; }
+        .search-section {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🍽️ SAGA MCP Client</h1>
+    
+    <div class="container">
+        <div class="panel">
+            <h2>🔍 Consultas SAGA</h2>
+            <button onclick="listTools()">📋 Listar Ferramentas</button>
+            <button onclick="countUsers()">👥 Contar Usuários</button>
+            <button onclick="getTodayBookings()">📅 Reservas Hoje</button>
+            
+            <div class="search-section">
+                <h3>🔍 Buscar Usuários</h3>
+                <input type="text" id="searchQuery" placeholder="Digite: admin, aprov, manager..." />
+                <br>
+                <button onclick="searchUsers()">🔍 BUSCAR USUÁRIOS</button>
+            </div>
+            
+            <h3>📅 Reservas por Data</h3>
+            <input type="date" id="bookingDate" />
+            <button onclick="getBookingsByDate()">📊 Ver Reservas</button>
+            
+            <h3>📊 Intervalo de Reservas</h3>
+            <input type="date" id="startDate" placeholder="Data início" />
+            <input type="date" id="endDate" placeholder="Data fim" />
+            <button onclick="getBookingsRange()">📈 Ver Intervalo</button>
+            
+            <h3>📈 Estatísticas Diárias</h3>
+            <input type="date" id="statsStart" />
+            <input type="date" id="statsEnd" />
+            <button onclick="getDailyStats()">📊 Estatísticas</button>
+        </div>
+        
+        <div class="panel">
+            <h2>Resultado</h2>
+            <div id="result">Clique em uma consulta para ver o resultado...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3030';
+        
+        async function callMCP(toolName, params = {}) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>⏳ Carregando...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/tool/${toolName}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                
+                const data = await response.json();
+                
+                if (data.ok) {
+                    resultDiv.innerHTML = `<div class="success">✅ Sucesso</div><pre>${JSON.stringify(data.result, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Erro: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Erro de conexão: ${error.message}</div>`;
+            }
+        }
+        
+        function listTools() {
+            fetch(`${API_BASE}/.well-known/mcp/tools`)
+                .then(r => r.json())
+                .then(data => {
+                    const tools = data.tools.map(t => `<li><strong>${t.name}</strong>: ${t.schema.description}</li>`).join('');
+                    document.getElementById('result').innerHTML = `<h3>🛠️ Ferramentas Disponíveis</h3><ul>${tools}</ul>`;
+                })
+                .catch(e => document.getElementById('result').innerHTML = `<div class="error">❌ ${e.message}</div>`);
+        }
+        
+        function countUsers() {
+            callMCP('users.count');
+        }
+        
+        function getTodayBookings() {
+            const today = new Date().toISOString().split('T')[0];
+            callMCP('bookings.byDate', { date: today });
+        }
+        
+        function searchUsers() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query) {
+                alert('Digite um termo para buscar');
+                return;
+            }
+            callMCP('users.search', { q: query });
+        }
+        
+        function getBookingsByDate() {
+            const date = document.getElementById('bookingDate').value;
+            if (!date) {
+                alert('Selecione uma data');
+                return;
+            }
+            callMCP('bookings.byDate', { date });
+        }
+        
+        function getBookingsRange() {
+            const start = document.getElementById('startDate').value;
+            const end = document.getElementById('endDate').value;
+            if (!start || !end) {
+                alert('Selecione ambas as datas');
+                return;
+            }
+            callMCP('bookings.range', { start_date: start, end_date: end });
+        }
+        
+        function getDailyStats() {
+            const start = document.getElementById('statsStart').value;
+            const end = document.getElementById('statsEnd').value;
+            if (!start || !end) {
+                alert('Selecione ambas as datas');
+                return;
+            }
+            callMCP('stats.dailyCounts', { start_date: start, end_date: end });
+        }
+        
+        // Definir data de hoje nos campos
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').value = today;
+            document.getElementById('startDate').value = today;
+            document.getElementById('endDate').value = today;
+            document.getElementById('statsStart').value = today;
+            document.getElementById('statsEnd').value = today;
+        });
+    </script>
+</body>
+</html>

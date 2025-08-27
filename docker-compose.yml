@@ -60,6 +60,28 @@ services:
         ports:
             - "6379:6379"
 
+    mcp:
+        image: node:20-alpine
+        container_name: saga_mcp
+        working_dir: /workspace
+        restart: unless-stopped
+        volumes:
+            - ./:/workspace
+        environment:
+            - DB_HOST=database
+            - DB_PORT=5432
+            - DB_DATABASE=saga
+            - DB_USERNAME=saga_user
+            - DB_PASSWORD=saga_password
+            - MCP_PORT=3030
+        command: sh -c "cd mcp && npm install --no-audit --no-fund && npm run start:docker"
+        depends_on:
+            - database
+        networks:
+            - saga_network
+        ports:
+            - "3030:3030"
+
 networks:
     saga_network:
         driver: bridge
