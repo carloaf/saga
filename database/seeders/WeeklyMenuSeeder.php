@@ -14,11 +14,11 @@ class WeeklyMenuSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buscar um superuser para criar os cardápios
-        $superuser = User::where('role', 'superuser')->first();
+        // Buscar um aprov para criar os cardápios
+        $aprov = User::where('role', 'aprov')->first();
         
-        if (!$superuser) {
-            echo "⚠️  Nenhum superuser encontrado. Execute primeiro o SuperuserSeeder.\n";
+        if (!$aprov) {
+            echo "⚠️  Nenhum aprov encontrado. Execute primeiro o AprovSeeder.\n";
             return;
         }
 
@@ -49,8 +49,8 @@ class WeeklyMenuSeeder extends Seeder
                         'cafe' => 'Café, Pão Francês, Geleia de Frutas, Leite, Fruta da Época'
                     ]
                 ],
-                'created_by' => $superuser->id,
-                'updated_by' => $superuser->id
+                'created_by' => $aprov->id,
+                'updated_by' => $aprov->id
             ]
         );
 
@@ -81,8 +81,8 @@ class WeeklyMenuSeeder extends Seeder
                         'cafe' => 'Café, Pão Integral, Doce de Leite, Leite, Abacaxi'
                     ]
                 ],
-                'created_by' => $superuser->id,
-                'updated_by' => $superuser->id
+                'created_by' => $aprov->id,
+                'updated_by' => $aprov->id
             ]
         );
 

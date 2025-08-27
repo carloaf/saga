@@ -14,13 +14,13 @@ class SuperuserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Criar usuário superuser exemplo
+        // Criar usuário aprov exemplo
         User::create([
-            'full_name' => 'João Silva Superuser',
+            'full_name' => 'João Silva Aprov',
             'war_name' => 'SILVA',
-            'email' => 'superuser@saga.mil.br',
+            'email' => 'aprov@saga.mil.br',
             'password' => bcrypt('123456'),
-            'role' => 'superuser',
+            'role' => 'aprov',
             'organization_id' => 1,
             'rank_id' => 1,
             'gender' => 'M',
@@ -30,6 +30,6 @@ class SuperuserSeeder extends Seeder
             'armed_force' => 'EB',
         ]);
 
-        echo "Usuário superuser criado: superuser@saga.mil.br / 123456\n";
+        echo "Usuário aprov criado: aprov@saga.mil.br / 123456\n";
     }
 }

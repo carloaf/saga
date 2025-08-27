@@ -42,7 +42,7 @@ services:
     networks:
       - saga_network
     ports:
-      - "${DB_PORT:-5433}:5432"  # Different port for staging
+      - "${DB_PORT:-5434}:5432"  # Different port for staging
 
   redis:
     image: redis:7-alpine
