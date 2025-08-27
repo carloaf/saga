@@ -1,0 +1,16 @@
+{
+  "name": "saga-mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server for SAGA to query and manage meal booking data via Model Context Protocol.",
+  "main": "src/index.js",
+  "scripts": {
+  "start": "node src/index.js",
+  "dev": "NODE_ENV=development node src/index.js",
+  "start:docker": "MCP_PORT=3030 node src/index.js",
+  "mcp:stdio": "node src/mcp-stdio-server.js"
+  },
+  "dependencies": {
+    "pg": "^8.12.0"
+  }
+}
