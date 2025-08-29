@@ -9,8 +9,8 @@
         <div class="px-4 sm:px-6 lg:px-8 py-6">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <div class="flex items-center space-x-4">
-                        <!-- Back to Dashboard Button -->
+                    <div class="flex items-center                                     <option value="aprov">👨‍🍳 Aprov</option>pace-x-4">
+                                                <option value="aprov">👨‍🍳 Aprov</option>   <!-- Back to Dashboard Button -->
                         <a href="{{ route('dashboard') }}" class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center backdrop-blur-sm hover:bg-opacity-30 transition-all duration-200 group">
                             <svg class="w-6 h-6 text-white group-hover:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -41,8 +41,8 @@
                     <!-- Filter Dropdown -->
                     <select id="filterRole" class="rounded-lg bg-white bg-opacity-90 backdrop-blur-sm border border-gray-300 px-3 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent sm:text-sm">
                         <option value="">Todos os tipos</option>
-                        <option value="user">Usuários</option>
-                        <option value="aprov">Gerentes</option>
+                        <option value="user">👤 Usuários</option>
+                        <option value="aprov">👨‍🍳 Mestres Cucas</option>
                     </select>
                     <!-- New User Button -->
                     <button type="button" onclick="openCreateModal()" 
@@ -199,7 +199,7 @@
                                 Organização
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
-                                Data Prontidão OM
+                                Data Pronto OM
                             </th>
                             <th scope="col" class="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider">
                                 Tipo
@@ -256,8 +256,14 @@
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
                                 <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
-                                    {{ $user->role === 'manager' ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300' }}">
-                                    {{ $user->role === 'manager' ? '🛡️ Gerente' : '👤 Usuário' }}
+                                    {{ $user->role === 'aprov' ? 'bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border border-orange-300' : ($user->role === 'manager' ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300' : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300') }}">
+                                    @if($user->role === 'aprov')
+                                        👨‍🍳 Aprov
+                                    @elseif($user->role === 'manager')
+                                        🛡️ Gerente
+                                    @else
+                                        👤 Usuário
+                                    @endif
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
@@ -401,19 +407,23 @@
 
                             <div>
                                 <label for="createGender" class="block text-sm font-medium text-gray-700">
-                                    Gênero <span class="text-red-500">*</span>
+                                    <i class="fas fa-venus-mars text-pink-500 mr-2"></i>Gênero <span class="text-red-500">*</span>
                                 </label>
                                 <select id="createGender" name="gender" required
                                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     <option value="">Selecione o gênero</option>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Feminino</option>
+                                    <option value="M">
+                                        <i class="fas fa-mars text-blue-500 mr-2"></i>Masculino
+                                    </option>
+                                    <option value="F">
+                                        <i class="fas fa-venus text-pink-500 mr-2"></i>Feminino
+                                    </option>
                                 </select>
                             </div>
 
                             <div>
                                 <label for="createReadyDate" class="block text-sm font-medium text-gray-700">
-                                    Data de Prontidão na OM <span class="text-red-500">*</span>
+                                    Data Pronto na OM <span class="text-red-500">*</span>
                                 </label>
                                 <input type="date" id="createReadyDate" name="ready_at_om_date" required
                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -426,7 +436,7 @@
                                 <select id="createRole" name="role" 
                                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                     <option value="user" selected>👤 Usuário Normal</option>
-                                    <option value="aprov">🛡️ Gerente</option>
+                                    <option value="aprov">�‍🍳 Aprov</option>
                                 </select>
                             </div>
                             
@@ -513,11 +523,17 @@
                         </div>
                     </div>
                     <div>
-                        <label for="editGender" class="block text-sm font-medium text-gray-700">Gênero</label>
+                        <label for="editGender" class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-venus-mars text-pink-500 mr-2"></i>Gênero
+                        </label>
                         <select id="editGender" name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="">Selecione o gênero</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
+                            <option value="M">
+                                <i class="fas fa-mars text-blue-500 mr-2"></i>Masculino
+                            </option>
+                            <option value="F">
+                                <i class="fas fa-venus text-pink-500 mr-2"></i>Feminino
+                            </option>
                         </select>
                     </div>
                     <div>
@@ -535,7 +551,7 @@
                         <label for="editRole" class="block text-sm font-medium text-gray-700">Tipo de Usuário</label>
                         <select id="editRole" name="role" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                             <option value="user">👤 Usuário Normal</option>
-                            <option value="aprov">🛡️ Gerente</option>
+                            <option value="aprov">�‍🍳 Aprov</option>
                         </select>
                     </div>
                 </form>

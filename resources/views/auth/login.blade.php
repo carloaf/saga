@@ -57,11 +57,11 @@
             <!-- Traditional Login/Register Options -->
             <div class="space-y-3 mb-6">
                 <a href="{{ route('auth.traditional-login') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    🔑 Login com Email e Senha
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login com Email e Senha
                 </a>
                 
                 <a href="{{ route('auth.register') }}" class="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    ➕ Criar Nova Conta
+                    <i class="fas fa-user-plus mr-2"></i>Criar Nova Conta
                 </a>
             </div>
 
@@ -78,11 +78,11 @@
             <!-- Development Login Options -->
             <div class="space-y-3">
                 <a href="/dev-login" class="w-full inline-flex justify-center items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    👤 Entrar como Usuário
+                    <i class="fas fa-user mr-2"></i>Entrar como Usuário
                 </a>
                 
                 <a href="/dev-admin-login" class="w-full inline-flex justify-center items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-purple-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                    🛡️ Entrar como Admin
+                    <i class="fas fa-shield-alt mr-2"></i>Entrar como Admin
                 </a>
             </div>
 

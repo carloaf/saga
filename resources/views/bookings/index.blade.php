@@ -350,10 +350,10 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ações Rápidas</h3>
                         <div class="space-y-3">
                             <button id="btn-reserve-breakfast" class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                                ☕ Reservar Café da Semana
+                                ☕ Reservar Café da Próxima Semana
                             </button>
                             <button id="btn-reserve-lunch" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
-                                🍽️ Reservar Almoço da Semana
+                                🍽️ Reservar Almoço da Próxima Semana
                             </button>
                             <a href="{{ route('bookings.history') }}" class="block w-full bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition duration-300 text-center">
                                 📋 Ver Histórico de Reservas
@@ -393,14 +393,13 @@
             <div class="mt-6 bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
                 <strong>📝 Regras Importantes:</strong>
                 <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>Reservas apenas para dias úteis (segunda a sexta-feira)</li>
-                    <li>Sexta-feira: apenas café da manhã disponível</li>
-                    <li>Prazo máximo: 30 dias de antecedência</li>
+                    <li><strong>Ações Rápidas:</strong> Os botões reservam automaticamente para a <strong>próxima semana</strong> (segunda a sexta)</li>
+                    <li>Almoço não disponível nas sextas-feiras</li>
+                    <li><strong>Prazo limite:</strong> Reservas devem ser feitas até às 13h do dia anterior</li>
+                    <li><strong>Não é possível:</strong> Reservar para o mesmo dia ou após o prazo</li>
                     <li>Cancelamentos devem ser feitos até às 13h do dia anterior</li>
                     <li>Reservas do dia atual não podem ser canceladas</li>
-                    @if(auth()->user()->status === 'Laranjeira')
-                    <li>Status Laranjeira: (em desenvolvimento) habilitará reserva de jantar conforme regras.</li>
-                    @endif
+                    <li>Prazo máximo: 30 dias de antecedência</li>
                 </ul>
             </div>
         </div>
@@ -541,7 +540,7 @@
             })
             .finally(() => {
                 this.disabled = false;
-                this.innerHTML = '☕ Reservar Café da Semana';
+                this.innerHTML = '☕ Reservar Café da Próxima Semana';
             });
         });
 
@@ -577,7 +576,7 @@
             })
             .finally(() => {
                 this.disabled = false;
-                this.innerHTML = '🍽️ Reservar Almoço da Semana';
+                this.innerHTML = '🍽️ Reservar Almoço da Próxima Semana';
             });
         });
 

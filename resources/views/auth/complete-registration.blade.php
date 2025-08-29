@@ -38,6 +38,9 @@
 
                     <!-- Rank -->
                     <div>
+                        <label for="rank_id" class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-star text-yellow-500 mr-2"></i>Posto/Graduação *
+                        </label>
                         <select id="rank_id" name="rank_id" required class="select-enhanced">
                             <option value="" disabled selected>Selecione seu Posto/Graduação</option>
                             @foreach($ranks as $rank)
@@ -53,14 +56,22 @@
 
                     <!-- Armed Force -->
                     <div>
-                        <label for="armed_force" class="block text-sm font-medium text-gray-700">Força Armada *</label>
+                        <label for="armed_force" class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-flag text-blue-500 mr-2"></i>Força Armada *
+                        </label>
                         <select id="armed_force" name="armed_force" required 
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                 onchange="toggleOrganizationField()">
                             <option value="" disabled selected>Selecione sua Força Armada</option>
-                            <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>Exército Brasileiro (EB)</option>
-                            <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>Marinha do Brasil (MB)</option>
-                            <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>Força Aérea Brasileira (FAB)</option>
+                            <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>
+                                <i class="fas fa-shield-alt text-green-600 mr-2"></i>Exército Brasileiro (EB)
+                            </option>
+                            <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>
+                                <i class="fas fa-anchor text-blue-600 mr-2"></i>Marinha do Brasil (MB)
+                            </option>
+                            <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>
+                                <i class="fas fa-plane text-indigo-600 mr-2"></i>Força Aérea Brasileira (FAB)
+                            </option>
                         </select>
                         @error('armed_force')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -69,7 +80,9 @@
 
                     <!-- Organization (conditional) -->
                     <div id="organization-field" style="display: none;">
-                        <label for="organization_id" class="block text-sm font-medium text-gray-700">Organização Militar *</label>
+                        <label for="organization_id" class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-building text-purple-500 mr-2"></i>Organização Militar *
+                        </label>
                         <select id="organization_id" name="organization_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
                             <option value="" disabled selected>Selecione sua Organização Militar</option>
                             @foreach($organizations as $organization)
@@ -85,17 +98,23 @@
 
                     <!-- Gender -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Sexo *</label>
+                        <label class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-venus-mars text-pink-500 mr-2"></i>Sexo *
+                        </label>
                         <div class="mt-2 space-y-2">
                             <label class="flex items-center">
                                 <input type="radio" name="gender" value="M" {{ old('gender') === 'M' ? 'checked' : '' }}
                                        class="text-green-600 focus:ring-green-500">
-                                <span class="ml-2">Masculino</span>
+                                <span class="ml-2">
+                                    <i class="fas fa-mars text-blue-500 mr-1"></i>Masculino
+                                </span>
                             </label>
                             <label class="flex items-center">
                                 <input type="radio" name="gender" value="F" {{ old('gender') === 'F' ? 'checked' : '' }}
                                        class="text-green-600 focus:ring-green-500">
-                                <span class="ml-2">Feminino</span>
+                                <span class="ml-2">
+                                    <i class="fas fa-venus text-pink-500 mr-1"></i>Feminino
+                                </span>
                             </label>
                         </div>
                         @error('gender')
@@ -105,7 +124,9 @@
 
                     <!-- Ready at OM Date -->
                     <div>
-                        <label for="ready_at_om_date" class="block text-sm font-medium text-gray-700">Data de Pronto na OM *</label>
+                        <label for="ready_at_om_date" class="block text-sm font-medium text-gray-700">
+                            <i class="fas fa-calendar-alt text-orange-500 mr-2"></i>Data de Pronto na OM *
+                        </label>
                         <input type="date" id="ready_at_om_date" name="ready_at_om_date" required
                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
                                value="{{ old('ready_at_om_date') }}">
