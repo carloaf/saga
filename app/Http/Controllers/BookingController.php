@@ -150,55 +150,40 @@ class BookingController extends Controller
         try {
             $user = Auth::user();
             $now = Carbon::now();
-            $weekStart = $now->copy()->startOfWeek(Carbon::MONDAY);
-            
-            // If it's already past Monday morning, start from current day
-            if ($now->isMonday() && $now->hour >= 12) {
-                // If it's Monday afternoon, start from Tuesday
-                $weekStart = $now->copy()->addDay()->startOfDay();
-            } elseif ($now->dayOfWeek > Carbon::MONDAY) {
-                // If it's Tuesday or later, start from current day
-                $weekStart = $now->copy()->startOfDay();
-            }
-            
+
+            // Sempre reservar para a próxima semana (segunda a sexta)
+            $nextWeekStart = $now->copy()->startOfWeek(Carbon::MONDAY)->addWeek();
+
             $reservations = [];
             $errors = [];
-            
+
             // Reserve for weekdays only (Monday to Friday)
             for ($i = 0; $i < 5; $i++) {
-                $date = $weekStart->copy()->addDays($i);
-                
-                // Skip weekends
+                $date = $nextWeekStart->copy()->addDays($i);
+
+                // Skip weekends (Saturday and Sunday)
                 if ($date->isWeekend()) {
                     continue;
                 }
-                
-                // Skip if date is in the past
-                if ($date->isPast() && !$date->isToday()) {
-                    continue;
-                }
-                
-                // Check if booking deadline has passed
+
+                // Check if booking deadline has passed (13:00 of the day before)
                 if ($this->hasBookingDeadlinePassed($date)) {
-                    if ($date->isTomorrow()) {
-                        $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de hoje";
-                    } else {
-                        $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nPrazo para reserva expirou";
-                    }
+                    $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de " . $date->copy()->subDay()->format('d/m/Y');
                     continue;
                 }
-                
-                // Skip if it's today and already past breakfast time (assuming 12:00)
-                if ($date->isToday() && $now->hour >= 12) {
+
+                // Skip if it's today (same day rule)
+                if ($date->isToday()) {
+                    $errors[] = "⏰ Café da manhã - " . $date->format('d/m/Y') . "\nNão é possível reservar para o mesmo dia";
                     continue;
                 }
-                
+
                 // Check if booking already exists
                 $existingBooking = Booking::where('user_id', $user->id)
                     ->where('booking_date', $date->format('Y-m-d'))
                     ->where('meal_type', 'breakfast')
                     ->first();
-                
+
                 if (!$existingBooking) {
                     try {
                         $booking = Booking::create([
@@ -211,19 +196,25 @@ class BookingController extends Controller
                     } catch (\Exception $e) {
                         $errors[] = "Erro ao reservar café da manhã para " . $date->format('d/m/Y') . ": " . $e->getMessage();
                     }
+                } else {
+                    $errors[] = "⚠️ Café da manhã - " . $date->format('d/m/Y') . "\nJá possui reserva";
                 }
             }
-            
+
             if (count($reservations) > 0) {
-                $message = "✅ " . count($reservations) . " reserva(s) de café realizadas!";
+                $message = "✅ " . count($reservations) . " reserva(s) de café realizadas!\n\n📅 Semana: " . $nextWeekStart->format('d/m/Y') . " - " . $nextWeekStart->copy()->endOfWeek(Carbon::FRIDAY)->format('d/m/Y');
                 if (count($errors) > 0) {
                     $message .= "\n\n⚠️ Avisos:\n" . implode("\n", $errors);
                 }
-                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $weekStart->format('d/m/Y')]);
+                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $nextWeekStart->format('d/m/Y')]);
             } else {
-                return response()->json(['success' => false, 'message' => 'Nenhuma reserva realizada.', 'type' => 'warning']);
+                $errorMessage = "Nenhuma reserva realizada.";
+                if (count($errors) > 0) {
+                    $errorMessage .= "\n\n⚠️ Detalhes:\n" . implode("\n", $errors);
+                }
+                return response()->json(['success' => false, 'message' => $errorMessage, 'type' => 'warning']);
             }
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -240,60 +231,45 @@ class BookingController extends Controller
         try {
             $user = Auth::user();
             $now = Carbon::now();
-            $weekStart = $now->copy()->startOfWeek(Carbon::MONDAY);
-            
-            // If it's already past Monday afternoon, start from current day
-            if ($now->isMonday() && $now->hour >= 15) {
-                // If it's Monday late afternoon, start from Tuesday
-                $weekStart = $now->copy()->addDay()->startOfDay();
-            } elseif ($now->dayOfWeek > Carbon::MONDAY) {
-                // If it's Tuesday or later, start from current day
-                $weekStart = $now->copy()->startOfDay();
-            }
-            
+
+            // Sempre reservar para a próxima semana (segunda a quinta - sem sexta)
+            $nextWeekStart = $now->copy()->startOfWeek(Carbon::MONDAY)->addWeek();
+
             $reservations = [];
             $errors = [];
-            
+
             // Reserve for weekdays only (Monday to Thursday - no lunch on Friday)
             for ($i = 0; $i < 4; $i++) {
-                $date = $weekStart->copy()->addDays($i);
-                
+                $date = $nextWeekStart->copy()->addDays($i);
+
                 // Skip weekends
                 if ($date->isWeekend()) {
                     continue;
                 }
-                
+
                 // Skip Friday (no lunch available)
                 if ($date->isFriday()) {
                     continue;
                 }
-                
-                // Skip if date is in the past
-                if ($date->isPast() && !$date->isToday()) {
-                    continue;
-                }
-                
-                // Check if booking deadline has passed
+
+                // Check if booking deadline has passed (13:00 of the day before)
                 if ($this->hasBookingDeadlinePassed($date)) {
-                    if ($date->isTomorrow()) {
-                        $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de hoje";
-                    } else {
-                        $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nPrazo para reserva expirou";
-                    }
+                    $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nPrazo encerrado às 13h de " . $date->copy()->subDay()->format('d/m/Y');
                     continue;
                 }
-                
-                // Skip if it's today and already past lunch time (assuming 15:00)
-                if ($date->isToday() && $now->hour >= 15) {
+
+                // Skip if it's today (same day rule)
+                if ($date->isToday()) {
+                    $errors[] = "⏰ Almoço - " . $date->format('d/m/Y') . "\nNão é possível reservar para o mesmo dia";
                     continue;
                 }
-                
+
                 // Check if booking already exists
                 $existingBooking = Booking::where('user_id', $user->id)
                     ->where('booking_date', $date->format('Y-m-d'))
                     ->where('meal_type', 'lunch')
                     ->first();
-                
+
                 if (!$existingBooking) {
                     try {
                         $booking = Booking::create([
@@ -306,19 +282,25 @@ class BookingController extends Controller
                     } catch (\Exception $e) {
                         $errors[] = "Erro ao reservar almoço para " . $date->format('d/m/Y') . ": " . $e->getMessage();
                     }
+                } else {
+                    $errors[] = "⚠️ Almoço - " . $date->format('d/m/Y') . "\nJá possui reserva";
                 }
             }
-            
+
             if (count($reservations) > 0) {
-                $message = "✅ " . count($reservations) . " reserva(s) de almoço realizadas!";
+                $message = "✅ " . count($reservations) . " reserva(s) de almoço realizadas!\n\n📅 Semana: " . $nextWeekStart->format('d/m/Y') . " - " . $nextWeekStart->copy()->endOfWeek(Carbon::THURSDAY)->format('d/m/Y');
                 if (count($errors) > 0) {
                     $message .= "\n\n⚠️ Avisos:\n" . implode("\n", $errors);
                 }
-                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $weekStart->format('d/m/Y')]);
+                return response()->json(['success' => true, 'message' => $message, 'bookings' => count($reservations), 'week_start' => $nextWeekStart->format('d/m/Y')]);
             } else {
-                return response()->json(['success' => false, 'message' => 'Nenhuma reserva realizada.', 'type' => 'warning']);
+                $errorMessage = "Nenhuma reserva realizada.";
+                if (count($errors) > 0) {
+                    $errorMessage .= "\n\n⚠️ Detalhes:\n" . implode("\n", $errors);
+                }
+                return response()->json(['success' => false, 'message' => $errorMessage, 'type' => 'warning']);
             }
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,

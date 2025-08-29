@@ -82,6 +82,125 @@
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(22, 163, 74, 0.3);
     }
+
+    /* Custom Select Styling */
+    .custom-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+        padding-right: 2.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .custom-select:hover {
+        border-color: #10b981;
+    }
+
+    .custom-select:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    /* Remove default select styling for webkit browsers */
+    .custom-select::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .custom-select::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    .custom-select::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+
+    .custom-select::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Date Picker Styling */
+    .date-picker-container {
+        position: relative;
+    }
+
+    .date-picker-container input[type="date"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 5;
+    }
+
+    .date-picker-container .date-display {
+        pointer-events: none;
+    }
+
+    .date-picker-container .date-icon {
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    /* Form Field Animations */
+    .form-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transform: translateY(-1px);
+    }
+
+    /* Input Modern Styling */
+    .input-modern {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-modern:focus {
+        border-color: #059669;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    .input-modern:hover {
+        border-color: #10b981;
+    }
+
+    /* Enhanced Button Hover Effects */
+    .btn-primary {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(22, 163, 74, 0.3);
+    }
 </style>
 
 <div class="page-container flex items-center justify-center p-4">
@@ -138,21 +257,22 @@
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Nome Completo -->
-                            <div class="floating-label">
+                            <div>
+                                <label for="full_name" class="block text-sm font-medium text-gray-700 mb-2">Nome Completo *</label>
                                 <input 
                                     type="text" 
                                     id="full_name" 
                                     name="full_name" 
                                     value="{{ old('full_name') }}"
                                     required 
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none peer"
-                                    placeholder=" "
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
+                                    placeholder="Digite seu nome completo"
                                 >
-                                <label for="full_name" class="text-sm font-medium">Nome Completo *</label>
                             </div>
 
                             <!-- Identidade (IDT) -->
-                            <div class="floating-label">
+                            <div>
+                                <label for="idt" class="block text-sm font-medium text-gray-700 mb-2">Identidade (IDT) *</label>
                                 <input 
                                     type="text" 
                                     id="idt" 
@@ -162,11 +282,10 @@
                                     maxlength="30"
                                     pattern="[0-9]*"
                                     inputmode="numeric"
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none tracking-wide peer"
-                                    placeholder=" "
+                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none tracking-wide"
+                                    placeholder="Digite somente números"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 >
-                                <label for="idt" class="text-sm font-medium">Identidade (IDT) *</label>
                                 <p class="mt-1 text-xs text-gray-500">Documento militar único (somente números). Não poderá ser alterado depois.</p>
                                 @error('idt')
                                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
@@ -174,7 +293,8 @@
                             </div>
 
                             <!-- Nome de Guerra -->
-                            <div class="floating-label">
+                            <div>
+                                <label for="war_name" class="block text-sm font-medium text-gray-700 mb-2">Nome de Guerra *</label>
                                 <input 
                                     type="text" 
                                     id="war_name" 
@@ -182,9 +302,8 @@
                                     value="{{ old('war_name') }}"
                                     required 
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                    placeholder=" "
+                                    placeholder="Digite seu nome de guerra"
                                 >
-                                <label for="war_name" class="text-sm font-medium">Nome de Guerra *</label>
                             </div>
 
                             <!-- Email -->
@@ -203,29 +322,29 @@
                             </div>
 
                             <!-- Senha -->
-                            <div class="floating-label">
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Senha *</label>
                                 <input 
                                     type="password" 
                                     id="password" 
                                     name="password" 
                                     required 
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                    placeholder=" "
+                                    placeholder="Digite sua senha"
                                 >
-                                <label for="password" class="text-sm font-medium">Senha *</label>
                             </div>
 
                             <!-- Confirmar Senha -->
-                            <div class="floating-label">
+                            <div>
+                                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha *</label>
                                 <input 
                                     type="password" 
                                     id="password_confirmation" 
                                     name="password_confirmation" 
                                     required 
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                    placeholder=" "
+                                    placeholder="Confirme sua senha"
                                 >
-                                <label for="password_confirmation" class="text-sm font-medium">Confirmar Senha *</label>
                             </div>
                         </div>
                     </div>
@@ -242,11 +361,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Posto/Graduação -->
                             <div>
-                                <label for="rank_id" class="block text-sm font-medium text-gray-700 mb-2">Posto/Graduação *</label>
-                                <select 
-                                    id="rank_id" 
-                                    name="rank_id" 
-                                    required 
+                                <label for="rank_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <svg class="w-4 h-4 text-yellow-500 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>Posto/Graduação *
+                                </label>
+                                <select
+                                    id="rank_id"
+                                    name="rank_id"
+                                    required
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
                                 >
                                     <option value="">Selecione seu posto/graduação</option>
@@ -262,26 +385,36 @@
 
                             <!-- Força Armada -->
                             <div>
-                                <label for="armed_force" class="block text-sm font-medium text-gray-700 mb-2">Força Armada *</label>
-                                <select 
-                                    id="armed_force" 
-                                    name="armed_force" 
-                                    required 
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                    onchange="toggleOrganizationField()">
-                                    <option value="">Selecione sua força armada</option>
-                                    <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>🪖 Exército Brasileiro (EB)</option>
-                                    <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
-                                    <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
-                                </select>
+                                <label for="armed_force" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <svg class="w-4 h-4 text-blue-500 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>Força Armada *
+                                </label>
+                                <div class="relative">
+                                    <select
+                                        id="armed_force"
+                                        name="armed_force"
+                                        required
+                                        class="custom-select w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-green-500 bg-white"
+                                        onchange="toggleOrganizationField()">
+                                        <option value="">Selecione sua força armada</option>
+                                        <option value="EB" {{ old('armed_force') == 'EB' ? 'selected' : '' }}>🏰 Exército Brasileiro (EB)</option>
+                                        <option value="MB" {{ old('armed_force') == 'MB' ? 'selected' : '' }}>⚓ Marinha do Brasil (MB)</option>
+                                        <option value="FAB" {{ old('armed_force') == 'FAB' ? 'selected' : '' }}>✈️ Força Aérea Brasileira (FAB)</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- Organização Militar (condicional) -->
                             <div id="organization-field" style="display: none;">
-                                <label for="organization_id" class="block text-sm font-medium text-gray-700 mb-2">Organização Militar *</label>
-                                <select 
-                                    id="organization_id" 
-                                    name="organization_id" 
+                                <label for="organization_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <svg class="w-4 h-4 text-purple-500 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                    </svg>Organização Militar *
+                                </label>
+                                <select
+                                    id="organization_id"
+                                    name="organization_id"
                                     class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
                                     onchange="toggleSectionField()"
                                 >
@@ -313,17 +446,22 @@
 
                             <!-- Gênero -->
                             <div>
-                                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gênero *</label>
-                                <select 
-                                    id="gender" 
-                                    name="gender" 
-                                    required 
-                                    class="input-modern w-full px-4 py-3 rounded-lg border-2 focus:outline-none"
-                                >
-                                    <option value="">Selecione seu gênero</option>
-                                    <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>Masculino</option>
-                                    <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>Feminino</option>
-                                </select>
+                                <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <svg class="w-4 h-4 text-pink-500 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 3.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0zM10 6a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM8.5 10.5a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0z" clip-rule="evenodd"/>
+                                    </svg>Gênero *
+                                </label>
+                                <div class="relative">
+                                    <select
+                                        id="gender"
+                                        name="gender"
+                                        required
+                                        class="custom-select w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-green-500 bg-white">
+                                        <option value="">Selecione seu gênero</option>
+                                        <option value="M" {{ old('gender') == 'M' ? 'selected' : '' }}>♂️ Masculino</option>
+                                        <option value="F" {{ old('gender') == 'F' ? 'selected' : '' }}>♀️ Feminino</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -338,7 +476,11 @@
                         </h3>
 
                         <div class="max-w-md">
-                <label for="ready_at_om_date_display" class="block text-sm font-medium text-gray-700 mb-2">Data Pronto OM *</label>
+                <label for="ready_at_om_date_display" class="block text-sm font-medium text-gray-700 mb-2">
+                    <svg class="w-4 h-4 text-orange-500 mr-2 inline" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>Data Pronto OM *
+                </label>
                 <div class="relative max-w-xs">
                     <input type="text" 
                         id="ready_at_om_date_display"
@@ -449,33 +591,57 @@ function toggleSectionField() {
 
 function openDatePicker() {
     const dateInput = document.getElementById('ready_at_om_date');
-    dateInput.focus();
-    if (dateInput.showPicker) {
-        dateInput.showPicker();
+    if (dateInput) {
+        dateInput.focus();
+        // Tentar abrir o date picker nativo
+        if (dateInput.showPicker) {
+            dateInput.showPicker();
+        } else {
+            // Fallback para navegadores que não suportam showPicker
+            dateInput.click();
+        }
     }
 }
 
 function updateDisplayDate(input) {
     const displayInput = document.getElementById('ready_at_om_date_display');
-    if (input.value) {
+    if (input && input.value && displayInput) {
         const date = new Date(input.value + 'T00:00:00');
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         displayInput.value = `${day}/${month}/${year}`;
-    } else {
+    } else if (displayInput) {
         displayInput.value = '';
     }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('SAGA registration form initialized successfully!');
+
+    // Initialize form field visibility
     toggleOrganizationField();
-    
+
     // Set initial date display if there's an old value
     const dateInput = document.getElementById('ready_at_om_date');
-    if (dateInput.value) {
+    if (dateInput && dateInput.value) {
         updateDisplayDate(dateInput);
+    }
+
+    // Add event listener to date input for real-time updates
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            updateDisplayDate(this);
+        });
+    }
+
+    // Add click event to date display to open picker
+    const dateDisplay = document.getElementById('ready_at_om_date_display');
+    if (dateDisplay) {
+        dateDisplay.addEventListener('click', function() {
+            openDatePicker();
+        });
     }
 });
 </script>

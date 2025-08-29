@@ -308,7 +308,7 @@
                                     @elseif($user->role === 'furriel')
                                         ⚔️ Furriel
                                     @elseif($user->role === 'aprov')
-                                        ⭐ Aprov
+                                        👨‍🍳 Aprov
                                     @elseif($user->role === 'sgtte')
                                         🛠️ Sgtte
                                     @else
@@ -531,7 +531,7 @@
                                         <option value="user" selected>👤 Usuário Normal</option>
                                         <option value="manager">🛡️ Gerente</option>
                                         <option value="furriel">⚔️ Furriel</option>
-                                        <option value="aprov">⭐ Aprov</option>
+                                        <option value="aprov">👨‍🍳 Aprov</option>
                                         <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                                     </select>
                                 </div>
@@ -665,8 +665,12 @@
                             <label for="editGender" class="block text-sm font-semibold text-gray-900 mb-2">Gênero</label>
                             <select id="editGender" name="gender" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
                                 <option value="">Selecione o gênero</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Feminino</option>
+                                <option value="M">
+                                    <i class="fas fa-mars text-blue-500 mr-2"></i>Masculino
+                                </option>
+                                <option value="F">
+                                    <i class="fas fa-venus text-pink-500 mr-2"></i>Feminino
+                                </option>
                             </select>
                         </div>
                         <div>
@@ -686,7 +690,7 @@
                                 <option value="user">👤 Usuário Normal</option>
                                 <option value="manager">🛡️ Gerente</option>
                                 <option value="furriel">⚔️ Furriel</option>
-                                <option value="aprov">⭐ Aprov</option>
+                                <option value="aprov">👨‍🍳 Aprov</option>
                                 <option value="sgtte">🛠️ Sgtte (Serviço)</option>
                             </select>
                         </div>

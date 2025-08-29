@@ -309,7 +309,7 @@ Sempre que uma nova regra de negócio for implementada ou alterada, atualizar es
 
 **13.4. Aprimoramentos UX**: Melhorada responsividade do calendário Data Pronto OM para abertura ao clicar no ícone. Ajustes CSS de z-index e pointer-events para comportamento mais intuitivo.
 
-**13.5. Perfis no Profile**: Badges de role no perfil do usuário agora refletem fielmente todos os tipos de perfil (user, manager, aprov, furriel, sgtte) com cores e ícones distintos. Perfil Aprov utiliza ícone de chapéu de mestre cuca.
+**13.5. Perfis no Profile**: Badges de role no perfil do usuário agora refletem fielmente todos os tipos de perfil (user, manager, aprov, furriel, sgtte) com cores e ícones distintos. Perfil Aprov utiliza ícone de chapéu de Aprov.
 
 **13.6. Gestão de Usuários**: Criado sistema de usuários separados - admin@saga.mil.br (role: manager) para gestão administrativa e aprov@saga.mil.br (role: aprov, senha: 12345678) para gestão de cardápio.
 

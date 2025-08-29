@@ -657,8 +657,12 @@ function getRankSymbol($rankName) {
                                         <select name="gender" id="gender" 
                                                 class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
                                             <option value="">Selecione o gênero</option>
-                                            <option value="M" {{ auth()->user()->gender == 'M' ? 'selected' : '' }}>👨 Masculino</option>
-                                            <option value="F" {{ auth()->user()->gender == 'F' ? 'selected' : '' }}>👩 Feminino</option>
+                                            <option value="M" {{ auth()->user()->gender == 'M' ? 'selected' : '' }}>
+                                                <i class="fas fa-mars text-blue-500 mr-2"></i>Masculino
+                                            </option>
+                                            <option value="F" {{ auth()->user()->gender == 'F' ? 'selected' : '' }}>
+                                                <i class="fas fa-venus text-pink-500 mr-2"></i>Feminino
+                                            </option>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
