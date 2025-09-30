@@ -207,7 +207,8 @@ Baseado no commit 2eeca08.
 
 Backup:
 - Tipos: completo / dados / por tabela.
-- Retenção: >30 dias são limpos.
+- Retenção: preservados indefinidamente (limpeza automática desabilitada).
+- Limpeza manual disponível via `scripts/database/cleanup_old_backups.sh`.
 - Compressão padrão (.gz) + naming padronizado com timestamp.
 
 Restore:

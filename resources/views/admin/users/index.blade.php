@@ -675,7 +675,17 @@
                         </div>
                         <div>
                             <label for="editReadyDate" class="block text-sm font-semibold text-gray-900 mb-2">Pronto OM</label>
-                            <input type="date" id="editReadyDate" name="ready_at_om_date" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                            <div class="relative">
+                                <input type="text" id="editReadyDate" name="ready_at_om_date" placeholder="DD/MM/AAAA" inputmode="numeric" autocomplete="off" class="block w-full rounded-xl border-0 py-3 pr-12 pl-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                                <button type="button"
+                                        id="editReadyDateTrigger"
+                                        class="absolute inset-y-0 right-0 flex items-center justify-center px-3 text-blue-600 hover:text-blue-700"
+                                        aria-label="Abrir calendário">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label for="editStatus" class="block text-sm font-semibold text-gray-900 mb-2">Status</label>
@@ -720,6 +730,175 @@
 
 @section('scripts')
 <script>
+    const formatIsoToBr = (isoDate) => {
+        if (!isoDate) return '';
+        const [year, month, day] = isoDate.split('-');
+        if (!year || !month || !day) return '';
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+    };
+
+    const formatBrToIso = (brDate) => {
+        if (!brDate) return null;
+        const digits = brDate.replace(/\D/g, '').slice(0, 8);
+        if (digits.length !== 8) {
+            return null;
+        }
+
+        const day = digits.slice(0, 2);
+        const month = digits.slice(2, 4);
+        const year = digits.slice(4, 8);
+        const isoDate = `${year}-${month}-${day}`;
+        const parsed = new Date(`${isoDate}T00:00:00`);
+
+        if (
+            Number.isNaN(parsed.getTime()) ||
+            parsed.getUTCFullYear() !== parseInt(year, 10) ||
+            parsed.getUTCMonth() + 1 !== parseInt(month, 10) ||
+            parsed.getUTCDate() !== parseInt(day, 10)
+        ) {
+            return null;
+        }
+
+        return isoDate;
+    };
+
+    const maskBrDateString = (value) => {
+        const digits = value.replace(/\D/g, '').slice(0, 8);
+        const parts = [];
+
+        if (digits.length > 0) {
+            parts.push(digits.slice(0, Math.min(2, digits.length)));
+        }
+        if (digits.length >= 3) {
+            parts.push(digits.slice(2, Math.min(4, digits.length)));
+        }
+        if (digits.length >= 5) {
+            parts.push(digits.slice(4, 8));
+        }
+
+        return parts.join('/');
+    };
+
+    const attachBrDateMask = (inputElement) => {
+        if (!inputElement) return;
+
+        inputElement.addEventListener('input', (event) => {
+            const maskedValue = maskBrDateString(event.target.value);
+            event.target.value = maskedValue;
+        });
+
+        inputElement.addEventListener('blur', (event) => {
+            const isoDate = formatBrToIso(event.target.value);
+            if (isoDate) {
+                event.target.value = formatIsoToBr(isoDate);
+                event.target.dataset.originalIso = isoDate;
+            } else if (!event.target.value.trim()) {
+                event.target.dataset.originalIso = '';
+            }
+        });
+    };
+
+    if (typeof window.loadFlatpickrResources !== 'function') {
+        window.loadFlatpickrResources = function() {
+            if (window.__flatpickrLoader) {
+                return window.__flatpickrLoader;
+            }
+
+            const cssId = 'flatpickr-css';
+            if (!document.getElementById(cssId)) {
+                const link = document.createElement('link');
+                link.id = cssId;
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css';
+                document.head.appendChild(link);
+            }
+
+            window.__flatpickrLoader = new Promise((resolve, reject) => {
+                if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.pt) {
+                    resolve();
+                    return;
+                }
+
+                const loadLocale = () => {
+                    if (window.flatpickr && window.flatpickr.l10ns && window.flatpickr.l10ns.pt) {
+                        resolve();
+                        return;
+                    }
+
+                    const localeScript = document.createElement('script');
+                    localeScript.src = 'https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js';
+                    localeScript.onload = resolve;
+                    localeScript.onerror = reject;
+                    document.body.appendChild(localeScript);
+                };
+
+                if (!window.flatpickr) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/flatpickr';
+                    script.onload = loadLocale;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                } else {
+                    loadLocale();
+                }
+            });
+
+            return window.__flatpickrLoader;
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const editReadyDateInput = document.getElementById('editReadyDate');
+        const editReadyDateTrigger = document.getElementById('editReadyDateTrigger');
+
+        attachBrDateMask(editReadyDateInput);
+
+        if (editReadyDateInput) {
+            window.loadFlatpickrResources()
+                .then(() => {
+                    if (!window.flatpickr) {
+                        return;
+                    }
+
+                    if (window.editReadyDatePicker && typeof window.editReadyDatePicker.destroy === 'function') {
+                        window.editReadyDatePicker.destroy();
+                    }
+
+                    window.editReadyDatePicker = flatpickr(editReadyDateInput, {
+                        dateFormat: 'd/m/Y',
+                        allowInput: true,
+                        locale: (window.flatpickr.l10ns && window.flatpickr.l10ns.pt) ? window.flatpickr.l10ns.pt : 'pt',
+                        disableMobile: true,
+                        onChange: function(selectedDates) {
+                            if (!selectedDates.length) {
+                                return;
+                            }
+
+                            const isoDate = selectedDates[0].toISOString().split('T')[0];
+                            editReadyDateInput.dataset.originalIso = isoDate;
+                            editReadyDateInput.value = formatIsoToBr(isoDate);
+                        }
+                    });
+
+                    const initialIso = editReadyDateInput.dataset.originalIso || formatBrToIso(editReadyDateInput.value);
+                    if (initialIso) {
+                        window.editReadyDatePicker.setDate(initialIso, false, 'Y-m-d');
+                    }
+
+                    if (editReadyDateTrigger) {
+                        editReadyDateTrigger.addEventListener('click', () => {
+                            if (window.editReadyDatePicker) {
+                                window.editReadyDatePicker.open();
+                            }
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar o calendário de edição:', error);
+                });
+        }
+    });
+
     // Função para controlar visibilidade dos campos de organização na criação
     function toggleOrganizationFieldsCreate() {
         const armedForce = document.getElementById('createArmedForce').value;
@@ -747,14 +926,14 @@
         const subunitGroup = document.getElementById('createSubunitGroup');
         const subunitField = document.getElementById('createSubunit');
         
-        // ID 14 corresponde ao "11º Depósito de Suprimento"
-        if (orgValue === '14') {
+        // ID 1 corresponde ao "11º D Sup"
+        if (orgValue === '1') {
             subunitGroup.style.display = 'block';
-            console.log('Mostrando subunidade para 11º Depósito de Suprimento');
+            console.log('Mostrando subunidade para 11º D Sup');
         } else {
             subunitGroup.style.display = 'none';
             subunitField.value = '';
-            console.log('Ocultando subunidade - organização não é 11º Depósito');
+            console.log('Ocultando subunidade - organização não é 11º D Sup');
         }
     }
 
@@ -788,14 +967,14 @@
         console.log('toggleSubunitFieldEdit - Organização selecionada:', orgValue);
         console.log('Elemento subunitGroup encontrado:', subunitGroup);
         
-        // ID 14 corresponde ao "11º Depósito de Suprimento"
-        if (orgValue === '14') {
+        // ID 1 corresponde ao "11º D Sup"
+        if (orgValue === '1') {
             subunitGroup.style.display = 'block';
-            console.log('✅ Mostrando subunidade para 11º Depósito de Suprimento (ID: 14)');
+            console.log('✅ Mostrando subunidade para 11º D Sup (ID: 1)');
         } else {
             subunitGroup.style.display = 'none';
             subunitField.value = '';
-            console.log('❌ Ocultando subunidade - organização ID:', orgValue, '(não é 14)');
+            console.log('❌ Ocultando subunidade - organização ID:', orgValue, '(não é 1)');
         }
     }
 
@@ -905,7 +1084,7 @@
         const subunit = button.getAttribute('data-subunit');
         const armedForce = button.getAttribute('data-armed-force');
         const gender = button.getAttribute('data-gender');
-        const readyDate = button.getAttribute('data-ready-date');
+    const readyDate = button.getAttribute('data-ready-date');
         const isActive = button.getAttribute('data-is-active');
         const role = button.getAttribute('data-role');
         
@@ -920,7 +1099,18 @@
         document.getElementById('editSubunit').value = subunit || '';
         document.getElementById('editArmedForce').value = armedForce || '';
         document.getElementById('editGender').value = gender || '';
-        document.getElementById('editReadyDate').value = readyDate || '';
+        const readyDateInput = document.getElementById('editReadyDate');
+        if (readyDateInput) {
+            readyDateInput.value = readyDate ? formatIsoToBr(readyDate) : '';
+            readyDateInput.dataset.originalIso = readyDate || '';
+            if (window.editReadyDatePicker) {
+                if (readyDate) {
+                    window.editReadyDatePicker.setDate(readyDate, false, 'Y-m-d');
+                } else {
+                    window.editReadyDatePicker.clear();
+                }
+            }
+        }
         document.getElementById('editStatus').value = isActive;
         document.getElementById('editRole').value = role || 'user';
         
@@ -948,6 +1138,21 @@
         const saveButton = event.target;
         saveButton.disabled = true;
         saveButton.textContent = 'Salvando...';
+
+        const readyDateDisplay = formData.get('ready_at_om_date');
+        const readyDateIso = formatBrToIso(readyDateDisplay);
+
+        if (readyDateDisplay && !readyDateIso) {
+            alert('Informe uma data válida para "Pronto OM" no formato DD/MM/AAAA.');
+            const readyDateInput = document.getElementById('editReadyDate');
+            if (readyDateInput) {
+                const previousIso = readyDateInput.dataset.originalIso || '';
+                readyDateInput.value = previousIso ? formatIsoToBr(previousIso) : '';
+            }
+            saveButton.disabled = false;
+            saveButton.textContent = 'Salvar Alterações';
+            return;
+        }
         
         fetch(`/admin/users/${userId}`, {
             method: 'PATCH',
@@ -965,7 +1170,7 @@
                 subunit: formData.get('subunit') || null,
                 armed_force: formData.get('armed_force') || null,
                 gender: formData.get('gender'),
-                ready_at_om_date: formData.get('ready_at_om_date'),
+                ready_at_om_date: readyDateIso,
                 is_active: formData.get('is_active') === '1',
                 role: formData.get('role')
             })

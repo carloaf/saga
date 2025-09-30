@@ -48,7 +48,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->full_name) }}', '{{ addslashes($user->war_name) }}', '{{ $user->email }}', {{ $user->rank_id ?? 'null' }}, {{ $user->organization_id ?? 'null' }}, {{ $user->is_active ? 'true' : 'false' }})" 
+                                <button onclick="openEditModal({{ $user->id }}, '{{ addslashes($user->full_name) }}', '{{ addslashes($user->war_name) }}', '{{ $user->email }}', {{ $user->rank_id ?? 'null' }}, {{ $user->organization_id ?? 'null' }}, {{ $user->is_active ? 'true' : 'false' }}, '{{ addslashes($user->subunit ?? '') }}')" 
                                         class="text-indigo-600 hover:text-indigo-900">
                                     Editar
                                 </button>
@@ -144,6 +144,23 @@
                     </select>
                 </div>
                 
+                <!-- Campo de Subunidade -->
+                <div class="field-group" id="editSubunitGroup" style="display: none;">
+                    <label class="label-enhanced">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <span>Subunidade</span>
+                    </label>
+                    <select id="editSubunit" name="subunit" class="select-enhanced">
+                        <option value="">Selecione uma subunidade</option>
+                        <option value="1ª Cia">1ª Cia</option>
+                        <option value="2ª Cia">2ª Cia</option>
+                        <option value="EM">EM</option>
+                    </select>
+                </div>
+                
                 <div class="field-group">
                     <label class="label-enhanced">
                         <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +192,7 @@
 
 @section('scripts')
 <script>
-    function openEditModal(userId, fullName, warName, email, rankId, organizationId, isActive) {
+    function openEditModal(userId, fullName, warName, email, rankId, organizationId, isActive, subunit) {
         // Preenche os campos do formulário
         document.getElementById('editUserId').value = userId;
         document.getElementById('editFullName').value = fullName;
@@ -184,10 +201,29 @@
         document.getElementById('editRank').value = rankId || '';
         document.getElementById('editOrganization').value = organizationId || '';
         document.getElementById('editStatus').value = isActive ? '1' : '0';
+        document.getElementById('editSubunit').value = subunit || '';
+        
+        // Controla visibilidade do campo subunidade baseado na organização
+        toggleSubunitField(organizationId);
         
         // Mostra o modal
         const modal = document.getElementById('editModal');
         modal.classList.remove('hidden');
+    }
+
+    function toggleSubunitField(organizationId) {
+        const subunitGroup = document.getElementById('editSubunitGroup');
+        const subunitSelect = document.getElementById('editSubunit');
+        
+        // Organização 1 = 11º D Sup
+        if (organizationId == 1) {
+            subunitGroup.style.display = 'block';
+            subunitSelect.required = true;
+        } else {
+            subunitGroup.style.display = 'none';
+            subunitSelect.required = false;
+            subunitSelect.value = '';
+        }
     }
 
     function closeEditModal() {
@@ -241,6 +277,11 @@
         if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
             closeEditModal();
         }
+    });
+
+    // Event listener para mudança de organização
+    document.getElementById('editOrganization').addEventListener('change', function() {
+        toggleSubunitField(this.value);
     });
 </script>
 @endsection

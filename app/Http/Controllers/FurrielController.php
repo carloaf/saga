@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\User;
-use App\Models\Rank;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FurrielController extends Controller
 {
@@ -17,46 +17,81 @@ class FurrielController extends Controller
      */
     public function index(Request $request)
     {
+        /** @var User|null $furriel */
+        $furriel = Auth::user();
+
         // Verificar se o usuário é furriel
-        if (!Auth::user()->isFurriel()) {
+        if (!$furriel || !$furriel->isFurriel()) {
             abort(403, 'Acesso negado. Apenas furriéis podem acessar esta página.');
         }
 
-        $furriel = Auth::user();
-        $selectedDate = $request->get('date', Carbon::now()->format('Y-m-d'));
-        
-        // Buscar todos os Soldados EV da mesma organização/subunidade do furriel
-        $soldadosEv = User::whereHas('rank', function($query) {
-                $query->where('name', 'Soldado EV');
-            })
+        $requestedDate = $request->get('date');
+
+        try {
+            $selectedCarbon = $requestedDate ? Carbon::parse($requestedDate) : Carbon::now();
+        } catch (\Throwable $e) {
+            Log::warning('Data de arranchamento inválida recebida para furriel.', [
+                'requested_date' => $requestedDate,
+                'message' => $e->getMessage()
+            ]);
+            $selectedCarbon = Carbon::now();
+        }
+
+    $selectedDateIso = $selectedCarbon->format('Y-m-d');
+    $selectedDateDisplay = $selectedCarbon->format('d/m/Y');
+    $selectedDate = $selectedDateIso;
+
+        $organization = $furriel->organization;
+        $isHostOrganization = optional($organization)->is_host;
+
+        $militaresQuery = User::query()
             ->where('organization_id', $furriel->organization_id)
-            ->where('subunit', $furriel->subunit)
-            ->where('is_active', true)
+            ->where('is_active', true);
+
+        if ($isHostOrganization) {
+            // Host (11º D Sup): restringir a Soldados EV da mesma subunidade
+            $militaresQuery
+                ->where('subunit', $furriel->subunit)
+                ->whereHas('rank', function($query) {
+                    $query->where('name', 'Soldado EV');
+                });
+        }
+
+        $militares = $militaresQuery
             ->with(['rank', 'organization'])
-            ->orderBy('war_name')
+            ->orderByRaw('COALESCE(war_name, full_name)')
             ->get();
 
+        $audience = [
+            'label_plural' => $isHostOrganization ? 'Soldados EV' : 'Militares',
+            'label_singular' => $isHostOrganization ? 'Soldado' : 'Militar',
+            'scope' => $isHostOrganization ? 'da Companhia' : 'da Organização',
+            'description' => $isHostOrganization
+                ? 'Gerenciamento das refeições dos Soldados EV da companhia'
+                : 'Gerenciamento das refeições dos militares da organização'
+        ];
+
         // Buscar reservas existentes para a data selecionada
-        $existingBookings = Booking::whereDate('booking_date', $selectedDate)
-            ->whereIn('user_id', $soldadosEv->pluck('id'))
+        $existingBookings = Booking::whereDate('booking_date', $selectedDateIso)
+            ->whereIn('user_id', $militares->pluck('id'))
             ->get()
             ->groupBy('user_id');
 
         // Se for uma requisição AJAX, retornar JSON
         if ($request->ajax() || $request->wantsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
-            \Log::info('Requisição AJAX detectada para furriel arranchamento', [
-                'date' => $selectedDate,
-                'soldados_count' => $soldadosEv->count(),
+            Log::info('Requisição AJAX detectada para furriel arranchamento', [
+                'date' => $selectedDateIso,
+                'soldados_count' => $militares->count(),
                 'headers' => $request->headers->all()
             ]);
             
-            $soldadosData = $soldadosEv->map(function($soldado) use ($existingBookings) {
+            $soldadosData = $militares->map(function($militar) use ($existingBookings) {
                 return [
-                    'id' => $soldado->id,
-                    'full_name' => $soldado->full_name,
-                    'war_name' => $soldado->war_name,
-                    'rank_abbreviation' => $soldado->rank->abbreviation ?? null,
-                    'existing_bookings' => $existingBookings->get($soldado->id, collect())->map(function($booking) {
+                    'id' => $militar->id,
+                    'full_name' => $militar->full_name,
+                    'war_name' => $militar->war_name,
+                    'rank_abbreviation' => $militar->rank->abbreviation ?? null,
+                    'existing_bookings' => $existingBookings->get($militar->id, collect())->map(function($booking) {
                         return [
                             'meal_type' => $booking->meal_type,
                             'id' => $booking->id
@@ -66,7 +101,8 @@ class FurrielController extends Controller
             });
 
             $stats = [
-                'totalSoldadosEv' => $soldadosEv->count(),
+                'totalTargets' => $militares->count(),
+                'totalSoldadosEv' => $militares->count(),
                 'reservasNaData' => $existingBookings->flatten()->count()
             ];
 
@@ -78,35 +114,43 @@ class FurrielController extends Controller
 
         // Adicionar estatísticas para a view
         $stats = [
-            'totalSoldadosEv' => $soldadosEv->count(),
+            'totalTargets' => $militares->count(),
+            'totalSoldadosEv' => $militares->count(),
             'reservasNaData' => $existingBookings->flatten()->count()
         ];
 
         // Adicionar as reservas existentes aos soldados
-        foreach ($soldadosEv as $soldado) {
-            $soldado->existingBookings = $existingBookings->get($soldado->id, collect());
+        foreach ($militares as $militar) {
+            $militar->existingBookings = $existingBookings->get($militar->id, collect());
         }
 
-        \Log::info('Retornando view normal (não AJAX) para furriel arranchamento', [
-            'date' => $selectedDate,
-            'soldados_count' => $soldadosEv->count()
+        Log::info('Retornando view normal (não AJAX) para furriel arranchamento', [
+            'date' => $selectedDateIso,
+            'soldados_count' => $militares->count()
         ]);
 
         return view('furriel.arranchamento-cia', compact(
-            'soldadosEv',
+            'militares',
             'existingBookings', 
             'selectedDate',
+            'selectedDateIso',
+            'selectedDateDisplay',
             'furriel',
-            'stats'
+            'stats',
+            'audience',
+            'isHostOrganization'
         ));
     }
 
     /**
-     * Store bookings for Soldados EV
+     * Store bookings for eligible users managed by the furriel
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isFurriel()) {
+        /** @var User|null $furriel */
+        $furriel = Auth::user();
+
+        if (!$furriel || !$furriel->isFurriel()) {
             abort(403, 'Acesso negado.');
         }
 
@@ -119,7 +163,7 @@ class FurrielController extends Controller
         ]);
 
         $bookingDate = $request->booking_date;
-        $furriel = Auth::user();
+        $isHostOrganization = optional($furriel->organization)->is_host;
         
         // Verificar se é dia útil
         $carbonDate = Carbon::parse($bookingDate);
@@ -146,19 +190,24 @@ class FurrielController extends Controller
             }
         }
 
-        DB::transaction(function() use ($request, $furriel, $bookingDate) {
+        DB::transaction(function() use ($request, $furriel, $bookingDate, $isHostOrganization) {
             foreach ($request->bookings as $booking) {
                 $user = User::find($booking['user_id']);
                 
-                // Verificar se o usuário pertence à mesma organização/subunidade do furriel
-                if ($user->organization_id !== $furriel->organization_id || 
-                    $user->subunit !== $furriel->subunit) {
+                // Verificar se o usuário pertence à mesma organização do furriel
+                if ($user->organization_id !== $furriel->organization_id) {
                     continue;
                 }
 
-                // Verificar se é Soldado EV
-                if (!$user->rank || $user->rank->name !== 'Soldado EV') {
-                    continue;
+                if ($isHostOrganization) {
+                    // Host: restringir à mesma subunidade e Soldado EV
+                    if ($user->subunit !== $furriel->subunit) {
+                        continue;
+                    }
+
+                    if (!$user->rank || $user->rank->name !== 'Soldado EV') {
+                        continue;
+                    }
                 }
 
                 // Remover reservas existentes para esta data
@@ -189,50 +238,50 @@ class FurrielController extends Controller
      */
     public function getStats()
     {
-        if (!Auth::user()->isFurriel()) {
+        /** @var User|null $furriel */
+        $furriel = Auth::user();
+
+        if (!$furriel || !$furriel->isFurriel()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $furriel = Auth::user();
+        $isHostOrganization = optional($furriel->organization)->is_host;
         $today = Carbon::now()->format('Y-m-d');
         $thisWeek = [
             Carbon::now()->startOfWeek(Carbon::MONDAY)->format('Y-m-d'),
             Carbon::now()->endOfWeek(Carbon::FRIDAY)->format('Y-m-d')
         ];
 
-        // Contar Soldados EV da companhia
-        $totalSoldadosEv = User::whereHas('rank', function($query) {
-                $query->where('name', 'Soldado EV');
-            })
+        $eligibleUsersQuery = User::query()
             ->where('organization_id', $furriel->organization_id)
-            ->where('subunit', $furriel->subunit)
-            ->where('is_active', true)
-            ->count();
+            ->where('is_active', true);
+
+        if ($isHostOrganization) {
+            $eligibleUsersQuery
+                ->where('subunit', $furriel->subunit)
+                ->whereHas('rank', function($query) {
+                    $query->where('name', 'Soldado EV');
+                });
+        }
+
+        $eligibleUserIds = $eligibleUsersQuery->pluck('id');
+
+        // Contagem de militares elegíveis
+        $totalMilitares = $eligibleUserIds->count();
 
         // Reservas de hoje
         $todayBookings = Booking::whereDate('booking_date', $today)
-            ->whereHas('user', function($query) use ($furriel) {
-                $query->where('organization_id', $furriel->organization_id)
-                      ->where('subunit', $furriel->subunit)
-                      ->whereHas('rank', function($rankQuery) {
-                          $rankQuery->where('name', 'Soldado EV');
-                      });
-            })
+            ->whereIn('user_id', $eligibleUserIds)
             ->count();
 
         // Reservas da semana
         $weekBookings = Booking::whereBetween('booking_date', $thisWeek)
-            ->whereHas('user', function($query) use ($furriel) {
-                $query->where('organization_id', $furriel->organization_id)
-                      ->where('subunit', $furriel->subunit)
-                      ->whereHas('rank', function($rankQuery) {
-                          $rankQuery->where('name', 'Soldado EV');
-                      });
-            })
+            ->whereIn('user_id', $eligibleUserIds)
             ->count();
 
         return response()->json([
-            'total_soldados_ev' => $totalSoldadosEv,
+            'total_militares' => $totalMilitares,
+            'total_soldados_ev' => $totalMilitares,
             'today_bookings' => $todayBookings,
             'week_bookings' => $weekBookings
         ]);
