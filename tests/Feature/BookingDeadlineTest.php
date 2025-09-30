@@ -8,6 +8,9 @@ use App\Models\Booking;
 use App\Models\Organization;
 use App\Models\Rank;
 use Carbon\Carbon;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BookingDeadlineTest extends TestCase
@@ -15,10 +18,17 @@ class BookingDeadlineTest extends TestCase
     use RefreshDatabase;
 
     private $user;
+    private array $csrfHeaders;
 
     protected function setUp(): void
     {
         parent::setUp();
+    $this->withoutMiddleware(VerifyCsrfToken::class);
+        Session::start();
+        $this->csrfHeaders = [
+            'X-CSRF-TOKEN' => Session::token(),
+            'X-Requested-With' => 'XMLHttpRequest',
+        ];
         
         // Create test organization and rank
         $organization = Organization::create([
@@ -40,6 +50,8 @@ class BookingDeadlineTest extends TestCase
             'organization_id' => $organization->id,
             'rank_id' => $rank->id,
             'role' => 'user',
+            'ready_at_om_date' => now()->format('Y-m-d'),
+            'idt' => 'TST' . Str::upper(Str::random(7)),
         ]);
     }
 
@@ -59,7 +71,7 @@ class BookingDeadlineTest extends TestCase
         Carbon::setTestNow(Carbon::today()->setTime(14, 0, 0));
 
         $response = $this->actingAs($this->user)
-            ->deleteJson("/bookings/{$booking->id}");
+            ->deleteJson("/bookings/{$booking->id}", [], $this->csrfHeaders);
 
         $response->assertStatus(400)
             ->assertJson([
@@ -87,7 +99,7 @@ class BookingDeadlineTest extends TestCase
         Carbon::setTestNow(Carbon::today()->setTime(12, 0, 0));
 
         $response = $this->actingAs($this->user)
-            ->deleteJson("/bookings/{$booking->id}");
+            ->deleteJson("/bookings/{$booking->id}", [], $this->csrfHeaders);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -110,7 +122,7 @@ class BookingDeadlineTest extends TestCase
             ->postJson('/bookings/reserve-single', [
                 'date' => $tomorrow->format('Y-m-d'),
                 'meal_type' => 'breakfast',
-            ]);
+            ], $this->csrfHeaders);
 
         $response->assertStatus(400)
             ->assertJson([
@@ -138,7 +150,7 @@ class BookingDeadlineTest extends TestCase
             ->postJson('/bookings/reserve-single', [
                 'date' => $tomorrow->format('Y-m-d'),
                 'meal_type' => 'breakfast',
-            ]);
+            ], $this->csrfHeaders);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -167,7 +179,7 @@ class BookingDeadlineTest extends TestCase
             ->postJson('/bookings/reserve-single', [
                 'date' => $monday->format('Y-m-d'),
                 'meal_type' => 'breakfast',
-            ]);
+            ], $this->csrfHeaders);
 
         $response->assertStatus(400)
             ->assertJsonFragment(['success' => false]);

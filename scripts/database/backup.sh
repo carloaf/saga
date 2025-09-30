@@ -113,13 +113,16 @@ echo "" >> "$REPORT_FILE"
 echo "Espaço total utilizado:" >> "$REPORT_FILE"
 du -sh "$BACKUP_DIR" >> "$REPORT_FILE"
 
-# Limpeza de backups antigos
-echo -e "${YELLOW}🧹 Limpando backups antigos (>30 dias)...${NC}"
-DELETED_COUNT=$(find "$BACKUP_DIR" -name "*.gz" -mtime +30 -delete -print | wc -l)
-echo "  🗑️  Removidos: $DELETED_COUNT arquivos"
+# Limpeza de backups antigos - DESABILITADA
+# echo -e "${YELLOW}🧹 Limpando backups antigos (>30 dias)...${NC}"
+# DELETED_COUNT=$(find "$BACKUP_DIR" -name "*.gz" -mtime +30 -delete -print | wc -l)
+# echo "  🗑️  Removidos: $DELETED_COUNT arquivos"
 
-# Limpeza de relatórios antigos
-find "$BACKUP_DIR" -name "backup_report_*.txt" -mtime +7 -delete
+# Limpeza de relatórios antigos - DESABILITADA
+# find "$BACKUP_DIR" -name "backup_report_*.txt" -mtime +7 -delete
+
+echo -e "${BLUE}📦 Backups preservados indefinidamente${NC}"
+echo "  💾 Para limpeza manual, use: find $BACKUP_DIR -name '*.gz' -mtime +30 -delete"
 
 echo -e "${GREEN}🎉 Backup concluído com sucesso!${NC}"
 echo "=================================================="

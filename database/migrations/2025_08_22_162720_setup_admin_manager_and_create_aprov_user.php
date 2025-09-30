@@ -16,30 +16,47 @@ return new class extends Migration
         // Primeiro, alterar admin@saga.mil.br para role 'manager'
         DB::table('users')->where('email', 'admin@saga.mil.br')->update(['role' => 'manager']);
         
-        // Gerar IDT único para o usuário aprov
-        do {
-            $idt = 'APR' . str_pad(random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
-        } while (DB::table('users')->where('idt', $idt)->exists());
+        $hasIdtColumn = Schema::hasColumn('users', 'idt');
+        $idt = null;
+
+        // Gerar IDT único para o usuário aprov (apenas se a coluna existir)
+        if ($hasIdtColumn) {
+            do {
+                $idt = 'APR' . str_pad(random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
+            } while (DB::table('users')->where('idt', $idt)->exists());
+        }
         
-        // Criar novo usuário aprov@saga.mil.br (apenas se não existir)
-        if (!DB::table('users')->where('email', 'aprov@saga.mil.br')->exists()) {
-            DB::table('users')->insert([
+        $rankId = DB::table('ranks')->min('id');
+        $organizationId = DB::table('organizations')->min('id');
+
+        // Criar novo usuário aprov@saga.mil.br (apenas se não existir e houver dados mínimos)
+        if (
+            $rankId !== null &&
+            $organizationId !== null &&
+            !DB::table('users')->where('email', 'aprov@saga.mil.br')->exists()
+        ) {
+            $userData = [
                 'full_name' => 'Aprovador SAGA',
                 'war_name' => 'APROV',
                 'email' => 'aprov@saga.mil.br',
                 'password' => Hash::make('12345678'),
-                'rank_id' => 1, // Soldado EV (primeiro rank disponível)
-                'organization_id' => 1, // Primeira organização disponível
+                'rank_id' => $rankId,
+                'organization_id' => $organizationId,
                 'gender' => 'M',
                 'ready_at_om_date' => now()->format('Y-m-d'),
                 'role' => 'aprov',
                 'is_active' => true,
-                'idt' => $idt,
                 'subunit' => '1ª Cia',
                 'armed_force' => 'EB',
                 'created_at' => now(),
                 'updated_at' => now(),
-            ]);
+            ];
+
+            if ($hasIdtColumn && $idt) {
+                $userData['idt'] = $idt;
+            }
+
+            DB::table('users')->insert($userData);
         }
     }
 
