@@ -2,14 +2,17 @@
 
 @section('content')
 <style>
-    /* Modern UI Styling */
+    /* Modern Military Register UI Styling */
     .page-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
         min-height: 100vh;
         position: relative;
         overflow: hidden;
+        border-radius: 24px;
+        margin: 16px;
     }
 
+    /* Animated Background Pattern */
     .page-container::before {
         content: '';
         position: absolute;
@@ -17,20 +20,206 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="30" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="70" r="4" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>');
+        background-image: 
+            radial-gradient(circle at 20% 50%, rgba(22, 163, 74, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
         animation: float 20s ease-in-out infinite;
     }
 
+    .page-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 50px,
+                rgba(255, 255, 255, 0.02) 50px,
+                rgba(255, 255, 255, 0.02) 51px
+            ),
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 50px,
+                rgba(255, 255, 255, 0.02) 50px,
+                rgba(255, 255, 255, 0.02) 51px
+            );
+        opacity: 0.3;
+    }
+
+    /* Background Logo Watermark - Cascata Diagonal */
+    .bg-logo-cascade {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        background-image: url('{{ asset('images/folhaint_transparent.png') }}');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0.05;
+        z-index: 0;
+        animation: float-cascade 15s ease-in-out infinite;
+    }
+
+    .bg-logo-cascade:nth-child(1) {
+        top: 5%;
+        left: 5%;
+        animation-delay: 0s;
+    }
+
+    .bg-logo-cascade:nth-child(2) {
+        top: 15%;
+        left: 15%;
+        animation-delay: 0.5s;
+    }
+
+    .bg-logo-cascade:nth-child(3) {
+        top: 25%;
+        left: 25%;
+        animation-delay: 1s;
+    }
+
+    .bg-logo-cascade:nth-child(4) {
+        top: 35%;
+        left: 35%;
+        animation-delay: 1.5s;
+    }
+
+    .bg-logo-cascade:nth-child(5) {
+        top: 45%;
+        left: 45%;
+        animation-delay: 2s;
+    }
+
+    .bg-logo-cascade:nth-child(6) {
+        top: 55%;
+        left: 55%;
+        animation-delay: 2.5s;
+    }
+
+    .bg-logo-cascade:nth-child(7) {
+        top: 65%;
+        left: 65%;
+        animation-delay: 3s;
+    }
+
+    .bg-logo-cascade:nth-child(8) {
+        top: 75%;
+        left: 75%;
+        animation-delay: 3.5s;
+    }
+
+    .bg-logo-cascade:nth-child(9) {
+        top: 85%;
+        left: 85%;
+        animation-delay: 4s;
+    }
+
+    .bg-logo-cascade:nth-child(10) {
+        top: 10%;
+        right: 10%;
+        animation-delay: 4.5s;
+    }
+
+    .bg-logo-cascade:nth-child(11) {
+        top: 30%;
+        right: 20%;
+        animation-delay: 5s;
+    }
+
+    .bg-logo-cascade:nth-child(12) {
+        top: 50%;
+        right: 30%;
+        animation-delay: 5.5s;
+    }
+
+    .bg-logo-cascade:nth-child(13) {
+        top: 70%;
+        right: 15%;
+        animation-delay: 6s;
+    }
+
+    .bg-logo-cascade:nth-child(14) {
+        top: 90%;
+        right: 5%;
+        animation-delay: 6.5s;
+    }
+
+    @keyframes float-cascade {
+        0%, 100% { 
+            transform: translateY(0px) rotate(0deg);
+            opacity: 0.05;
+        }
+        50% { 
+            transform: translateY(-15px) rotate(5deg);
+            opacity: 0.08;
+        }
+    }
+
     @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+        0%, 100% { 
+            transform: translateY(0px) scale(1); 
+            opacity: 0.3;
+        }
+        50% { 
+            transform: translateY(-30px) scale(1.1); 
+            opacity: 0.5;
+        }
     }
 
     .card-enhanced {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 25px 45px rgba(0, 0, 0, 0.2),
+            0 0 80px rgba(22, 163, 74, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    /* Header Glow Effect */
+    .header-glow {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                     0 0 40px rgba(22, 163, 74, 0.3);
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { 
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                         0 0 40px rgba(22, 163, 74, 0.3);
+        }
+        50% { 
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.7),
+                         0 0 60px rgba(22, 163, 74, 0.5);
+        }
+    }
+
+    /* Logo Glow */
+    .logo-glow {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))
+                drop-shadow(0 0 20px rgba(22, 163, 74, 0.3));
+    }
+
+    /* Divider Animation */
+    .divider-animated {
+        animation: expand 1s ease-out;
+    }
+
+    @keyframes expand {
+        from {
+            width: 0;
+            opacity: 0;
+        }
+        to {
+            width: 96px;
+            opacity: 1;
+        }
     }
 
     .form-section {
@@ -204,12 +393,31 @@
 </style>
 
 <div class="page-container flex items-center justify-center p-4">
+    <!-- Background Logo Watermark - Cascata Diagonal -->
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    <div class="bg-logo-cascade"></div>
+    
     <div class="w-full max-w-4xl">
         <!-- Header -->
         <div class="text-center mb-8 relative z-10">
-            <h1 class="text-4xl font-bold text-white mb-4">Sistema SAGA</h1>
+            <div class="flex items-center justify-center mb-4">
+                <img src="{{ asset('images/folhaint_transparent.png') }}" alt="11º D Sup Logo" class="w-12 h-12 object-contain mr-3 logo-glow">
+                <h1 class="text-4xl font-bold text-white header-glow">Sistema SAGA</h1>
+            </div>
             <p class="text-xl text-blue-100 mb-2">Sistema de Agendamento e Gestão de Arranchamento</p>
-            <div class="w-24 h-1 bg-green-300 mx-auto mt-4 rounded-full"></div>
+            <div class="w-24 h-1 bg-gradient-to-r from-green-400 via-green-300 to-green-400 mx-auto mt-4 rounded-full divider-animated"></div>
         </div>
 
         <!-- Register Card -->
@@ -421,7 +629,15 @@
                                     <option value="">Selecione sua organização</option>
                                     @if(isset($organizations))
                                         @foreach($organizations as $organization)
-                                            <option value="{{ $organization->id }}" {{ old('organization_id') == $organization->id ? 'selected' : '' }}>
+                                            @php
+                                                $is11DepSup = $organization->name === '11º D Sup';
+                                            @endphp
+                                            <option
+                                                value="{{ $organization->id }}"
+                                                data-name="{{ $organization->name }}"
+                                                data-is-11dsup="{{ $is11DepSup ? '1' : '0' }}"
+                                                {{ old('organization_id') == $organization->id ? 'selected' : '' }}
+                                            >
                                                 {{ $organization->name }}
                                             </option>
                                         @endforeach
@@ -574,12 +790,16 @@ function toggleSectionField() {
     const sectionField = document.getElementById('section-field');
     const subunitSelect = document.getElementById('subunit');
     
+    if (!organizationSelect || !sectionField || !subunitSelect) {
+        return;
+    }
+    
     // Buscar o texto da opção selecionada
     const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
-    const organizationName = selectedOption ? selectedOption.text : '';
+    const is11DepSup = selectedOption && selectedOption.getAttribute('data-is-11dsup') === '1';
     
-    // Só mostrar o campo Cia se for "11º Depósito de Suprimento"
-    if (organizationName.includes('11º Depósito de Suprimento')) {
+    // Só mostrar o campo Cia se for "11º D Sup"
+    if (is11DepSup) {
         sectionField.style.display = 'block';
         subunitSelect.required = true;
     } else {

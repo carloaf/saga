@@ -560,13 +560,14 @@ function getRankSymbol($rankName) {
                                                         // Se o usuário já tem uma organização, selecionar ela
                                                         $isSelected = auth()->user()->organization_id == $organization->id;
                                                     } else {
-                                                        // Se não tem organização, selecionar "11º Depósito de Suprimento" como padrão
-                                                        $isSelected = $organization->name === '11º Depósito de Suprimento';
+                                                        // Se não tem organização, selecionar "11º D Sup" como padrão
+                                                        $isSelected = $organization->name === '11º D Sup';
                                                     }
-                                                    $is11DSup = $organization->name === '11º Depósito de Suprimento';
+                                                    $is11DSup = $organization->name === '11º D Sup';
                                                 @endphp
                                                 <option value="{{ $organization->id }}" 
                                                         data-name="{{ $organization->name }}"
+                                                        data-is-11dsup="{{ $is11DSup ? '1' : '0' }}"
                                                         {{ $isSelected ? 'selected' : '' }}>
                                                     {{ $organization->name }}
                                                     @if($is11DSup)
@@ -586,12 +587,12 @@ function getRankSymbol($rankName) {
                                     <svg class="w-4 h-4 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                                     </svg>
-                                    <span class="font-medium">11º Depósito de Suprimento</span> é a organização padrão do sistema
+                                    <span class="font-medium">11º D Sup</span> é a organização padrão do sistema
                                 </p>
                             </div>
                             
                             <!-- Subunidade -->
-                            <div class="form-group" id="subunit-group" style="{{ auth()->user()->organization && auth()->user()->organization->name == '11º Depósito de Suprimento' ? '' : 'display: none;' }}">
+                            <div class="form-group" id="subunit-group" style="display: none;">
                                 <label for="subunit" class="flex items-center text-sm font-semibold text-gray-700 mb-3 label-enhanced">
                                     <svg class="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
@@ -602,12 +603,11 @@ function getRankSymbol($rankName) {
                                 <div class="gradient-border">
                                     <div class="relative">
                                         <select name="subunit" id="subunit" 
-                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900"
-                                                {{ auth()->user()->organization && auth()->user()->organization->name == '11º Depósito de Suprimento' ? 'required' : '' }}>
+                                                class="form-select block w-full px-4 py-4 border-0 rounded-lg shadow-sm appearance-none cursor-pointer font-medium text-gray-900">
                                             <option value="" disabled {{ !auth()->user()->subunit ? 'selected' : '' }}>Selecione sua Cia</option>
-                                            <option value="1" {{ auth()->user()->subunit == '1' ? 'selected' : '' }}>1ª Cia</option>
-                                            <option value="2" {{ auth()->user()->subunit == '2' ? 'selected' : '' }}>2ª Cia</option>
-                                            <option value="3" {{ auth()->user()->subunit == '3' ? 'selected' : '' }}>3ª Cia</option>
+                                            <option value="1ª Cia" {{ auth()->user()->subunit == '1ª Cia' || auth()->user()->subunit == '1' ? 'selected' : '' }}>1ª Cia</option>
+                                            <option value="2ª Cia" {{ auth()->user()->subunit == '2ª Cia' || auth()->user()->subunit == '2' ? 'selected' : '' }}>2ª Cia</option>
+                                            <option value="EM" {{ auth()->user()->subunit == 'EM' || auth()->user()->subunit == '3' ? 'selected' : '' }}>EM</option>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1149,10 +1149,10 @@ function getRankSymbol($rankName) {
             
             if (organizationSelect && subunitGroup && subunitSelect) {
                 const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
-                const organizationName = selectedOption.getAttribute('data-name');
-                
-                if (organizationName === '11º Depósito de Suprimento') {
-                    subunitGroup.style.display = '';
+                const is11DepSup = selectedOption && selectedOption.getAttribute('data-is-11dsup') === '1';
+
+                if (is11DepSup) {
+                    subunitGroup.style.display = 'block';
                     subunitSelect.setAttribute('required', 'required');
                 } else {
                     subunitGroup.style.display = 'none';
