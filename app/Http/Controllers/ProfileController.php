@@ -28,9 +28,9 @@ class ProfileController extends Controller
         $ranks = Rank::orderBy('order')->get();
         $organizations = Organization::orderBy('name')->get();
         
-        // Se o usuário não tem organização definida, definir 11º Depósito de Suprimento como padrão
+        // Se o usuário não tem organização definida, definir 11º D Sup como padrão
         if (!$user->organization_id) {
-            $defaultOrganization = Organization::where('name', '11º Depósito de Suprimento')->first();
+            $defaultOrganization = Organization::where('name', '11º D Sup')->first();
             if ($defaultOrganization) {
                 $user->organization_id = $defaultOrganization->id;
                 $user->save();

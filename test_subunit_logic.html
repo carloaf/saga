@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Lógica Subunit</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .field { margin: 10px 0; }
+        select, label { display: block; margin: 5px 0; }
+        #subunit-field { display: none; background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .visible { display: block !important; }
+    </style>
+</head>
+<body>
+    <h1>Teste da Lógica de Subunit</h1>
+    
+    <div class="field">
+        <label for="organization_id">Organização:</label>
+        <select id="organization_id" onchange="toggleSubunitField()">
+            <option value="">Selecione uma organização</option>
+            <option value="1" data-name="11º D Sup" data-is-11dsup="1">11º D Sup</option>
+            <option value="2" data-name="CITEx" data-is-11dsup="0">CITEx</option>
+            <option value="3" data-name="PMB" data-is-11dsup="0">PMB</option>
+            <option value="4" data-name="7º CTA" data-is-11dsup="0">7º CTA</option>
+        </select>
+    </div>
+
+    <div id="subunit-field">
+        <label for="subunit">Subunidade:</label>
+        <select id="subunit">
+            <option value="">Selecione sua Cia</option>
+            <option value="1ª Cia">1ª Cia</option>
+            <option value="2ª Cia">2ª Cia</option>
+            <option value="EM">EM</option>
+        </select>
+    </div>
+
+    <div id="debug"></div>
+
+    <script>
+        function toggleSubunitField() {
+            const organizationSelect = document.getElementById('organization_id');
+            const subunitField = document.getElementById('subunit-field');
+            const subunitSelect = document.getElementById('subunit');
+            const debug = document.getElementById('debug');
+            
+            // Log debug
+            debug.innerHTML = '<h3>Debug:</h3>';
+            
+            if (!organizationSelect || !subunitField || !subunitSelect) {
+                debug.innerHTML += '<p>❌ Elementos não encontrados!</p>';
+                return;
+            }
+            
+            const selectedOption = organizationSelect.options[organizationSelect.selectedIndex];
+            const is11DepSup = selectedOption && selectedOption.getAttribute('data-is-11dsup') === '1';
+            
+            debug.innerHTML += `<p>Opção selecionada: ${selectedOption?.text || 'nenhuma'}</p>`;
+            debug.innerHTML += `<p>data-name: ${selectedOption?.getAttribute('data-name') || 'nenhum'}</p>`;
+            debug.innerHTML += `<p>data-is-11dsup: ${selectedOption?.getAttribute('data-is-11dsup') || 'nenhum'}</p>`;
+            debug.innerHTML += `<p>is11DepSup: ${is11DepSup}</p>`;
+            
+            if (is11DepSup) {
+                debug.innerHTML += '<p>✅ MOSTRANDO campo subunit</p>';
+                subunitField.style.display = 'block';
+                subunitSelect.required = true;
+            } else {
+                debug.innerHTML += '<p>❌ OCULTANDO campo subunit</p>';
+                subunitField.style.display = 'none';
+                subunitSelect.required = false;
+                subunitSelect.value = '';
+            }
+        }
+        
+        // Teste inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada - testando lógica inicial');
+            toggleSubunitField();
+        });
+    </script>
+</body>
+</html>

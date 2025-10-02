@@ -55,7 +55,7 @@
         <!-- Footer -->
         <div class="mt-8 text-center text-xs text-gray-500">
             <p>Acesso restrito a militares autorizados</p>
-            <p class="mt-1">© 2025 SAGA - Desenv: Augusto</p>
+            <p class="mt-1 text-sm text-gray-400 opacity-90 italic">© 2025 SAGA - Desenv: Augusto</p>
         </div>
     </div>
 </body>

@@ -180,16 +180,16 @@ class DashboardController extends Controller
                 ->leftJoin('organizations', 'users.organization_id', '=', 'organizations.id')
                 ->select(
                     DB::raw('CASE 
-                        WHEN organizations.name = \'11º Depósito de Suprimento\' THEN \'Própria OM\'
-                        WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º Depósito de Suprimento\' OR organizations.name IS NULL) THEN \'Outras OM\'
+                        WHEN organizations.name = \'11º D Sup\' THEN \'Própria OM\'
+                        WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º D Sup\' OR organizations.name IS NULL) THEN \'Outras OM\'
                         WHEN users.armed_force IN (\'MB\', \'FAB\') THEN \'Outras Forças\'
                         ELSE \'Outras OM\'
                     END as origin'),
                     DB::raw('COUNT(*) as total')
                 )
                 ->groupBy(DB::raw('CASE 
-                    WHEN organizations.name = \'11º Depósito de Suprimento\' THEN \'Própria OM\'
-                    WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º Depósito de Suprimento\' OR organizations.name IS NULL) THEN \'Outras OM\'
+                    WHEN organizations.name = \'11º D Sup\' THEN \'Própria OM\'
+                    WHEN users.armed_force = \'EB\' AND (organizations.name != \'11º D Sup\' OR organizations.name IS NULL) THEN \'Outras OM\'
                     WHEN users.armed_force IN (\'MB\', \'FAB\') THEN \'Outras Forças\'
                     ELSE \'Outras OM\'
                 END'))
@@ -488,13 +488,13 @@ class DashboardController extends Controller
             $propriaOmTotal = Booking::whereBetween('booking_date', [$monthStart, $monthEnd])
                 ->join('users', 'bookings.user_id', '=', 'users.id')
                 ->join('organizations', 'users.organization_id', '=', 'organizations.id')
-                ->where('organizations.name', '11º Depósito de Suprimento')
+                ->where('organizations.name', '11º D Sup')
                 ->count();
             
             $outrasOmTotal = Booking::whereBetween('booking_date', [$monthStart, $monthEnd])
                 ->join('users', 'bookings.user_id', '=', 'users.id')
                 ->join('organizations', 'users.organization_id', '=', 'organizations.id')
-                ->where('organizations.name', '!=', '11º Depósito de Suprimento')
+                ->where('organizations.name', '!=', '11º D Sup')
                 ->where('users.armed_force', 'EB')
                 ->count();
             
