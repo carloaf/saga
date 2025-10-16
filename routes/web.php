@@ -119,6 +119,7 @@ Route::get('/dev-admin-login', function () {
             'google_id' => 'admin_dev_' . time(),
             'full_name' => 'Admin Development',
             'war_name' => 'ADMIN',
+            'idt' => 'ADM' . str_pad((string)random_int(10000, 99999), 5, '0', STR_PAD_LEFT),
             'rank_id' => 1,
             'organization_id' => 1,
             'armed_force' => 'EB',

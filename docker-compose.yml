@@ -1,4 +1,3 @@
-
 # =============================================================================
 # Docker Compose - Development Environment
 # Para produção: usar deploy/production/docker-compose.prod.yml
@@ -15,15 +14,15 @@ services:
             dockerfile: Dockerfile
             target: runtime
             # Args expostos para buildx (opcional – buildx injeta automaticamente)
-            args:
-                BUILDPLATFORM: ${BUILDPLATFORM}
-                TARGETPLATFORM: ${TARGETPLATFORM}
+            # args:
+            # BUILDPLATFORM: ${BUILDPLATFORM}
+            # TARGETPLATFORM: ${TARGETPLATFORM}
         image: saga/app:dev
         container_name: saga_app_dev
         restart: unless-stopped
         working_dir: /var/www/html
         volumes:
-            - ./:/var/www/html  # Development: mount source for live editing
+            - ./:/var/www/html # Development: mount source for live editing
         networks:
             - saga_network
         depends_on:

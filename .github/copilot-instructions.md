@@ -6,7 +6,8 @@
 
 This is a Laravel-based military meal booking system (SAGA) that allows military personnel to schedule their meals (breakfast and lunch) for weekdays. The system includes:
 
-- **Authentication**: Google OAuth integration
+# - **Authentication**: Google OAuth integration
+- **Authentication**: Login com email e senha
 - **User Management**: Role-based access (user, manager)
 - **Booking System**: Interactive calendar for meal scheduling
 - **Dashboard**: Analytics and reporting with Chart.js

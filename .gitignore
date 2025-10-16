@@ -29,6 +29,9 @@ public/test-*.html
 *.sql
 *.sql.gz
 
+# Arquivos arquivados/backup de limpeza
+/.archive/
+
 # Scripts de desenvolvimento temporários (manter apenas os principais)
 clean-labels.sh
 fix-icons.sh
