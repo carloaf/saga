@@ -33,8 +33,9 @@ class AdminController extends Controller
 
         // Estatísticas dos usuários
         $totalUsers = User::count();
-        $activeUsers = User::where('is_active', true)->count();
-        $inactiveUsers = User::where('is_active', false)->count();
+        $activeUsers = User::where('is_active', true)->where('status', '!=', 'H')->count();
+        $inactiveUsers = User::where('is_active', false)->where('status', '!=', 'H')->count();
+        $pendingUsers = User::where('status', 'H')->count();
         $recentUsers = User::where('created_at', '>=', now()->subDays(30))->count();
 
         // Query base para usuários
@@ -77,6 +78,7 @@ class AdminController extends Controller
             'totalUsers',
             'activeUsers', 
             'inactiveUsers',
+            'pendingUsers',
             'recentUsers',
             'ranks',
             'organizations'
@@ -108,9 +110,16 @@ class AdminController extends Controller
             'armed_force' => 'nullable|in:FAB,MB,EB',
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
-            'is_active' => 'required|boolean',
+            'status' => 'required|in:active,inactive,H',
             'role' => 'required|in:user,manager,aprov,furriel,sgtte'
         ]);
+
+        // Atualizar is_active baseado no status
+        if ($validatedData['status'] === 'active') {
+            $validatedData['is_active'] = true;
+        } else {
+            $validatedData['is_active'] = false;
+        }
 
     // IDT permanece imutável (já garantido acima) sem necessidade de remoção pós-validação
 
@@ -140,8 +149,15 @@ class AdminController extends Controller
             'gender' => 'required|in:M,F',
             'ready_at_om_date' => 'required|date',
             'role' => 'required|in:user,manager,aprov,furriel,sgtte',
-            'is_active' => 'required|boolean'
+            'status' => 'required|in:active,inactive,H'
         ]);
+
+        // Atualizar is_active baseado no status
+        if ($validatedData['status'] === 'active') {
+            $validatedData['is_active'] = true;
+        } else {
+            $validatedData['is_active'] = false;
+        }
 
         // Adicionar campos padrão para usuário criado manualmente
         $validatedData['google_id'] = 'manual_' . time() . '_' . rand(1000, 9999);

@@ -63,7 +63,7 @@
     <!-- Main Content -->
     <div class="px-4 sm:px-6 lg:px-8 py-4">
         <!-- Enhanced Statistics Cards -->
-        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-4 cards-grid">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5 mb-4 cards-grid">
             <!-- Total de Usuários -->
             <div class="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                 <div class="p-5">
@@ -127,6 +127,29 @@
                             <div class="flex items-center mt-1">
                                 <span class="text-xs text-red-600 font-medium">●</span>
                                 <span class="text-xs text-gray-500 ml-1">Bloqueados temporariamente</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuários Aguardando Homologação -->
+            <div class="bg-white overflow-hidden shadow-xl rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Aguardando Homologação</p>
+                            <p class="text-2xl font-bold text-orange-600">{{ $pendingUsers }}</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-xs text-orange-600 font-medium">●</span>
+                                <span class="text-xs text-gray-500 ml-1">Precisam de aprovação</span>
                             </div>
                         </div>
                     </div>
@@ -317,11 +340,18 @@
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-6 py-5 text-sm">
-                                <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
-                                    {{ $user->is_active ? 'bg-gradient-to-r from-green-100 to-emerald-200 text-green-800 border border-green-300' : 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300' }}">
-                                    <span class="w-2 h-2 rounded-full {{ $user->is_active ? 'bg-green-500' : 'bg-red-500' }} mr-2"></span>
-                                    {{ $user->is_active ? 'Ativo' : 'Inativo' }}
-                                </span>
+                                @if($user->status === 'H')
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border border-orange-300">
+                                        <span class="w-2 h-2 rounded-full bg-orange-500 mr-2"></span>
+                                        H
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold shadow-sm
+                                        {{ $user->is_active ? 'bg-gradient-to-r from-green-100 to-emerald-200 text-green-800 border border-green-300' : 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300' }}">
+                                        <span class="w-2 h-2 rounded-full {{ $user->is_active ? 'bg-green-500' : 'bg-red-500' }} mr-2"></span>
+                                        {{ $user->is_active ? 'Ativo' : 'Inativo' }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="relative whitespace-nowrap py-5 pl-3 pr-6 text-right text-sm font-medium">
                 <button type="button" 
@@ -336,7 +366,7 @@
                                         data-armed-force="{{ $user->armed_force ?? '' }}"
                                         data-gender="{{ $user->gender ?? '' }}"
                                         data-ready-date="{{ $user->ready_at_om_date ? \Carbon\Carbon::parse($user->ready_at_om_date)->format('Y-m-d') : '' }}"
-                                        data-is-active="{{ $user->is_active ? 1 : 0 }}"
+                                        data-status="{{ $user->status ?? 'active' }}"
                                         data-role="{{ $user->role ?? 'user' }}"
                                         onclick="openEditModal(this)"
                                         title="Editar usuário"
@@ -540,10 +570,11 @@
                                     <label for="createStatus" class="block text-sm font-semibold text-gray-900 mb-2">
                                         Status
                                     </label>
-                                    <select id="createStatus" name="is_active" 
+                                    <select id="createStatus" name="status" 
                                             class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-green-500 sm:text-sm transition-all">
-                                        <option value="1" selected>✅ Ativo</option>
-                                        <option value="0">❌ Inativo</option>
+                                        <option value="active" selected>✅ Ativo</option>
+                                        <option value="inactive">❌ Inativo</option>
+                                        <option value="H">🔶 Ag. Hom.</option>
                                     </select>
                                 </div>
                             </div>
@@ -689,9 +720,10 @@
                         </div>
                         <div>
                             <label for="editStatus" class="block text-sm font-semibold text-gray-900 mb-2">Status</label>
-                            <select id="editStatus" name="is_active" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
-                                <option value="1">✅ Ativo</option>
-                                <option value="0">❌ Inativo</option>
+                            <select id="editStatus" name="status" class="block w-full rounded-xl border-0 py-3 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:text-sm transition-all">
+                                <option value="active">✅ Ativo</option>
+                                <option value="inactive">❌ Inativo</option>
+                                <option value="H">🔶 Ag. Hom.</option>
                             </select>
                         </div>
                         <div>
@@ -1046,7 +1078,7 @@
                 armed_force: formData.get('armed_force') || null,
                 gender: formData.get('gender'),
                 ready_at_om_date: formData.get('ready_at_om_date'),
-                is_active: formData.get('is_active') === '1',
+                status: formData.get('status') || 'active',
                 role: formData.get('role')
             })
         })
@@ -1085,7 +1117,7 @@
         const armedForce = button.getAttribute('data-armed-force');
         const gender = button.getAttribute('data-gender');
     const readyDate = button.getAttribute('data-ready-date');
-        const isActive = button.getAttribute('data-is-active');
+        const status = button.getAttribute('data-status');
         const role = button.getAttribute('data-role');
         
         // Preenche os campos do formulário
@@ -1111,7 +1143,7 @@
                 }
             }
         }
-        document.getElementById('editStatus').value = isActive;
+        document.getElementById('editStatus').value = status || 'active';
         document.getElementById('editRole').value = role || 'user';
         
         // Inicializa a visibilidade dos campos condicionais após um pequeno delay
@@ -1171,7 +1203,7 @@
                 armed_force: formData.get('armed_force') || null,
                 gender: formData.get('gender'),
                 ready_at_om_date: readyDateIso,
-                is_active: formData.get('is_active') === '1',
+                status: formData.get('status') || 'active',
                 role: formData.get('role')
             })
         })

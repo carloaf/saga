@@ -26,6 +26,20 @@ class AuthController extends Controller
             $user = User::where('google_id', $googleUser->getId())->first();
             
             if ($user) {
+                // Verificar se usuário está aguardando homologação
+                if ($user->status === 'H') {
+                    return redirect('/login')->withErrors([
+                        'email' => 'Seu cadastro ainda está aguardando homologação pelo administrador.',
+                    ]);
+                }
+                
+                // Verificar se usuário está ativo
+                if (!$user->is_active || $user->status === 'inactive') {
+                    return redirect('/login')->withErrors([
+                        'email' => 'Sua conta está inativa. Entre em contato com o administrador.',
+                    ]);
+                }
+                
                 // Update user info from Google
                 $user->update([
                     'full_name' => $googleUser->getName(),
@@ -143,6 +157,24 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $user = Auth::user();
+            
+            // Verificar se usuário está aguardando homologação
+            if ($user->status === 'H') {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Seu cadastro ainda está aguardando homologação pelo administrador.',
+                ])->onlyInput('email');
+            }
+            
+            // Verificar se usuário está ativo
+            if (!$user->is_active || $user->status === 'inactive') {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Sua conta está inativa. Entre em contato com o administrador.',
+                ])->onlyInput('email');
+            }
+            
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
@@ -202,12 +234,14 @@ class AuthController extends Controller
             'gender' => $request->gender,
             'ready_at_om_date' => $request->ready_at_om_date,
             'role' => 'user',
-            'is_active' => true,
+            'status' => 'H', // Novo usuário aguardando homologação
+            'is_active' => false, // Inativo até ser homologado
             'email_verified_at' => now(), // Para simplificar, considera como verificado
         ]);
 
-        Auth::login($user);
+        // Não fazer login automático - usuário precisa ser homologado primeiro
+        // Auth::login($user);
 
-        return redirect('/dashboard')->with('success', 'Cadastro realizado com sucesso!');
+        return redirect('/login')->with('success', 'Cadastro realizado com sucesso! Aguarde a homologação do administrador para acessar o sistema.');
     }
 }
