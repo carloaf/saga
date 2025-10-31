@@ -80,7 +80,8 @@ class BookingController extends Controller
         
         // Calendar data
         $calendarMonth = request('month', Carbon::now()->format('Y-m'));
-        $calendarDate = Carbon::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
+        // Fix: Ensure we start from day 1 to avoid date overflow issues (e.g., Oct 31 -> Nov 31 = Dec 1)
+        $calendarDate = Carbon::createFromFormat('Y-m-d', $calendarMonth . '-01')->startOfMonth();
         
         // Calculate calendar range (including previous/next month days that appear in calendar)
         $startOfCalendar = $calendarDate->copy()->startOfWeek(Carbon::SUNDAY);
