@@ -10,11 +10,11 @@
 # Configurações
 DATE=$(date +%Y%m%d_%H%M%S)
 BACKUP_DIR="/home/suporte/backups/saga"
-CONTAINER_NAME="saga_db"
+CONTAINER_NAME="saga_db_port8080"
 DB_USER="saga_user"
 DB_NAME="saga"
-RETENTION_DAYS=9999
-LOG_FILE="/home/suporte/backups/saga/saga-backup.log"
+RETENTION_DAYS=30
+LOG_FILE="/var/log/saga-backup.log"
 
 # Cores para output
 RED='\033[0;31m'

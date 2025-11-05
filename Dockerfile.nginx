@@ -1,0 +1,19 @@
+FROM node:20-alpine
+
+# Instalar nginx
+RUN apk add --no-cache nginx curl
+
+# Criar diretórios necessários
+RUN mkdir -p /var/log/nginx /var/lib/nginx/tmp /run/nginx
+
+# Remover configuração padrão
+RUN rm -f /etc/nginx/http.d/default.conf
+
+# Copiar nossa configuração
+COPY nginx.conf /etc/nginx/http.d/default.conf
+
+# Expor portas
+EXPOSE 80 8080
+
+# Comando para iniciar nginx
+CMD ["nginx", "-g", "daemon off;"]
