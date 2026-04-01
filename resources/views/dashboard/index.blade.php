@@ -279,81 +279,81 @@
                     </div>
                     
                     <div class="p-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 xl:gap-4">
                             <!-- Reservas de Arranchamento -->
-                            <a href="{{ route('bookings.index') }}" class="group bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-2xl p-6 border border-blue-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                            <a href="{{ route('bookings.index') }}" class="group bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-2xl border border-blue-200 p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl xl:p-5">
+                                <div class="mb-4 flex items-center justify-between xl:mb-3">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-shadow group-hover:shadow-xl xl:h-11 xl:w-11">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                     </div>
-                                    <div class="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center group-hover:bg-blue-300 transition-colors">
+                                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-200 transition-colors group-hover:bg-blue-300">
                                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </div>
                                 </div>
-                                <h4 class="text-lg font-bold text-blue-900 mb-2">Reservas de Arranchamento</h4>
-                                <p class="text-sm text-blue-700">Gerencie suas reservas de café da manhã, almoço e jantar</p>
+                                <h4 class="mb-2 text-lg font-bold text-blue-900 xl:text-base">Reservas de Arranchamento</h4>
+                                <p class="text-sm text-blue-700 xl:text-xs">Gerencie suas reservas de café da manhã, almoço e jantar</p>
                             </a>
 
                             <!-- Perfil -->
-                            <a href="{{ route('profile.edit') }}" class="group bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-2xl p-6 border border-green-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                            <a href="{{ route('profile.edit') }}" class="group bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-2xl border border-green-200 p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl xl:p-5">
+                                <div class="mb-4 flex items-center justify-between xl:mb-3">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-shadow group-hover:shadow-xl xl:h-11 xl:w-11">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                         </svg>
                                     </div>
-                                    <div class="w-6 h-6 bg-green-200 rounded-full flex items-center justify-center group-hover:bg-green-300 transition-colors">
+                                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-green-200 transition-colors group-hover:bg-green-300">
                                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </div>
                                 </div>
-                                <h4 class="text-lg font-bold text-green-900 mb-2">Meu Perfil</h4>
-                                <p class="text-sm text-green-700">Atualize suas informações pessoais e militares</p>
+                                <h4 class="mb-2 text-lg font-bold text-green-900 xl:text-base">Meu Perfil</h4>
+                                <p class="text-sm text-green-700 xl:text-xs">Atualize suas informações pessoais e militares</p>
                             </a>
 
                             @if(auth()->user()->role === 'furriel')
                             <!-- Arranchamento da Cia - Apenas para Furriéis -->
-                            <a href="{{ route('furriel.arranchamento.index') }}" class="group bg-gradient-to-br from-red-50 to-orange-100 hover:from-red-100 hover:to-orange-200 rounded-2xl p-6 border border-red-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                            <a href="{{ route('furriel.arranchamento.index') }}" class="group bg-gradient-to-br from-red-50 to-orange-100 hover:from-red-100 hover:to-orange-200 rounded-2xl border border-red-200 p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl xl:p-5">
+                                <div class="mb-4 flex items-center justify-between xl:mb-3">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-600 shadow-lg transition-shadow group-hover:shadow-xl xl:h-11 xl:w-11">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                         </svg>
                                     </div>
-                                    <div class="w-6 h-6 bg-red-200 rounded-full flex items-center justify-center group-hover:bg-red-300 transition-colors">
+                                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-red-200 transition-colors group-hover:bg-red-300">
                                         <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </div>
                                 </div>
-                                <h4 class="text-lg font-bold text-red-900 mb-2">Arranchamento da Cia</h4>
-                                <p class="text-sm text-red-700">Gerencie as refeições dos Soldados EV da sua companhia</p>
+                                <h4 class="mb-2 text-lg font-bold text-red-900 xl:text-base">Arranchamento da Cia</h4>
+                                <p class="text-sm text-red-700 xl:text-xs">Gerencie as refeições dos Soldados EV da sua companhia</p>
                             </a>
                             @endif
 
-                            @if(auth()->user()->role === 'sgtte')
-                            <!-- Serviço do Sgtte - Apenas para Sgtte -->
-                            <a href="{{ route('sgtte.servico') }}" class="group bg-gradient-to-br from-teal-50 to-emerald-100 hover:from-teal-100 hover:to-emerald-200 rounded-2xl p-6 border border-emerald-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                            @if(auth()->user()->canAccessSgtteFeatures())
+                            <!-- Serviço da companhia - Sgtte e Furriel -->
+                            <a href="{{ route('sgtte.servico') }}" class="group bg-gradient-to-br from-teal-50 to-emerald-100 hover:from-teal-100 hover:to-emerald-200 rounded-2xl border border-emerald-200 p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl xl:p-5">
+                                <div class="mb-4 flex items-center justify-between xl:mb-3">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg transition-shadow group-hover:shadow-xl xl:h-11 xl:w-11">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v7h6v-7c0-1.657-1.343-3-3-3z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 20h14M12 3v5" />
                                         </svg>
                                     </div>
-                                    <div class="w-6 h-6 bg-emerald-200 rounded-full flex items-center justify-center group-hover:bg-emerald-300 transition-colors">
+                                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-200 transition-colors group-hover:bg-emerald-300">
                                         <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                         </svg>
                                     </div>
                                 </div>
-                                <h4 class="text-lg font-bold text-emerald-900 mb-2">Serviço (Sgtte)</h4>
-                                <p class="text-sm text-emerald-700">Arranche militares da subunidade (café, almoço e jantar)</p>
+                                <h4 class="mb-2 text-lg font-bold text-emerald-900 xl:text-base">Serviço da Companhia</h4>
+                                <p class="text-sm text-emerald-700 xl:text-xs">Arranche militares da subunidade com acesso de Sgtte e Furriel</p>
                             </a>
                             @endif
 
@@ -397,23 +397,23 @@
                             </a>
                             @endif
 
-                            @if(auth()->user()->role === 'manager' || auth()->user()->role === 'aprov')
-                            <!-- Relatórios Avançados - Para Managers e usuários Aprov -->
-                            <a href="{{ route('admin.reports.index') }}" class="group bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-2xl p-6 border border-orange-200 transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+                            @if(auth()->user()->canAccessReports())
+                            <!-- Relatórios Avançados - Para Managers, usuários Aprov e Furriel -->
+                            <a href="{{ route('admin.reports.index') }}" class="group bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-2xl border border-orange-200 p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl xl:p-5">
+                                <div class="mb-4 flex items-center justify-between xl:mb-3">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg transition-shadow group-hover:shadow-xl xl:h-11 xl:w-11">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                         </svg>
                                     </div>
-                                    <div class="w-6 h-6 bg-orange-200 rounded-full flex items-center justify-center group-hover:bg-orange-300 transition-colors">
+                                    <div class="flex h-6 w-6 items-center justify-center rounded-full bg-orange-200 transition-colors group-hover:bg-orange-300">
                                         <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                         </svg>
                                     </div>
                                 </div>
-                                <h4 class="text-lg font-bold text-orange-900 mb-2">Relatórios Avançados</h4>
-                                <p class="text-sm text-orange-700">Analise dados e exporte relatórios detalhados</p>
+                                <h4 class="mb-2 text-lg font-bold text-orange-900 xl:text-base">Relatórios Avançados</h4>
+                                <p class="text-sm text-orange-700 xl:text-xs">Analise dados e exporte relatórios detalhados</p>
                             </a>
                             @endif
 

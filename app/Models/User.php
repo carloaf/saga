@@ -75,6 +75,16 @@ class User extends Authenticatable
         return $this->role === 'sgtte';
     }
 
+    public function canAccessSgtteFeatures(): bool
+    {
+        return $this->isSgtte() || $this->isFurriel();
+    }
+
+    public function canAccessReports(): bool
+    {
+        return $this->isManager() || $this->isAprov() || $this->isFurriel();
+    }
+
     public function hasRole($role)
     {
         return $this->role === $role;
