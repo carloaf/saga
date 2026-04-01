@@ -8,7 +8,6 @@ use App\Models\Organization;
 use App\Models\Rank;
 use App\Exports\DailyMealsExport;
 use App\Exports\SummaryExport;
-use App\Exports\WeeklySummaryExport;
 use App\Exports\OrganizationBreakdownExport;
 use App\Exports\UserActivityExport;
 use Illuminate\Http\Request;
@@ -200,9 +199,9 @@ class AdminController extends Controller
      */
     public function reports()
     {
-        // Verificação de acesso - Managers e Aprov podem acessar
-        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'aprov'])) {
-            abort(403, 'Acesso negado. Apenas managers e usuários Aprov podem acessar esta área.');
+        // Verificação de acesso - Managers, Aprov e Furriel podem acessar
+        if (!Auth::user() || !Auth::user()->canAccessReports()) {
+            abort(403, 'Acesso negado. Apenas managers, usuários Aprov e Furriel podem acessar esta área.');
         }
 
         // Estatísticas do dia atual
@@ -252,9 +251,9 @@ class AdminController extends Controller
      */
     public function generateReport(Request $request)
     {
-        // Verificação de acesso - Managers e Aprov podem acessar
-        if (!Auth::user() || !in_array(Auth::user()->role, ['manager', 'aprov'])) {
-            abort(403, 'Acesso negado. Apenas managers e usuários Aprov podem acessar esta área.');
+        // Verificação de acesso - Managers, Aprov e Furriel podem acessar
+        if (!Auth::user() || !Auth::user()->canAccessReports()) {
+            abort(403, 'Acesso negado. Apenas managers, usuários Aprov e Furriel podem acessar esta área.');
         }
 
         $request->validate([
@@ -438,7 +437,7 @@ class AdminController extends Controller
                 break;
 
             case 'weekly_summary':
-                $export = new WeeklySummaryExport($data, $startDate, $endDate);
+                $export = new SummaryExport($data, $startDate, $endDate, 'weekly');
                 $filename = 'resumo_semanal_' . Carbon::parse($startDate)->format('Y-m-d') . '_' . Carbon::parse($endDate)->format('Y-m-d') . '.xlsx';
                 break;
 

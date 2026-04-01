@@ -18,8 +18,8 @@ class SgtteController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        if (!$user || !$user->isSgtte()) {
-            abort(403, 'Acesso negado. Apenas sargentos podem acessar esta página.');
+        if (!$user || !$user->canAccessSgtteFeatures()) {
+            abort(403, 'Acesso negado. Apenas sargentos e furriéis podem acessar esta página.');
         }
 
         $search = $request->get('q');
@@ -60,7 +60,7 @@ class SgtteController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        if (!$user || !$user->isSgtte()) {
+        if (!$user || !$user->canAccessSgtteFeatures()) {
             abort(403, 'Acesso negado.');
         }
 
@@ -110,7 +110,7 @@ class SgtteController extends Controller
     public function getBookings(Request $request)
     {
         $user = Auth::user();
-        if (!$user || !$user->isSgtte()) {
+        if (!$user || !$user->canAccessSgtteFeatures()) {
             abort(403, 'Acesso negado.');
         }
 
@@ -130,7 +130,7 @@ class SgtteController extends Controller
                 ->pluck('id');
         }
 
-        // Garantir que todos os IDs pertencem à mesma organização/subunidade do sgtte
+        // Garantir que todos os IDs pertencem à mesma organização/subunidade do operador
         $validIds = User::whereIn('id', $userIds)
             ->where('organization_id', $user->organization_id)
             ->where('subunit', $user->subunit)

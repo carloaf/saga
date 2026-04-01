@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold mb-4">Serviço - Arranchamento Companhia (Sgtte)</h1>
+    <h1 class="text-2xl font-bold mb-2">Serviço da Companhia</h1>
+    <p class="text-sm text-gray-600 mb-4">Tela compartilhada para o arranchamento da subunidade por Sargenteante ou Furriel.</p>
 
     @if(session('success'))
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
