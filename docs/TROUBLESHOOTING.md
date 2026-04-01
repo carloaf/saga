@@ -68,6 +68,24 @@ docker exec saga_app_dev php artisan config:cache
 curl http://localhost:8000
 ```
 
+### 4.1. Container de homologação no CTA não atualiza após copiar arquivos
+
+**Causa**: O ambiente do CTA usa bind mount em `/workspace/saga`, então copiar o arquivo não basta se o Laravel estiver com cache antigo ou se o `docker-compose` remoto não resolver o serviço `app`.
+
+**Solução**:
+```bash
+# Confirmar o diretório remoto
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "ls -la /workspace/saga/"
+
+# Limpar cache e reiniciar o container diretamente
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "docker exec saga_app_dev php artisan optimize:clear && docker restart saga_app_dev"
+
+# Verificar saúde do container
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "docker ps | grep saga_app_dev"
+```
+
+**Observação**: se o `docker-compose` remoto falhar ao localizar o serviço `app`, prefira operar diretamente no container `saga_app_dev`.
+
 ### 5. Erro: "SQLSTATE[42P01]: Undefined table: cache"
 
 **Causa**: Configuração de cache tentando usar banco de dados sem tabela.
@@ -192,6 +210,21 @@ docker exec saga_app_dev php artisan config:show
 docker exec saga_app_dev ls -la storage/framework/views/
 docker exec saga_app_dev ls -la bootstrap/cache/
 ```
+
+### Problema: `php artisan test` falha em homologação
+
+**Causa**: O ambiente do CTA pode não ter o banco de testes configurado, por exemplo `saga_test`.
+
+**Solução**:
+```bash
+# Verificar conexão de testes configurada
+docker exec saga_app_dev php artisan about | grep -i database
+
+# Alternativa: validar a funcionalidade manualmente no navegador
+# após publicar a correção em homologação
+```
+
+**Ação recomendada**: provisionar um banco de testes dedicado no host antes de depender da suíte automatizada em homologação.
 
 ### Status Esperado
 

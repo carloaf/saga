@@ -186,6 +186,37 @@ curl http://localhost:8080
 # - Performance
 ```
 
+### 4.1 **Homologação no CTA (Teleport + bind mount)**
+```bash
+# 1. Autenticar no Teleport
+tsh login --proxy=teleport.7cta.eb.mil.br --user=cleitonpaulo.martins@eb.mil.br
+
+# 2. Validar acesso e diretório da aplicação
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "ls -la /workspace/saga/"
+
+# 3. Fazer backup dos arquivos alterados antes da cópia
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "cp /workspace/saga/app/Models/User.php /workspace/saga/app/Models/User.php.bkp-$(date +%Y%m%d-%H%M%S)"
+
+# 4. Copiar somente os arquivos modificados
+tsh scp app/Models/User.php suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO:/workspace/saga/app/Models/User.php
+
+# 5. Limpar cache e reiniciar a aplicação
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "docker exec saga_app_dev php artisan optimize:clear && docker restart saga_app_dev"
+
+# 6. Verificar saúde do container
+tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "docker ps | grep saga_app_dev"
+```
+
+**Notas operacionais do CTA**
+- O código do ambiente de homologação fica em `/workspace/saga` com bind mount no container `saga_app_dev`.
+- Quando o `docker-compose` remoto não reconhecer o serviço `app`, prefira `docker exec` e `docker restart` diretamente no container `saga_app_dev`.
+- Para mudanças pequenas, copie apenas os arquivos alterados e rode `php artisan optimize:clear` antes do restart.
+- Valide a funcionalidade no navegador após o deploy, porque nem todo cenário de homologação está coberto por testes automatizados no host.
+
+**Limitação conhecida de testes no servidor**
+- O comando `php artisan test` no CTA depende de um banco de testes dedicado, como `saga_test`.
+- Se esse banco não existir, faça a validação funcional manual em homologação ou provisione a base antes de executar a suíte.
+
 ### 5. **Deploy para Produção**
 ```bash
 # Merge para main (via PR)
