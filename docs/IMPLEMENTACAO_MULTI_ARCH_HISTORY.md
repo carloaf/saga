@@ -7,6 +7,24 @@
 ### Objetivo
 Implementar estrutura multi-arquitetura profissional para o SAGA (Sistema de Agendamento e Gestão de Arranchamento), com suporte para x64 e arm64, incluindo limpeza do projeto e organização profissional.
 
+## 🆕 ATUALIZAÇÕES RECENTES (01/04/2026)
+
+### Commit `d2d5ba6` - `feat: amplia acessos do furriel no dashboard`
+- Furriel passou a herdar as permissões operacionais antes restritas ao fluxo do Sargenteante.
+- Dashboard do Furriel foi ajustado para exibir cinco cards na mesma linha em desktop, com redimensionamento do layout.
+- Card de Relatórios foi liberado para Furriel, incluindo a autorização real no backend.
+- Tela de serviço recebeu nomenclatura mais neutra para atender ambos os perfis.
+
+### Commit `6db5b42` - `test: adiciona regressao para exportacao semanal`
+- Foi adicionada cobertura de regressão para a exportação semanal em Excel na área `admin/reports`.
+- O objetivo é impedir retorno de erro ao acionar o botão de exportação do resumo semanal em futuras alterações.
+
+### Validação operacional em homologação (CTA)
+- As alterações foram publicadas no servidor do CTA via `tsh ssh` e `tsh scp`, com backup prévio dos arquivos remotos.
+- A ativação foi concluída com `php artisan optimize:clear` e reinício do container `saga_app_dev`.
+- Em casos onde o `docker-compose` remoto não resolve o serviço `app`, o procedimento validado foi atuar diretamente no container com `docker exec` e `docker restart`.
+- Foi identificado que a suíte automatizada no host depende de um banco `saga_test`; sem essa base, a validação em homologação precisa combinar teste manual e comandos pontuais.
+
 ### Checklist de Implementação - ✅ CONCLUÍDO
 - [x] Otimizar Dockerfile para multi-arquitetura (x64/arm64)
 - [x] Atualizar docker-compose com buildx

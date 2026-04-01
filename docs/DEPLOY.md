@@ -2,6 +2,8 @@
 
 ## 🚀 Deploy e Branches
 
+> Nota: este documento resume o fluxo de deploy. Para o procedimento operacional detalhado de homologação no CTA, consulte `docs/DESENVOLVIMENTO_WORKFLOW.md`.
+
 ### Estrutura de Branches
 O projeto utiliza duas branches principais:
 
@@ -32,14 +34,34 @@ O projeto utiliza duas branches principais:
    git checkout main
    git merge dev
    git push origin main
-   ./deploy.sh
+
+  cd deploy/production
+  ./deploy-production.sh deploy
    ```
+
+3. **Homologação no CTA**: Publicação manual no host de homologação
+  ```bash
+  tsh login --proxy=teleport.7cta.eb.mil.br --user=cleitonpaulo.martins@eb.mil.br
+  tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "ls -la /workspace/saga/"
+
+  # Copiar apenas os arquivos alterados
+  tsh scp app/Models/User.php suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO:/workspace/saga/app/Models/User.php
+
+  # Ativar no container com bind mount
+  tsh ssh suporte@VM-7CTA-11DSUP-ARRANCHAMENTO-HOMOLOGACAO "docker exec saga_app_dev php artisan optimize:clear && docker restart saga_app_dev"
+  ```
+
+  Observações:
+  - O código remoto de homologação fica em `/workspace/saga`.
+  - Se o `docker-compose` remoto não reconhecer o serviço `app`, use `docker exec` e `docker restart saga_app_dev` diretamente.
+  - A suíte `php artisan test` no host depende de um banco de testes dedicado.
 
 ### Deploy Rápido
 
 Execute o script de deploy:
 ```bash
-./deploy.sh
+cd deploy/production
+./deploy-production.sh deploy
 ```
 
 Este script irá:
@@ -52,28 +74,30 @@ Este script irá:
 
 ### URLs do Sistema
 
-- **Produção**: http://localhost:8000
-- **Login**: http://localhost:8000/login
-- **Registro**: http://localhost:8000/register
-- **Admin**: http://localhost:8000/admin
+- **Desenvolvimento**: http://localhost:8000
+- **Homologação**: http://localhost:8080
+- **Produção**: http://localhost
+- **Login**: http://localhost/login
+- **Registro**: http://localhost/register
+- **Admin**: http://localhost/admin
 
 ### Comandos Docker Úteis
 
 ```bash
 # Ver status dos containers
-docker-compose ps
+docker compose ps
 
 # Ver logs
-docker-compose logs -f
+docker compose logs -f
 
 # Parar containers
-docker-compose down
+docker compose down
 
 # Reiniciar containers
-docker-compose restart
+docker compose restart
 
 # Rebuild completo
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 ## 🛠️ Tecnologias
